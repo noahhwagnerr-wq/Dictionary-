@@ -585,8 +585,8 @@ background:linear-gradient(135deg,rgba(245,166,35,.10) 0%,transparent 60%);
 pointer-events:none;
 }
 .detail-schilderung{
-font-size:14px;line-height:1.9;color:var(–text);white-space:pre-wrap;
-font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif !important;direction:rtl;text-align:right;
+font-size:14px;line-height:1.9;color:var(--text);
+font-family:’Noto Naskh Arabic’,Tahoma,sans-serif !important;
 }
 .schilderung-textarea{
 width:100%;min-height:120px;resize:vertical;
@@ -2587,7 +2587,7 @@ color:var(–accent3);
     <textarea class="edit-input schilderung-textarea" id="edit-forms" placeholder="توضیحات Schilderung..." autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
   <button class="schilderung-analyse-btn" id="schilderung-btn-edit" onclick="analyseSchilderung('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
-    Schilderung analysieren
+    Schilderung erzeugen
   </button>
   <div id="schilderung-preview-edit"></div>
   </div>
@@ -2598,7 +2598,7 @@ color:var(–accent3);
   <textarea class="edit-input persian" id="edit-persian" rows="3" placeholder="ترجمه فارسی را بنویسید..."></textarea>
   <button class="trans-analyse-btn" id="trans-analyse-btn" onclick="analyseTranslation('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-    Übersetzung analysieren
+    Beispiel analysieren
   </button>
   <div class="trans-suggestions" id="trans-suggestions-edit"></div>
 </div>
@@ -2720,7 +2720,7 @@ color:var(–accent3);
     <textarea class="edit-input schilderung-textarea" id="addword-forms" placeholder="توضیحات Schilderung..." autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
   <button class="schilderung-analyse-btn" id="schilderung-btn-addword" onclick="analyseSchilderung('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
-    Schilderung analysieren
+    Schilderung erzeugen
   </button>
   <div id="schilderung-preview-addword"></div>
   </div>
@@ -2730,7 +2730,7 @@ color:var(–accent3);
   <textarea class="edit-input persian" id="addword-persian" rows="3" placeholder="ترجمه فارسی را بنویسید..."></textarea>
   <button class="trans-analyse-btn" id="trans-analyse-btn-add" onclick="analyseTranslation('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-    Übersetzung analysieren
+    Beispiel analysieren
   </button>
   <div class="trans-suggestions" id="trans-suggestions-addword"></div>
 </div>
@@ -3653,7 +3653,7 @@ function renderDetail(){
     schHtml=`<div class="detail-section">
       <div class="detail-section-label">Schilderung</div>
       <div class="detail-wortformen-block" style="margin-top:0;background:rgba(79,142,247,0.06);border-color:rgba(79,142,247,0.2);">
-        <div class="detail-schilderung">${esc(_schSource)}</div>
+        <div class="detail-schilderung" id="_detail-schild-render"></div>
       </div>
     </div>`;
   }
@@ -3700,6 +3700,10 @@ function renderDetail(){
     </div>
     ${schHtml}
     ${exHtml}`;
+  if(_schSource){
+    const _sd=document.getElementById('_detail-schild-render');
+    if(_sd) _renderSchilderungLines(_sd, _schSource);
+  }
 }
 function toggleFavFromDetail(){if(!currentEntry)return;toggleFav(currentEntry.id);renderDetail();}
 
@@ -4287,7 +4291,7 @@ function openEdit(){
   const _gbtn=document.getElementById('grammar-check-btn-edit');
   if(_gbtn){ _gbtn.classList.remove('loading'); const _sv=_gbtn.querySelector('svg'); if(_sv) _sv.style.animation=''; }
   const _sb=document.getElementById('schilderung-btn-edit');
-  if(_sb){ _sb.classList.remove('loading'); _sb.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> Schilderung analysieren'; }
+  if(_sb){ _sb.classList.remove('loading'); _sb.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> Schilderung erzeugen'; }
   document.getElementById('edit-german').value = e.g || '';
   document.getElementById('edit-persian').value = e.p || '';
 
@@ -5458,7 +5462,7 @@ async function analyseSchilderung(prefix){
       previewHeader.style.cssText = 'padding:9px 14px 6px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2);border-bottom:1px solid rgba(79,142,247,0.15);';
       previewHeader.textContent = 'VORSCHAU – Schilderung' + (wikiData ? ' · Wiktionary ✓' : '');
       const previewBody = document.createElement('div');
-      previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;max-height:260px;overflow-y:auto;';
+      previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);max-height:260px;overflow-y:auto;';
       _renderSchilderungLines(previewBody, resultText);
       const adoptBtn = document.createElement('button');
       adoptBtn.style.cssText = 'display:flex;align-items:center;gap:6px;width:100%;padding:11px 14px;border:none;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border-top:1px solid rgba(79,142,247,0.15);transition:background .15s;';
@@ -5479,7 +5483,7 @@ async function analyseSchilderung(prefix){
     showToast('Fehler: '+e.message,'error');
   } finally {
     btn.classList.remove('loading');
-    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> Schilderung analysieren';
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> Schilderung erzeugen';
   }
 }
 
@@ -5933,75 +5937,12 @@ async function analyseTranslation(prefix){
     if(!newSuggs.length && !wrongEntries.length){
       suggestionsEl.innerHTML='<div style="font-size:12px;color:var(--text3);padding:10px 4px;text-align:center;direction:rtl;">همه ترجمه‌ها صحیح و کامل هستند ✔</div>';
     }
-
-    // ── Schilderung generieren (bei Komposita / fehlender Direktübersetzung) ──
-    if(allTrans.length > 0){
-      btn.textContent = '⏳ Generiere Schilderung…';
-      const schildPrompt = 'Deutsches Wort: "' + germanWord + '"\n'
-        + 'Persische Übersetzungen: ' + allTrans.join('؛ ') + '\n\n'
-        + 'Erstelle auf Persisch eine klare, verständliche Erklärung dieses deutschen Wortes:\n'
-        + '1. Bedeutung (kurz und präzise)\n'
-        + '2. Falls Kompositum: Zerlegung der Bestandteile mit separater Erklärung (z.B. Muster + Kampf)\n'
-        + '3. Typischer Verwendungskontext + 1-2 kurze deutsche Beispielsätze mit persischer Übersetzung\n'
-        + '4. Falls keine exakte persische Entsprechung: sinngemäße Umschreibung\n'
-        + 'Stil: klar, modern, für Sprachlernende verständlich. Nur Persisch.';
-      try {
-        let schildText = null;
-        if(keys.openai){
-          try{
-            schildText = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
-              [{role:'user',content:schildPrompt}], 700, 0.25);
-          }catch(e){ console.warn('Schilderung OpenAI:', e.message); }
-        }
-        if(!schildText && keys.gemini){
-          try{
-            const d = await callGemini(keys.gemini,{
-              contents:[{role:'user',parts:[{text:schildPrompt}]}],
-              generationConfig:{temperature:0.25,maxOutputTokens:700}
-            });
-            schildText = _extractGeminiText(d);
-          }catch(e){ console.warn('Schilderung Gemini:', e.message); }
-        }
-        if(schildText && schildText.trim()){
-          const schildDiv = document.createElement('div');
-          schildDiv.style.cssText = 'margin-top:12px;background:rgba(79,142,247,0.07);border:1px solid rgba(79,142,247,0.22);border-radius:10px;padding:12px 14px;';
-          const schildLbl = document.createElement('div');
-          schildLbl.style.cssText = 'font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;';
-          schildLbl.textContent = 'توضیح / SCHILDERUNG';
-          const schildTxt = document.createElement('div');
-          schildTxt.style.cssText = 'font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;';
-          const _schildClean = schildText.trim().replace(/\s+([،,؛;])/g,'$1');
-          schildTxt.dataset.raw = _schildClean;
-          _renderSchilderungLines(schildTxt, _schildClean);
-          const adoptSchildBtn = document.createElement('button');
-          adoptSchildBtn.style.cssText = 'margin-top:9px;border:none;border-radius:8px;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 11px;cursor:pointer;font-family:inherit;display:block;';
-          adoptSchildBtn.textContent = 'Als Schilderung übernehmen';
-          adoptSchildBtn.addEventListener('click',()=>{
-            const formsEl = document.getElementById(prefix+'-forms');
-            if(formsEl){
-              // Nur Textarea füllen — Worttyp bleibt unverändert
-              formsEl.value = schildTxt.dataset.raw || schildTxt.textContent;
-              // Schilderungs-Div sichtbar machen OHNE _setWordTypeUI (kein Reset der Grammatikfelder)
-              const otherDiv = document.getElementById(prefix+'-other-fields');
-              if(otherDiv) otherDiv.style.display = '';
-              showToast('Schilderung übernommen ✓');
-              adoptSchildBtn.textContent='✓ Übernommen';
-              adoptSchildBtn.disabled=true;
-            }
-          });
-          schildDiv.appendChild(schildLbl);
-          schildDiv.appendChild(schildTxt);
-          schildDiv.appendChild(adoptSchildBtn);
-          suggestionsEl.appendChild(schildDiv);
-        }
-      } catch(e){ console.warn('Schilderung block:', e.message); }
-    }
   } catch(e){
     suggestionsEl.innerHTML='<div style="font-size:12px;color:#f87171;padding:8px 4px;">'+esc(e.message)+'</div>';
     showToast('Fehler: '+e.message,'error');
   } finally {
     btn.classList.remove('loading');
-    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Übersetzung analysieren';
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Beispiel analysieren';
   }
 }
 
