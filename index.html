@@ -4911,11 +4911,12 @@ function deleteCurrentEntry(){
     });
   });
 }
-function adoptTranslation(prefix, suggestion, item, btn){
+function adoptTranslation(prefix, suggestion, item, btn, note){
   const field = document.getElementById(prefix+'-persian');
   if(!field) return;
+  const text = (note && note.trim()) ? suggestion + ' (' + note.trim() + ')' : suggestion;
   const current = field.value.trim();
-  field.value = current ? current + '، ' + suggestion : suggestion;
+  field.value = current ? current + '، ' + text : text;
   // Vorschlag als übernommen markieren
   if(item) item.style.opacity='0.45';
   if(btn){ btn.textContent='✓'; btn.style.background='rgba(52,211,153,0.05)'; btn.disabled=true; }
@@ -5927,7 +5928,7 @@ async function analyseTranslation(prefix){
         const ab=document.createElement('button'); ab.className='trans-add-btn';
         ab.type='button'; ab.textContent=isUnusual?'⚠ Eintrag':'Eintrag';
         if(isUnusual) ab.style.opacity='0.6';
-        ab.addEventListener('click',()=>adoptTranslation(prefix,s,item,ab));
+        ab.addEventListener('click',()=>adoptTranslation(prefix,s,item,ab,tObj.note||''));
         item.appendChild(txt); item.appendChild(ab);
         suggestionsEl.appendChild(item);
       });
