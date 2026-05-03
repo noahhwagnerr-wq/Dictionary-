@@ -5547,6 +5547,10 @@ async function checkExamplesGrammar(prefix){
 
   const sysPr = 'You are a Persian-German bilingual linguist and language quality auditor. '
     + 'Your task: deeply check German example sentences AND their Persian translations. '
+    + '\n\nABSOLUTE RULE — ZWNJ FORBIDDEN: NEVER use the zero-width non-joiner character (U+200C, نیم‌فاصله) '
+    + 'in ANY output field — not in fa_correction, not in fa_note, not anywhere. '
+    + 'Use a plain space ( ) everywhere instead. This rule overrides all Persian orthography conventions. '
+    + 'Compounds like برتری‌طلبی must be written as برتری طلبی (with space). '
     + '\n\nREGISTER AWARENESS (CRITICAL): '
     + 'German has multiple registers: standard (Hochdeutsch), colloquial (umgangssprachlich), coarse (derb), vulgar (vulgär). '
     + 'You MUST detect and RESPECT the register of each sentence. '
@@ -5560,7 +5564,7 @@ async function checkExamplesGrammar(prefix){
     + '    Example: بیادعا is NOT correct — correct form is بی ادعا. '
     + '(B) Morphological correctness: wrong suffixes/prefixes, invalid formations. '
     + '(C) Word spacing: prefixes بی/نا/با/هم/غیر must be space-separated. '
-    + '(D) No ZWNJ (U+200C) — use plain space. '
+    + '(D) ZWNJ (U+200C) is BANNED — use plain space only. '
     + '(E) Semantic match per register: colloquial DE → colloquial FA, vulgar DE → vulgar FA. '
     + 'Provide the "register" field for every result: "standard", "umgangssprachlich", "derb", or "vulgär".';
 
@@ -5609,7 +5613,13 @@ async function checkExamplesGrammar(prefix){
 
     const jMatch = raw.match(/\[[\s\S]*\]/);
     if(!jMatch) throw new Error('Ungültige KI-Antwort');
-    const results = JSON.parse(jMatch[0]);
+    const results = JSON.parse(jMatch[0]).map(r=>({
+      ...r,
+      fa_correction: stripZWNJ(r.fa_correction||''),
+      fa_note:       stripZWNJ(r.fa_note||''),
+      de_correction: stripZWNJ(r.de_correction||''),
+      de_note:       stripZWNJ(r.de_note||''),
+    }));
 
     panel.innerHTML='';
     let hasErrors = false;
