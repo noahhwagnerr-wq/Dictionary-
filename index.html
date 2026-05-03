@@ -5344,10 +5344,14 @@ async function analyseSchilderung(prefix){
     + '   – اگر صفت تفضیلی/عالی است: پایه را بنویس\n'
     + '   – اگر کلمه مرکب است: اجزای سازنده را توضیح بده\n\n'
 
-    + '📌 معانی و مفاهیم\n'
-    + '   – همه معانی مهم با شماره‌گذاری\n'
-    + '   – معادل فارسی روان و طبیعی برای هر معنا (نه کلمه به کلمه)\n'
-    + '   – موقعیت استفاده: رسمی / محاوره / ادبی / تخصصی\n\n'
+    + '📌 معانی و مفاهیم – با جملات نمونه\n'
+    + '   برای هر معنا به‌طور جداگانه:\n'
+    + '   – شماره‌گذاری معنا + معادل فارسی روان و طبیعی\n'
+    + '   – موقعیت استفاده: رسمی / محاوره / ادبی / تخصصی\n'
+    + '   – حداقل ۲ جمله نمونه برای همین معنا:\n'
+    + '       • جمله آلمانی (با فرم کامل: Perfekt با hat/ist، یا Präsens، یا ترکیب واقعی)\n'
+    + '       ← ترجمه فارسی روان\n'
+    + '   – فرم فعلی که در جمله به کار رفته را مشخص کن (z.B. „hat gespielt" = Perfekt mit haben)\n\n'
 
     + '📐 نکات دستوری ضروری\n'
     + '   – اسم: جنس (der/die/das)، جمع، Genitiv، الگوی صرف\n'
@@ -5356,8 +5360,8 @@ async function analyseSchilderung(prefix){
     + '   – حرف اضافه: کاسوس حاکم\n'
     + '   – اشتباهات رایج زبان‌آموزان\n\n'
 
-    + '💬 جملات نمونه (از Wiktionary / Duden / DWDS)\n'
-    + '   – ۳ تا ۵ جمله با سطح‌های مختلف (روزمره، رسمی، ادبی)\n'
+    + '💬 جملات اضافی از منابع معتبر (Wiktionary / Duden / DWDS)\n'
+    + '   – ۱ تا ۲ جمله که ترکیب‌های کمیاب‌تر یا سطح ادبی/رسمی را نشان می‌دهند\n'
     + '   – هر جمله: متن آلمانی ← ترجمه فارسی روان\n\n'
 
     + '🗣️ اصطلاحات، ترکیب‌ها و کاربردهای ثابت\n'
@@ -5378,20 +5382,20 @@ async function analyseSchilderung(prefix){
     if(keys.openai){
       try{
         result = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
-          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 2000, 0.3);
+          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 3000, 0.3);
       }catch(e){ console.warn('analyseSchilderung OpenAI:',e.message); }
     }
     if(!result && keys.groq){
       try{
         result = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 2000, 0.3);
+          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 3000, 0.3);
       }catch(e){ console.warn('analyseSchilderung Groq:',e.message); }
     }
     if(!result && keys.gemini){
       try{
         const d = await callGemini(keys.gemini,{
           contents:[{role:'user',parts:[{text:sysPrompt+'\n\n'+userPrompt}]}],
-          generationConfig:{temperature:0.3,maxOutputTokens:2000}
+          generationConfig:{temperature:0.3,maxOutputTokens:3000}
         });
         result = _extractGeminiText(d);
       }catch(e){ console.warn('analyseSchilderung Gemini:',e.message); }
