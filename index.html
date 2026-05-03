@@ -5725,41 +5725,61 @@ async function analyseTranslation(prefix){
     // Markdown-Fences entfernen, dann JSON robust parsen
     const _cleanRaw = step1Raw.replace(/```(?:json)?\s*/gi,'').replace(/```/g,'').trim();
     let allTrans = [], wordRegister = 'standard', transObjects = [];
+
+    // Hilfsfunktion: extrahiert den persischen Text aus einem Translations-Objekt,
+    // egal wie das Feld heißt (fa, persian, translation, text, word, …)
+    function _extractFa(t) {
+      if(typeof t === 'string') return stripZWNJ(t.trim());
+      const val = t.fa || t.persian || t.translation || t.text || t.word || t.farsi || '';
+      return stripZWNJ(String(val).trim()).replace(/\s+([،,؛;])/g,'$1');
+    }
+
     let _parsed = null;
     try { _parsed = JSON.parse(_cleanRaw); } catch(e) {
       const m = _cleanRaw.match(/\{[\s\S]*\}/);
       if(m) try { _parsed = JSON.parse(m[0]); } catch(e2) { /* weiter */ }
     }
     if(_parsed && typeof _parsed === 'object' && !Array.isArray(_parsed)){
-      wordRegister = _parsed.word_register || 'standard';
-      transObjects = (_parsed.translations||[]).map(t=>({
-        fa: stripZWNJ(String(t.fa||'').trim()).replace(/\s+([،,؛;])/g,'$1'),
-        register: t.register||'standard',
-        note: String(t.note||'').trim()
+      wordRegister = _parsed.word_register || _parsed.register || 'standard';
+      // Translations-Array unter beliebigem Schlüssel suchen
+      let transArr = _parsed.translations || _parsed.results || _parsed.entries || null;
+      if(!transArr) {
+        for(const v of Object.values(_parsed)) { if(Array.isArray(v) && v.length){ transArr = v; break; } }
+      }
+      transObjects = (transArr||[]).map(t=>({
+        fa: _extractFa(t),
+        register: (typeof t==='object' ? (t.register||'standard') : 'standard'),
+        note: (typeof t==='object' ? String(t.note||'').trim() : '')
       })).filter(t=>t.fa);
+      allTrans = transObjects.map(t=>t.fa);
+    } else if(Array.isArray(_parsed) && _parsed.length) {
+      // Direkt ein Array zurückgegeben
+      transObjects = _parsed.map(t=>({ fa:_extractFa(t), register:(typeof t==='object'?t.register||'standard':'standard'), note:'' })).filter(t=>t.fa);
       allTrans = transObjects.map(t=>t.fa);
     }
     if(!allTrans.length){
-      // Fallback: größtes Array im Text extrahieren
+      // Fallback: alle JSON-Arrays im Text ausprobieren
       const arrMatches = [..._cleanRaw.matchAll(/\[[\s\S]*?\]/g)].map(m=>m[0]);
       for(const candidate of arrMatches){
         try{
           const arr = JSON.parse(candidate);
           if(Array.isArray(arr) && arr.length){
-            if(typeof arr[0]==='string'){
-              allTrans = arr.map(s=>stripZWNJ(String(s).trim())).filter(Boolean);
-            } else if(typeof arr[0]==='object' && arr[0].fa){
-              allTrans = arr.map(t=>stripZWNJ(String(t.fa||'').trim())).filter(Boolean);
-              transObjects = arr.map(t=>({fa:stripZWNJ(String(t.fa||'').trim()),register:t.register||'standard',note:String(t.note||'').trim()})).filter(t=>t.fa);
+            const extracted = arr.map(t=>_extractFa(t)).filter(Boolean);
+            if(extracted.length){
+              allTrans = extracted;
+              transObjects = arr.map(t=>({fa:_extractFa(t),register:(typeof t==='object'?t.register||'standard':'standard'),note:''})).filter(t=>t.fa);
+              break;
             }
-            if(allTrans.length) break;
           }
         }catch(e){ /* nächster Kandidat */ }
       }
-      if(!allTrans.length) throw new Error('Ungültige Antwort Schritt 1');
-      if(!transObjects.length) transObjects = allTrans.map(fa=>({fa, register:'standard', note:''}));
     }
-    if(!allTrans.length) throw new Error('Keine Übersetzungen gefunden');
+    if(!allTrans.length){
+      // Letzter Ausweg: zeige was die KI tatsächlich zurückgegeben hat
+      const snippet = _cleanRaw.slice(0,120).replace(/\n/g,' ');
+      throw new Error('KI-Antwort nicht lesbar: ' + snippet);
+    }
+    if(!transObjects.length) transObjects = allTrans.map(fa=>({fa, register:'standard', note:''}));
 
     // STUFE 2: Vergleich — neue Vorschläge + falsche Einträge erkennen
     btn.textContent = '⏳ Schritt 2/2: Prüfe bestehende…';
