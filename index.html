@@ -5297,7 +5297,9 @@ async function analyseSchilderung(prefix){
   btn.classList.add('loading');
   btn.textContent = '⏳ Wiktionary…';
 
-  const wikiData = await fetchWiktionaryData(gw);
+  // Klammern und Zusatzinfos entfernen: "beschlagen (ist)" → "beschlagen"
+  const wikiWord = gw.replace(/\s*\(.*?\)\s*/g, '').replace(/\s+/g, ' ').trim();
+  const wikiData = await fetchWiktionaryData(wikiWord);
 
   btn.textContent = '⏳ Analysiere…';
 
@@ -5355,13 +5357,18 @@ async function analyseSchilderung(prefix){
 
     + '📌 معانی و مفاهیم – با جملات نمونه\n'
     + '   برای هر معنا به‌طور جداگانه:\n'
-    + '   – شماره‌گذاری معنا + معادل فارسی روان (اگر نادر است برچسب بزن: historisch / selten / fachsprachlich)\n'
+    + '   – شماره‌گذاری معنا + معادل فارسی روان\n'
+    + '   – اگر نادر/تاریخی/تخصصی است: برچسب (historisch) / (selten) / (fachsprachlich) اضافه کن\n'
     + '   – موقعیت استفاده: رسمی / محاوره / ادبی / تخصصی\n'
     + '   – حداقل ۲ جمله نمونه واقعی برای همین معنا:\n'
     + '       • جمله آلمانی ← ترجمه فارسی روان\n'
-    + '       • برچسب دقیق فرم فعلی: Präsens / Perfekt mit haben / Perfekt mit sein /\n'
-    + '         Zustandsbeschreibung (ist + Partizip II) / Vorgangspassiv (wird + Partizip II)\n'
-    + '   ⚠ تذکر: „ist/sind + Partizip II" تقریباً هرگز Passiv نیست – معمولاً Zustandsbeschreibung است!\n\n'
+    + '       • برچسب فرم دقیق – فقط یکی از این چهار گزینه:\n'
+    + '           (Präsens Aktiv)  ←  er spielt\n'
+    + '           (Perfekt mit haben)  ←  er hat gespielt\n'
+    + '           (Perfekt mit sein)  ←  er ist gefahren\n'
+    + '           (Zustandsbeschreibung)  ←  die Scheibe ist beschlagen / er ist beschlagen\n'
+    + '           (Vorgangspassiv)  ←  die Scheibe wird beschlagen\n'
+    + '   ⚠ WICHTIG: „ist/sind/war/waren + Partizip II" = (Zustandsbeschreibung) – NIEMALS (Passiv)!\n\n'
 
     + '📐 نکات دستوری ضروری\n'
     + '   – اسم: جنس (der/die/das)، جمع، Genitiv، الگوی صرف\n'
