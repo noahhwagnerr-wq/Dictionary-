@@ -5367,8 +5367,9 @@ async function analyseSchilderung(prefix){
     + 'GRAMMATIKREGEL 1: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
     + 'GRAMMATIKREGEL 2: "wurde/wurden + Partizip II" = Vorgangspassiv Präteritum, NIEMALS "Perfekt". Perfekt Passiv = "ist/sind ... worden". '
     + 'REGISTER-LABELS (exakt): روزمره = alltäglich (Brille beschlagen), استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. Alltagsvorgänge wie Glas/Brille beschlagen sind روزمره, NICHT رسمی. '
-    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" schreiben – nie beides, außer das Verb hat tatsächlich beide Hilfsverben (z.B. fahren: hat/ist gefahren). Zustandsbeschreibungen wie "Die Brille ist beschlagen" sind KEIN Perfekt – dort kein Hilfsverb im 📐-Abschnitt angeben. '
-    + 'KOLLOKATIONEN: Bei gut beschlagen sein immer die typische Verstärkung gut hinzufügen. Natürlichkeit vor Korrektheit – Beispiele sollen so klingen wie ein Muttersprachler sie sagen würde. '
+    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" – nie beides, außer Verb hat tatsächlich beide Formen. Zustandsbeschreibungen sind KEIN Perfekt. '
+    + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben – weder im ⚡-Abschnitt noch irgendwo sonst. '
+    + 'NATÜRLICHKEIT: Beispiele wie ein Muttersprachler formulieren. '
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
@@ -5376,9 +5377,9 @@ async function analyseSchilderung(prefix){
     + 'Schreib die Analyse EXAKT in diesem Format (ersetze die Beispiele durch echte Inhalte):\n\n'
 
     + '🔍 تشخیص فرم و پایه کلمه\n'
-    + '   – پایه: [EXAKT das deutsche Wort als Lemma – z.B. "beschlagen" oder "Gaumen", NICHT "مفرد" oder "مصدر"]\n'
-    + '   – نوع: [Verb / Substantiv / Adjektiv / Adverb / ...]\n'
-    + '   – جنسیت: [der/die/das – nur bei Substantiven, sonst weglassen]\n'
+    + `   – پایه: ${wikiWord}\n`
+    + '   – نوع: [Verb / Substantiv / Adjektiv / Adverb]\n'
+    + '   – جنسیت: [der/die/das – nur bei Substantiven, sonst diese Zeile weglassen]\n'
     + '   – فرم ورودی: [Partizip II / Plural / Genitiv / Nominativ Singular / ...]\n\n'
 
     + '📌 معانی\n'
@@ -5387,7 +5388,7 @@ async function analyseSchilderung(prefix){
     + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Zustandsbeschreibung / Vorgangspassiv])\n'
     + '      • [جمله آلمانی ۲]\n'
     + '        [ترجمه فارسی] ([فرم])\n'
-    + '   ۲. [معادل فارسی روان] – [سطح]\n'
+    + '   ۲. [معادل فارسی روان] – [روزمره / رسمی / تخصصی / ...]\n'
     + '      • [جمله]\n'
     + '        [ترجمه] ([فرم])\n'
     + '      • [جمله]\n'
@@ -5396,7 +5397,10 @@ async function analyseSchilderung(prefix){
     + '📐 نکات دستوری\n'
     + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Bewegung/Zustandswechsel)\n'
     + '     trennbar: ja/nein | reflexiv: ja/nein | Rektion: + Akk./Dat.\n'
-    + '   – یا (اسم): Nominativ: [der/die/das X] | Genitiv: [des/der Xs] | Plural: [die Xe]\n'
+    + '   – اسم:\n'
+    + '     Nominativ: [der/die/das Wort]\n'
+    + '     Genitiv: [des/der Wortes]\n'
+    + '     Plural: [die Wörter]\n'
     + '   – [اشتباه رایج یا نکته کلیدی]\n\n'
 
     + '🗣️ اصطلاحات و ترکیب‌های ثابت\n'
@@ -5404,8 +5408,8 @@ async function analyseSchilderung(prefix){
     + '   – [کالوکیشن]: [معادل فارسی]\n\n'
 
     + '⚡ نکات برای زبان‌آموز\n'
-    + '   – تفاوت با: [واژه مشابه گمراه‌کننده و چرا باید بین آن‌ها تفاوت گذاشت]\n'
-    + '   – [نکته سبکی یا کاربردی دقیق – KEIN "wird selten verwendet" ohne Kontext]';
+    + '   – تفاوت با: [واژه مشابه و چرا باید بین آن‌ها تفاوت گذاشت]\n'
+    + '   – [نکته کاربردی دقیق]';
 
 
   try {
