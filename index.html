@@ -3496,7 +3496,7 @@ async function saveNewWord(){
   }));
   // Auto-Übersetzung für Beispiele mit leerem Persisch-Feld
   const filledRows = await autoTranslateExamples(rows);
-  const _schTextNew=stripZWNJ((document.getElementById('addword-forms').value||'').trim());
+  const _schTextNew=(document.getElementById('addword-forms').value||'').trim();
   const entry={g:german,p:persian,f:forms,wordType:_addWordType,ex:normalizeExamples(filledRows),...(_schTextNew?{sch:_schTextNew}:{})};
   enrichEntryForSearch(entry);
   const newId=await dbAdd(entry);
@@ -4448,7 +4448,7 @@ async function saveEdit(force){
   currentEntry.f=forms;
   currentEntry.wordType=_currentWordType;
   // Schilderung für ALLE Worttypen speichern (Textarea immer sichtbar)
-  const _schText=stripZWNJ((document.getElementById('edit-forms').value||'').trim());
+  const _schText=(document.getElementById('edit-forms').value||'').trim();
   if(_schText) currentEntry.sch=_schText; else delete currentEntry.sch;
   currentEntry.ex=normalizeExamples(filledExamples);
   enrichEntryForSearch(currentEntry);
@@ -5335,9 +5335,12 @@ async function analyseSchilderung(prefix){
     + 'Schreib auf Persisch (فارسی). Keine Einleitung, keine Begrüßung, keine Markdown-Sterne. '
     + 'Verwende EXAKT die vorgegebene Vorlage mit den Emoji-Überschriften. '
     + 'GRAMMATIKREGEL: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
-    + 'Nur Duden-belegte Bedeutungen. Seltene Bedeutungen mit (selten)/(historisch) kennzeichnen.';
+    + 'Nur Duden-belegte Bedeutungen. Seltene Bedeutungen mit (selten)/(historisch) kennzeichnen. '
+    + 'PERSISCHE ORTHOGRAFIE: Benutze Leerzeichen oder Halbleerzeichen (‌) vor Suffixen wie های، ها، ای، ی. '
+    + 'Schreibe پنجره‌های oder پنجره های, NIEMALS پنجرهها oder پنجرههای.';
 
   const userPrompt = context + '\n\n'
+    + `WICHTIG: Analysiere ALLE Bedeutungen der Basisform "${wikiWord}", unabhängig davon, in welcher Form das Wort eingegeben wurde ("${gw}"). Liste jede Duden-belegte Bedeutung auf – auch fachsprachliche (z.B. Pferd beschlagen, Schloss beschlagen).\n\n`
     + 'Schreib die Analyse EXAKT in diesem Format (ersetze die Beispiele durch echte Inhalte):\n\n'
 
     + '🔍 تشخیص فرم و پایه کلمه\n'
@@ -5346,11 +5349,15 @@ async function analyseSchilderung(prefix){
 
     + '📌 معانی\n'
     + '   ۱. [معادل فارسی روان] – [رسمی / محاوره / تخصصی / selten]\n'
-    + '      • [جمله آلمانی] ← [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Zustandsbeschreibung / Vorgangspassiv])\n'
-    + '      • [جمله آلمانی ۲] ← [ترجمه فارسی] ([فرم])\n'
+    + '      • [جمله آلمانی]\n'
+    + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Zustandsbeschreibung / Vorgangspassiv])\n'
+    + '      • [جمله آلمانی ۲]\n'
+    + '        [ترجمه فارسی] ([فرم])\n'
     + '   ۲. [معادل فارسی روان] – [سطح]\n'
-    + '      • [جمله] ← [ترجمه] ([فرم])\n'
-    + '      • [جمله] ← [ترجمه] ([فرم])\n\n'
+    + '      • [جمله]\n'
+    + '        [ترجمه] ([فرم])\n'
+    + '      • [جمله]\n'
+    + '        [ترجمه] ([فرم])\n\n'
 
     + '📐 نکات دستوری\n'
     + '   – [اسم: جنس، جمع، Genitiv | فعل: haben/sein، trennbar، reflexiv، Rektion | صفت: Komparativ]\n'
@@ -5923,7 +5930,7 @@ async function analyseTranslation(prefix){
           schildLbl.textContent = 'توضیح / SCHILDERUNG';
           const schildTxt = document.createElement('div');
           schildTxt.style.cssText = 'font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;white-space:pre-wrap;';
-          schildTxt.textContent = stripZWNJ(schildText.trim()).replace(/\s+([،,؛;])/g,'$1');
+          schildTxt.textContent = schildText.trim().replace(/\s+([،,؛;])/g,'$1');
           const adoptSchildBtn = document.createElement('button');
           adoptSchildBtn.style.cssText = 'margin-top:9px;border:none;border-radius:8px;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 11px;cursor:pointer;font-family:inherit;display:block;';
           adoptSchildBtn.textContent = 'Als Schilderung übernehmen';
