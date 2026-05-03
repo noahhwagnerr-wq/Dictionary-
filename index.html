@@ -4914,13 +4914,13 @@ function deleteCurrentEntry(){
 function adoptTranslation(prefix, suggestion, item, btn, note){
   const field = document.getElementById(prefix+'-persian');
   if(!field) return;
-  const text = (note && note.trim()) ? suggestion + ' (' + note.trim() + ')' : suggestion;
+  const noteStr = (note && String(note).trim()) ? String(note).trim() : '';
+  const text = noteStr ? suggestion + ' (' + noteStr + ')' : suggestion;
   const current = field.value.trim();
   field.value = current ? current + '، ' + text : text;
-  // Vorschlag als übernommen markieren
   if(item) item.style.opacity='0.45';
   if(btn){ btn.textContent='✓'; btn.style.background='rgba(52,211,153,0.05)'; btn.disabled=true; }
-  showToast('Vorschlag übernommen');
+  showToast(noteStr ? 'Übernommen: ' + text : 'Vorschlag übernommen');
 }
 
 function getApiKeys(){
@@ -5923,16 +5923,18 @@ async function analyseTranslation(prefix){
           rb.textContent=regMap[tObj.register]||tObj.register;
           txt.appendChild(mk); txt.appendChild(rb);
         } else { txt.appendChild(mk); }
-        if(tObj.note){
+        const noteText = tObj.note || '';
+        if(noteText){
           const nt=document.createElement('div');
           nt.style.cssText='font-size:10px;color:var(--text3);direction:rtl;width:100%;margin-top:2px;';
-          nt.textContent=tObj.note;
+          nt.textContent=noteText;
           txt.appendChild(nt);
         }
         const ab=document.createElement('button'); ab.className='trans-add-btn';
         ab.type='button'; ab.textContent=isUnusual?'⚠ Eintrag':'Eintrag';
         if(isUnusual) ab.style.opacity='0.6';
-        ab.addEventListener('click',()=>adoptTranslation(prefix,s,item,ab,tObj.note||''));
+        ab.dataset.note = noteText;
+        ab.addEventListener('click',()=>adoptTranslation(prefix,s,item,ab,ab.dataset.note));
         item.appendChild(txt); item.appendChild(ab);
         suggestionsEl.appendChild(item);
       });
