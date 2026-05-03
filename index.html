@@ -3796,11 +3796,13 @@ function _aiCacheSet(word, provider, result) {
 }
 
 // OpenAI-kompatibler Aufruf (für OpenAI und Groq)
-async function _callOpenAICompat(baseUrl, apiKey, model, messages, maxTokens=700, temperature=0.7) {
+async function _callOpenAICompat(baseUrl, apiKey, model, messages, maxTokens=700, temperature=0.7, jsonMode=false) {
+  const body = { model, messages, max_tokens: maxTokens, temperature };
+  if (jsonMode) body.response_format = { type: 'json_object' };
   const resp = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-    body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature })
+    body: JSON.stringify(body)
   });
   if (!resp.ok) {
     let msg = 'HTTP ' + resp.status;
@@ -5687,20 +5689,20 @@ async function analyseTranslation(prefix){
     if(keys.openai){
       try{
         step1Raw = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 800, 0.15);
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 800, 0.15, true);
       }catch(e){ console.warn('analyseTranslation S1 OpenAI:',e.message); }
     }
     if(!step1Raw && keys.groq){
       try{
         step1Raw = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 800, 0.15);
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 800, 0.15, true);
       }catch(e){ console.warn('analyseTranslation S1 Groq:',e.message); }
     }
     if(!step1Raw && keys.gemini){
       try{
         const d = await callGemini(keys.gemini,{
           contents:[{role:'user',parts:[{text:step1Sys+'\n\n'+step1User}]}],
-          generationConfig:{temperature:0.05,maxOutputTokens:900}
+          generationConfig:{temperature:0.05,maxOutputTokens:900,responseMimeType:'application/json'}
         });
         step1Raw = _extractGeminiText(d);
       }catch(e){ console.warn('analyseTranslation S1 Gemini:',e.message); }
