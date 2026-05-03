@@ -5221,14 +5221,30 @@ const stripZWNJ = s => (s||'').replace(/‌/g,'');
 
 function _renderSchilderungLines(container, text) {
   container.innerHTML = '';
-  text.split('\n').forEach(line => {
+  const sectionRe = /^[🔍📌📐🗣️⚡💬]/u;
+  text.split('\n').forEach((line, i) => {
+    if (!line.trim()) {
+      const sp = document.createElement('div');
+      sp.style.height = '5px';
+      container.appendChild(sp);
+      return;
+    }
     const div = document.createElement('div');
-    const m = line.match(/[a-zA-Z؀-ۿݐ-ݿ]/);
+    const trimmed = line.trimStart();
+    if (sectionRe.test(trimmed)) {
+      if (i > 0) div.style.marginTop = '12px';
+      div.style.fontWeight = '700';
+      div.style.color = 'var(--accent2)';
+      div.style.borderBottom = '1px solid rgba(79,142,247,0.2)';
+      div.style.paddingBottom = '3px';
+      div.style.marginBottom = '3px';
+    }
+    const m = trimmed.match(/[a-zA-Z؀-ݿ]/);
     if (m && /[a-zA-Z]/.test(m[0])) {
       div.style.direction = 'ltr';
       div.style.textAlign = 'left';
     }
-    div.textContent = line || '​';
+    div.textContent = line;
     container.appendChild(div);
   });
 }
@@ -5948,7 +5964,9 @@ async function analyseTranslation(prefix){
           schildLbl.textContent = 'توضیح / SCHILDERUNG';
           const schildTxt = document.createElement('div');
           schildTxt.style.cssText = 'font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;';
-          _renderSchilderungLines(schildTxt, schildText.trim().replace(/\s+([،,؛;])/g,'$1'));
+          const _schildClean = schildText.trim().replace(/\s+([،,؛;])/g,'$1');
+          schildTxt.dataset.raw = _schildClean;
+          _renderSchilderungLines(schildTxt, _schildClean);
           const adoptSchildBtn = document.createElement('button');
           adoptSchildBtn.style.cssText = 'margin-top:9px;border:none;border-radius:8px;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 11px;cursor:pointer;font-family:inherit;display:block;';
           adoptSchildBtn.textContent = 'Als Schilderung übernehmen';
@@ -5956,7 +5974,7 @@ async function analyseTranslation(prefix){
             const formsEl = document.getElementById(prefix+'-forms');
             if(formsEl){
               // Nur Textarea füllen — Worttyp bleibt unverändert
-              formsEl.value = schildTxt.textContent;
+              formsEl.value = schildTxt.dataset.raw || schildTxt.textContent;
               // Schilderungs-Div sichtbar machen OHNE _setWordTypeUI (kein Reset der Grammatikfelder)
               const otherDiv = document.getElementById(prefix+'-other-fields');
               if(otherDiv) otherDiv.style.display = '';
