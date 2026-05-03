@@ -5219,6 +5219,20 @@ const stripZWNJ = s => (s||'').replace(/‌/g,'');
 })();
 
 
+function _renderSchilderungLines(container, text) {
+  container.innerHTML = '';
+  text.split('\n').forEach(line => {
+    const div = document.createElement('div');
+    const m = line.match(/[a-zA-Z؀-ۿݐ-ݿ]/);
+    if (m && /[a-zA-Z]/.test(m[0])) {
+      div.style.direction = 'ltr';
+      div.style.textAlign = 'left';
+    }
+    div.textContent = line || '​';
+    container.appendChild(div);
+  });
+}
+
 async function fetchWiktionaryData(word) {
   try {
     const url = `https://de.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(word)}&prop=text&format=json&origin=*`;
@@ -5334,10 +5348,11 @@ async function analyseSchilderung(prefix){
     + 'Deine Analysen entsprechen dem Niveau von Duden, DWDS und Langenscheidt. '
     + 'Schreib auf Persisch (فارسی). Keine Einleitung, keine Begrüßung, keine Markdown-Sterne. '
     + 'Verwende EXAKT die vorgegebene Vorlage mit den Emoji-Überschriften. '
-    + 'GRAMMATIKREGEL: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
-    + 'Nur Duden-belegte Bedeutungen. Seltene Bedeutungen mit (selten)/(historisch) kennzeichnen. '
-    + 'PERSISCHE ORTHOGRAFIE: Benutze Leerzeichen oder Halbleerzeichen (‌) vor Suffixen wie های، ها، ای، ی. '
-    + 'Schreibe پنجره‌های oder پنجره های, NIEMALS پنجرهها oder پنجرههای.';
+    + 'GRAMMATIKREGEL 1: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
+    + 'GRAMMATIKREGEL 2: "wurde/wurden + Partizip II" = Vorgangspassiv Präteritum, NIEMALS "Perfekt". Perfekt Passiv = "ist/sind ... worden". '
+    + 'REGISTER-LABELS (exakt): روزمره = alltäglich (Brille beschlagen), استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. Alltagsvorgänge wie Glas/Brille beschlagen sind روزمره, NICHT رسمی. '
+    + 'BEDEUTUNGEN: Nur Bedeutungen die im Duden oder Wiktionary explizit stehen. Erfinde KEINE Bedeutungen. Im Zweifel weglassen. '
+    + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
     + `WICHTIG: Analysiere ALLE Bedeutungen der Basisform "${wikiWord}", unabhängig davon, in welcher Form das Wort eingegeben wurde ("${gw}"). Liste jede Duden-belegte Bedeutung auf – auch fachsprachliche (z.B. Pferd beschlagen, Schloss beschlagen).\n\n`
@@ -5360,8 +5375,10 @@ async function analyseSchilderung(prefix){
     + '        [ترجمه] ([فرم])\n\n'
 
     + '📐 نکات دستوری\n'
-    + '   – [اسم: جنس، جمع، Genitiv | فعل: haben/sein، trennbar، reflexiv، Rektion | صفت: Komparativ]\n'
-    + '   – [اشتباه رایج یا نکته مهم]\n\n'
+    + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat/ist + PII]\n'
+    + '     trennbar: ja/nein | reflexiv: ja/nein | Rektion: + Akk./Dat.\n'
+    + '   – یا (اسم): [Artikel Singular, Plural, Genitiv]\n'
+    + '   – [اشتباه رایج یا نکته کلیدی]\n\n'
 
     + '🗣️ اصطلاحات و ترکیب‌های ثابت\n'
     + '   – [اصطلاح]: [معادل فارسی]\n'
@@ -5418,8 +5435,8 @@ async function analyseSchilderung(prefix){
       previewHeader.style.cssText = 'padding:9px 14px 6px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2);border-bottom:1px solid rgba(79,142,247,0.15);';
       previewHeader.textContent = 'VORSCHAU – Schilderung' + (wikiData ? ' · Wiktionary ✓' : '');
       const previewBody = document.createElement('div');
-      previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;white-space:pre-wrap;max-height:260px;overflow-y:auto;';
-      previewBody.textContent = resultText;
+      previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;max-height:260px;overflow-y:auto;';
+      _renderSchilderungLines(previewBody, resultText);
       const adoptBtn = document.createElement('button');
       adoptBtn.style.cssText = 'display:flex;align-items:center;gap:6px;width:100%;padding:11px 14px;border:none;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border-top:1px solid rgba(79,142,247,0.15);transition:background .15s;';
       adoptBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Als Schilderung übernehmen';
@@ -5929,8 +5946,8 @@ async function analyseTranslation(prefix){
           schildLbl.style.cssText = 'font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;';
           schildLbl.textContent = 'توضیح / SCHILDERUNG';
           const schildTxt = document.createElement('div');
-          schildTxt.style.cssText = 'font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;white-space:pre-wrap;';
-          schildTxt.textContent = schildText.trim().replace(/\s+([،,؛;])/g,'$1');
+          schildTxt.style.cssText = 'font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;';
+          _renderSchilderungLines(schildTxt, schildText.trim().replace(/\s+([،,؛;])/g,'$1'));
           const adoptSchildBtn = document.createElement('button');
           adoptSchildBtn.style.cssText = 'margin-top:9px;border:none;border-radius:8px;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:11px;font-weight:700;padding:5px 11px;cursor:pointer;font-family:inherit;display:block;';
           adoptSchildBtn.textContent = 'Als Schilderung übernehmen';
