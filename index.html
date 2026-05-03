@@ -5729,7 +5729,7 @@ async function analyseTranslation(prefix){
     if(!step1Raw && keys.groq){
       try{
         step1Raw = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 3000, 0.15, true);
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 3000, 0.15, false);
       }catch(e){ console.warn('analyseTranslation S1 Groq:',e.message); }
     }
     if(!step1Raw && keys.gemini){
