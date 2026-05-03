@@ -5395,18 +5395,18 @@ async function analyseSchilderung(prefix){
     + 'قالب: متن روان و خوانا، بدون JSON. فارسی زبان اصلی است، آلمانی فقط در مثال‌ها و اصطلاحات فنی.';
 
   try {
-    let result = null;
+    let result = null, _schErr = [];
     if(keys.openai){
       try{
         result = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
           [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 3000, 0.3);
-      }catch(e){ console.warn('analyseSchilderung OpenAI:',e.message); }
+      }catch(e){ _schErr.push('OpenAI: '+e.message); }
     }
     if(!result && keys.groq){
       try{
         result = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 3000, 0.3);
-      }catch(e){ console.warn('analyseSchilderung Groq:',e.message); }
+          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 2000, 0.3);
+      }catch(e){ _schErr.push('Groq: '+e.message); }
     }
     if(!result && keys.gemini){
       try{
@@ -5415,9 +5415,9 @@ async function analyseSchilderung(prefix){
           generationConfig:{temperature:0.3,maxOutputTokens:3000}
         });
         result = _extractGeminiText(d);
-      }catch(e){ console.warn('analyseSchilderung Gemini:',e.message); }
+      }catch(e){ _schErr.push('Gemini: '+e.message); }
     }
-    if(!result) throw new Error('Keine KI-Antwort');
+    if(!result) throw new Error('Keine KI-Antwort: ' + (_schErr.join(' | ') || 'kein Provider'));
 
     // Preamble (KI-Selbsteinleitung) und Markdown-Formatierung entfernen
     result = result
