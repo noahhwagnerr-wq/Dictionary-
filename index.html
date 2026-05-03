@@ -2813,6 +2813,8 @@ function parseLvtDeck(text){
     const line=lines[li];if(!line.trim())continue;
     const parts=line.split('\t');if(parts.length<2)continue;
     const g=parts[0].trim(),raw=parts[1].trim();if(!g||!raw)continue;
+    const wordType=parts[2]?parts[2].trim():'';
+    const sch=parts[3]?parts[3].replace(/&NL182/g,'\n').trim():'';
     const subs=raw.split('&B6182').map(s=>s.trim()).filter(Boolean);
     let mainFA='';const forms=[],ex=[];
     for(let i=0;i<subs.length;i++){
@@ -2827,7 +2829,12 @@ function parseLvtDeck(text){
         }
       }
     }
-    if(mainFA)entries.push({g,p:mainFA,f:forms.slice(0,3),ex:ex.slice(0,5)});
+    if(mainFA){
+      const entry={g,p:mainFA,f:forms.slice(0,3),ex:ex.slice(0,5)};
+      if(wordType)entry.wordType=wordType;
+      if(sch)entry.sch=sch;
+      entries.push(entry);
+    }
   }
   return entries;
 }
@@ -4511,7 +4518,7 @@ document.addEventListener('paste', function(e) {
 }, true);
 
 // ── Settings ──
-function exportData(){const all=getSerializableEntries(DICT);if(!all.length){showToast('⚠ Keine Daten zum Export');return;}const text=serializeLvtDeck(all);const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='woerterbuch-export.lvtdeck';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);showToast(`✓ ${all.length} Wörter exportiert`);}
+async function exportData(){const all=await dbGetAll();if(!all.length){showToast('⚠ Keine Daten zum Export');return;}const text=serializeLvtDeck(all);const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='woerterbuch-export.lvtdeck';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);showToast(`✓ ${all.length} Wörter exportiert`);}
 async function clearAllData(){
   if(!confirm('Alle Daten wirklich löschen?')) return;
   await dbClear();
@@ -4876,10 +4883,20 @@ async function restoreSnapshotIfNeeded(){
 }
 function serializeLvtDeck(entries){
   const lines=['Deutsch\tPERSIAN'];
-  getSerializableEntries(entries).forEach(e=>{
-    const parts=[e.p,...e.f];
-    e.ex.forEach(ex=>{parts.push(ex.de);parts.push(ex.fa);});
-    lines.push(`${e.g}\t${parts.join('&B6182')}`);
+  (Array.isArray(entries)?entries:[]).forEach(e=>{
+    if(!e||!e.g||!e.p) return;
+    const g=String(e.g||'').trim();
+    const p=String(e.p||'').trim();
+    if(!g||!p) return;
+    const f=Array.isArray(e.f)?e.f.map(x=>String(x||'').trim()).filter(Boolean):[];
+    const ex=Array.isArray(e.ex)?e.ex.map(x=>({de:String(x?.de||'').trim(),fa:String(x?.fa||'').trim()})).filter(x=>x.de&&x.fa):[];
+    const parts=[p,...f];
+    ex.forEach(x=>{parts.push(x.de);parts.push(x.fa);});
+    let line=`${g}\t${parts.join('&B6182')}`;
+    const wt=String(e.wordType||'').trim();
+    const sch=String(e.sch||'').trim().replace(/\t/g,' ').replace(/\n/g,'&NL182');
+    if(wt||sch) line+='\t'+wt+(sch?'\t'+sch:'');
+    lines.push(line);
   });
   return lines.join('\n');
 }
@@ -4916,8 +4933,16 @@ function adoptTranslation(prefix, suggestion, item, btn, note){
   if(!field) return;
   const noteStr = (note && String(note).trim()) ? String(note).trim() : '';
   const text = noteStr ? suggestion + ' (' + noteStr + ')' : suggestion;
-  const current = field.value.trim();
-  field.value = current ? current + '، ' + text : text;
+  const parts = field.value.split(/[،,;]/).map(s=>s.trim()).filter(Boolean);
+  const norm = s => s.replace(/\s*\(.*?\)\s*/g,'').replace(/[\s،,;.‌]/g,'').toLowerCase();
+  const existIdx = parts.findIndex(p => norm(p) === norm(suggestion));
+  if(existIdx >= 0 && noteStr){
+    parts[existIdx] = text;
+  } else if(existIdx < 0){
+    parts.push(text);
+  }
+  field.value = parts.join('، ');
+  field.scrollTop = field.scrollHeight;
   if(item) item.style.opacity='0.45';
   if(btn){ btn.textContent='✓'; btn.style.background='rgba(52,211,153,0.05)'; btn.disabled=true; }
   showToast(noteStr ? 'Übernommen: ' + text : 'Vorschlag übernommen');
