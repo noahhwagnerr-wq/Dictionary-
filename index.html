@@ -5330,69 +5330,41 @@ async function analyseSchilderung(prefix){
   if(existing) context += `\n\nBereits vorhandene Schilderung:\n${existing}`;
 
   const sysPrompt =
-    'تو یک زبان‌شناس دقیق، استاد زبان آلمانی و مترجم حرفه‌ای آلمانی-فارسی هستی. '
-    + 'تخصص تو تحلیل جامع واژگان آلمانی برای فارسی‌زبانان است. معیار تو Duden، DWDS و Wiktionary است. '
-    + 'فارسی تو باید روان، طبیعی و حرفه‌ای باشد – نه ترجمه تحت‌اللفظی، بلکه معادل‌سازی سنجیده و متناسب با بافت. '
-    + 'مستقیم شروع به نوشتن تحلیل کن. هیچ مقدمه یا تعارف ننویس. از ** یا ## استفاده نکن.\n\n'
-    + 'قوانین سخت‌گیرانه دستوری که باید رعایت کنی:\n'
-    + '① فقط معانی‌ای را بنویس که در Duden یا DWDS تأیید شده‌اند. هیچ معنایی را اختراع نکن.\n'
-    + '② معانی نادر، تاریخی یا تخصصی را با برچسب مشخص کن: (historisch) / (fachsprachlich) / (selten).\n'
-    + '③ برای برچسب‌گذاری فرم فعلی در جملات نمونه این تفاوت را رعایت کن:\n'
-    + '   – "sein/ist + Partizip II" = NICHT Passiv! → درست: (adjektivischer Gebrauch des Partizips II) یا (Zustandsbeschreibung)\n'
-    + '   – "wird/wurde + Partizip II" = Vorgangspassiv\n'
-    + '   – "hat/haben + Partizip II" = Perfekt Aktiv\n'
-    + '   – "ist/sein + Partizip II" bei Bewegungsverben = Perfekt mit sein\n'
-    + '④ Partizip II als Adjektiv (z.B. "die Scheibe ist beschlagen") ist eine Zustandsbeschreibung, kein Passiv.\n'
-    + '⑤ Trennbare Verben, Reflexivverben und Rektion immer korrekt angeben.';
+    'Du bist ein präziser Germanist, Sprachwissenschaftler und professioneller Übersetzer Deutsch-Persisch. '
+    + 'Deine Analysen entsprechen dem Niveau von Duden, DWDS und Langenscheidt. '
+    + 'Schreib auf Persisch (فارسی). Keine Einleitung, keine Begrüßung, keine Markdown-Sterne. '
+    + 'Verwende EXAKT die vorgegebene Vorlage mit den Emoji-Überschriften. '
+    + 'GRAMMATIKREGEL: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
+    + 'Nur Duden-belegte Bedeutungen. Seltene Bedeutungen mit (selten)/(historisch) kennzeichnen.';
 
   const userPrompt = context + '\n\n'
-    + 'یک تحلیل زبانی جامع و حرفه‌ای برای این واژه به فارسی بنویس. دقیقاً طبق ساختار زیر:\n\n'
+    + 'Schreib die Analyse EXAKT in diesem Format (ersetze die Beispiele durch echte Inhalte):\n\n'
 
     + '🔍 تشخیص فرم و پایه کلمه\n'
-    + '   – اگر فعل صرف‌شده است: مصدر اصلی را ذکر کن\n'
-    + '   – اگر اسم جمع است: مفرد را بنویس\n'
-    + '   – اگر حالت‌دار (dekliniert) است: حالت اصلی (Nominativ) را بنویس\n'
-    + '   – اگر صفت تفضیلی/عالی است: پایه را بنویس\n'
-    + '   – اگر کلمه مرکب است: اجزای سازنده را توضیح بده\n\n'
+    + '   – پایه: [مصدر / مفرد / حالت اصلی]\n'
+    + '   – فرم ورودی: [توضیح: Partizip II / Plural / Genitiv / ...]\n\n'
 
-    + '📌 معانی و مفاهیم – با جملات نمونه\n'
-    + '   برای هر معنا به‌طور جداگانه:\n'
-    + '   – شماره‌گذاری معنا + معادل فارسی روان\n'
-    + '   – اگر نادر/تاریخی/تخصصی است: برچسب (historisch) / (selten) / (fachsprachlich) اضافه کن\n'
-    + '   – موقعیت استفاده: رسمی / محاوره / ادبی / تخصصی\n'
-    + '   – حداقل ۲ جمله نمونه واقعی برای همین معنا:\n'
-    + '       • جمله آلمانی ← ترجمه فارسی روان\n'
-    + '       • برچسب فرم دقیق – فقط یکی از این چهار گزینه:\n'
-    + '           (Präsens Aktiv)  ←  er spielt\n'
-    + '           (Perfekt mit haben)  ←  er hat gespielt\n'
-    + '           (Perfekt mit sein)  ←  er ist gefahren\n'
-    + '           (Zustandsbeschreibung)  ←  die Scheibe ist beschlagen / er ist beschlagen\n'
-    + '           (Vorgangspassiv)  ←  die Scheibe wird beschlagen\n'
-    + '   ⚠ WICHTIG: „ist/sind/war/waren + Partizip II" = (Zustandsbeschreibung) – NIEMALS (Passiv)!\n\n'
+    + '📌 معانی\n'
+    + '   ۱. [معادل فارسی روان] – [رسمی / محاوره / تخصصی / selten]\n'
+    + '      • [جمله آلمانی] ← [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Zustandsbeschreibung / Vorgangspassiv])\n'
+    + '      • [جمله آلمانی ۲] ← [ترجمه فارسی] ([فرم])\n'
+    + '   ۲. [معادل فارسی روان] – [سطح]\n'
+    + '      • [جمله] ← [ترجمه] ([فرم])\n'
+    + '      • [جمله] ← [ترجمه] ([فرم])\n\n'
 
-    + '📐 نکات دستوری ضروری\n'
-    + '   – اسم: جنس (der/die/das)، جمع، Genitiv، الگوی صرف\n'
-    + '   – فعل: کمکی (haben/sein)، جدانوشتنی (trennbar)، بازتابی (reflexiv)، حالت مفعولی (Rektion)\n'
-    + '   – صفت: مقایسه (Komparativ/Superlativ)، کاربرد با کاسوس مختلف\n'
-    + '   – حرف اضافه: کاسوس حاکم\n'
-    + '   – اشتباهات رایج زبان‌آموزان\n\n'
+    + '📐 نکات دستوری\n'
+    + '   – [اسم: جنس، جمع، Genitiv | فعل: haben/sein، trennbar، reflexiv، Rektion | صفت: Komparativ]\n'
+    + '   – [اشتباه رایج یا نکته مهم]\n\n'
 
-    + '💬 جملات اضافی از منابع معتبر (Wiktionary / Duden / DWDS)\n'
-    + '   – ۱ تا ۲ جمله که ترکیب‌های کمیاب‌تر یا سطح ادبی/رسمی را نشان می‌دهند\n'
-    + '   – هر جمله: متن آلمانی ← ترجمه فارسی روان\n\n'
+    + '🗣️ اصطلاحات و ترکیب‌های ثابت\n'
+    + '   – [اصطلاح]: [معادل فارسی]\n'
+    + '   – [کالوکیشن]: [معادل فارسی]\n\n'
 
-    + '🗣️ اصطلاحات، ترکیب‌ها و کاربردهای ثابت\n'
-    + '   – Redewendungen و اصطلاحات رایج حاوی این کلمه\n'
-    + '   – کالوکیشن‌های متداول (ترکیب‌های پرکاربرد)\n'
-    + '   – فعل‌های مرکب یا مشتقات مهم\n'
-    + '   – معادل یا توضیح فارسی برای هر مورد\n\n'
+    + '⚡ نکات برای زبان‌آموز\n'
+    + '   – تفاوت با: [واژه مشابه گمراه‌کننده]\n'
+    + '   – سطح: [A1–C2]\n'
+    + '   – [نکته سبکی یا کاربردی]';
 
-    + '⚡ نکات ویژه برای زبان‌آموز\n'
-    + '   – تفاوت با واژگان مشابه یا گمراه‌کننده\n'
-    + '   – سطح زبانی تقریبی (A1–C2)\n'
-    + '   – نکات سبکی یا کاربردی مهم\n\n'
-
-    + 'قالب: متن روان و خوانا، بدون JSON. فارسی زبان اصلی است، آلمانی فقط در مثال‌ها و اصطلاحات فنی.';
 
   try {
     let result = null, _schErr = [];
