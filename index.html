@@ -5639,7 +5639,7 @@ async function analyseTranslation(prefix){
   btn.classList.add('loading');
   suggestionsEl.innerHTML = '';
   const keys = getApiKeys();
-  if(!keys.openai && !keys.gemini){
+  if(!keys.openai && !keys.gemini && !keys.groq){
     showToast('Kein API-Key konfiguriert','error');
     btn.classList.remove('loading'); return;
   }
@@ -5690,6 +5690,12 @@ async function analyseTranslation(prefix){
           [{role:'system',content:step1Sys},{role:'user',content:step1User}], 800, 0.15);
       }catch(e){ console.warn('analyseTranslation S1 OpenAI:',e.message); }
     }
+    if(!step1Raw && keys.groq){
+      try{
+        step1Raw = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 800, 0.15);
+      }catch(e){ console.warn('analyseTranslation S1 Groq:',e.message); }
+    }
     if(!step1Raw && keys.gemini){
       try{
         const d = await callGemini(keys.gemini,{
@@ -5701,26 +5707,42 @@ async function analyseTranslation(prefix){
     }
     if(!step1Raw) throw new Error('KI-Fehler in Schritt 1');
 
-    // Parse structured {word_register, translations[]} OR fallback simple string array
+    // Markdown-Fences entfernen, dann JSON robust parsen
+    const _cleanRaw = step1Raw.replace(/```(?:json)?\s*/gi,'').replace(/```/g,'').trim();
     let allTrans = [], wordRegister = 'standard', transObjects = [];
-    try {
-      const objMatch = step1Raw.match(/\{[\s\S]*\}/);
-      if(objMatch){
-        const parsed = JSON.parse(objMatch[0]);
-        wordRegister = parsed.word_register || 'standard';
-        transObjects = (parsed.translations||[]).map(t=>({
-          fa: stripZWNJ(String(t.fa||'').trim()).replace(/\s+([،,؛;])/g,'$1'),
-          register: t.register||'standard',
-          note: String(t.note||'').trim()
-        })).filter(t=>t.fa);
-        allTrans = transObjects.map(t=>t.fa);
-      }
-    } catch(e){ /* fallback to array */ }
+    let _parsed = null;
+    try { _parsed = JSON.parse(_cleanRaw); } catch(e) {
+      const m = _cleanRaw.match(/\{[\s\S]*\}/);
+      if(m) try { _parsed = JSON.parse(m[0]); } catch(e2) { /* weiter */ }
+    }
+    if(_parsed && typeof _parsed === 'object' && !Array.isArray(_parsed)){
+      wordRegister = _parsed.word_register || 'standard';
+      transObjects = (_parsed.translations||[]).map(t=>({
+        fa: stripZWNJ(String(t.fa||'').trim()).replace(/\s+([،,؛;])/g,'$1'),
+        register: t.register||'standard',
+        note: String(t.note||'').trim()
+      })).filter(t=>t.fa);
+      allTrans = transObjects.map(t=>t.fa);
+    }
     if(!allTrans.length){
-      const j1 = (step1Raw.match(/\[[\s\S]*?\]/) || [])[0];
-      if(!j1) throw new Error('Ungültige Antwort Schritt 1');
-      allTrans = JSON.parse(j1).map(s=>stripZWNJ(String(s).trim())).filter(Boolean);
-      transObjects = allTrans.map(fa=>({fa, register:'standard', note:''}));
+      // Fallback: größtes Array im Text extrahieren
+      const arrMatches = [..._cleanRaw.matchAll(/\[[\s\S]*?\]/g)].map(m=>m[0]);
+      for(const candidate of arrMatches){
+        try{
+          const arr = JSON.parse(candidate);
+          if(Array.isArray(arr) && arr.length){
+            if(typeof arr[0]==='string'){
+              allTrans = arr.map(s=>stripZWNJ(String(s).trim())).filter(Boolean);
+            } else if(typeof arr[0]==='object' && arr[0].fa){
+              allTrans = arr.map(t=>stripZWNJ(String(t.fa||'').trim())).filter(Boolean);
+              transObjects = arr.map(t=>({fa:stripZWNJ(String(t.fa||'').trim()),register:t.register||'standard',note:String(t.note||'').trim()})).filter(t=>t.fa);
+            }
+            if(allTrans.length) break;
+          }
+        }catch(e){ /* nächster Kandidat */ }
+      }
+      if(!allTrans.length) throw new Error('Ungültige Antwort Schritt 1');
+      if(!transObjects.length) transObjects = allTrans.map(fa=>({fa, register:'standard', note:''}));
     }
     if(!allTrans.length) throw new Error('Keine Übersetzungen gefunden');
 
