@@ -5706,20 +5706,20 @@ async function analyseTranslation(prefix){
     if(keys.openai){
       try{
         step1Raw = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1600, 0.15, true);
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 3000, 0.15, true);
       }catch(e){ console.warn('analyseTranslation S1 OpenAI:',e.message); }
     }
     if(!step1Raw && keys.groq){
       try{
         step1Raw = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1600, 0.15, true);
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 3000, 0.15, true);
       }catch(e){ console.warn('analyseTranslation S1 Groq:',e.message); }
     }
     if(!step1Raw && keys.gemini){
       try{
         const d = await callGemini(keys.gemini,{
           contents:[{role:'user',parts:[{text:step1Sys+'\n\n'+step1User}]}],
-          generationConfig:{temperature:0.05,maxOutputTokens:1600,responseMimeType:'application/json'}
+          generationConfig:{temperature:0.05,maxOutputTokens:3000,responseMimeType:'application/json'}
         });
         step1Raw = _extractGeminiText(d);
       }catch(e){ console.warn('analyseTranslation S1 Gemini:',e.message); }
