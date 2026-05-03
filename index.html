@@ -5231,6 +5231,10 @@ function _renderSchilderungLines(container, text) {
     }
     const div = document.createElement('div');
     const trimmed = line.trimStart();
+    const m = trimmed.match(/[a-zA-Z؀-ݿ]/);
+    const isLtr = m && /[a-zA-Z]/.test(m[0]);
+    div.style.direction = isLtr ? 'ltr' : 'rtl';
+    div.style.textAlign  = isLtr ? 'left'  : 'right';
     if (sectionRe.test(trimmed)) {
       if (i > 0) div.style.marginTop = '12px';
       div.style.fontWeight = '700';
@@ -5238,11 +5242,6 @@ function _renderSchilderungLines(container, text) {
       div.style.borderBottom = '1px solid rgba(79,142,247,0.2)';
       div.style.paddingBottom = '3px';
       div.style.marginBottom = '3px';
-    }
-    const m = trimmed.match(/[a-zA-Z؀-ݿ]/);
-    if (m && /[a-zA-Z]/.test(m[0])) {
-      div.style.direction = 'ltr';
-      div.style.textAlign = 'left';
     }
     div.textContent = line;
     container.appendChild(div);
@@ -5369,6 +5368,7 @@ async function analyseSchilderung(prefix){
     + 'REGISTER-LABELS (exakt): روزمره = alltäglich (Brille beschlagen), استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. Alltagsvorgänge wie Glas/Brille beschlagen sind روزمره, NICHT رسمی. '
     + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" – nie beides, außer Verb hat tatsächlich beide Formen. Zustandsbeschreibungen sind KEIN Perfekt. '
     + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben – weder im ⚡-Abschnitt noch irgendwo sonst. '
+    + 'VERBOTEN: Das Label "(Zustandsbeschreibung)" NIEMALS hinter Beispielsätzen verwenden. '
     + 'NATÜRLICHKEIT: Beispiele wie ein Muttersprachler formulieren. '
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
@@ -5385,7 +5385,7 @@ async function analyseSchilderung(prefix){
     + '📌 معانی\n'
     + '   ۱. [معادل فارسی روان] – [روزمره / استاندارد / رسمی / تخصصی / محاوره / selten]\n'
     + '      • [جمله آلمانی]\n'
-    + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Zustandsbeschreibung / Vorgangspassiv])\n'
+    + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Vorgangspassiv])\n'
     + '      • [جمله آلمانی ۲]\n'
     + '        [ترجمه فارسی] ([فرم])\n'
     + '   ۲. [معادل فارسی روان] – [روزمره / رسمی / تخصصی / ...]\n'
@@ -5443,6 +5443,7 @@ async function analyseSchilderung(prefix){
       .replace(/\*(.*?)\*/g, '$1')
       .replace(/^#{1,4}\s+/gm, '')
       .replace(/^---+$/gm, '')
+      .replace(/\s*\(Zustandsbeschreibung\)/g, '')
       .trim();
     // Einleitungszeilen entfernen (vor dem ersten Abschnitts-Emoji)
     const firstSection = result.search(/[🔍📌📐💬🗣️⚡]/u);
