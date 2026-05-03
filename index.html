@@ -5719,29 +5719,29 @@ async function analyseTranslation(prefix){
     + '{"word_register":"umgangssprachlich","translations":[{"fa":"مخاط بینی","register":"standard","note":""},{"fa":"عن دماغ","register":"derb","note":""},{"fa":"فیتیله بینی","register":"ungebräuchlich","note":"غیر متداول در فارسی معیار"}]}';
 
   try {
-    let step1Raw = null;
+    let step1Raw = null, _s1Err = [];
     if(keys.openai){
       try{
         step1Raw = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 3000, 0.15, true);
-      }catch(e){ console.warn('analyseTranslation S1 OpenAI:',e.message); }
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1800, 0.15, true);
+      }catch(e){ _s1Err.push('OpenAI: '+e.message); }
     }
     if(!step1Raw && keys.groq){
       try{
         step1Raw = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 3000, 0.15, false);
-      }catch(e){ console.warn('analyseTranslation S1 Groq:',e.message); }
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1800, 0.15, false);
+      }catch(e){ _s1Err.push('Groq: '+e.message); }
     }
     if(!step1Raw && keys.gemini){
       try{
         const d = await callGemini(keys.gemini,{
           contents:[{role:'user',parts:[{text:step1Sys+'\n\n'+step1User}]}],
-          generationConfig:{temperature:0.05,maxOutputTokens:3000,responseMimeType:'application/json'}
+          generationConfig:{temperature:0.05,maxOutputTokens:1800,responseMimeType:'application/json'}
         });
         step1Raw = _extractGeminiText(d);
-      }catch(e){ console.warn('analyseTranslation S1 Gemini:',e.message); }
+      }catch(e){ _s1Err.push('Gemini: '+e.message); }
     }
-    if(!step1Raw) throw new Error('KI-Fehler in Schritt 1');
+    if(!step1Raw) throw new Error('KI-Fehler: ' + (_s1Err.join(' | ') || 'kein Provider verfügbar'));
 
     // Markdown-Fences entfernen, dann JSON robust parsen
     const _cleanRaw = step1Raw.replace(/```(?:json)?\s*/gi,'').replace(/```/g,'').trim();
