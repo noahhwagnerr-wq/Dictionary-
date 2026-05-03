@@ -3756,7 +3756,7 @@ function _setWordTypeUI(mode, type) {
   const isEdit = mode === 'edit';
   const prefix = isEdit ? 'edit' : 'addword';
   if (isEdit) _currentWordType = type; else _addWordType = type;
-  ['nomen','verb','adjektiv','abkuerzung','other'].forEach(t => {
+  ['nomen','verb','adjektiv','abkuerzung'].forEach(t => {
     const el = document.getElementById(`${prefix}-${t}-fields`);
     if (el) el.style.display = 'none';
   });
