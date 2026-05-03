@@ -5351,7 +5351,8 @@ async function analyseSchilderung(prefix){
     + 'GRAMMATIKREGEL 1: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
     + 'GRAMMATIKREGEL 2: "wurde/wurden + Partizip II" = Vorgangspassiv Präteritum, NIEMALS "Perfekt". Perfekt Passiv = "ist/sind ... worden". '
     + 'REGISTER-LABELS (exakt): روزمره = alltäglich (Brille beschlagen), استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. Alltagsvorgänge wie Glas/Brille beschlagen sind روزمره, NICHT رسمی. '
-    + 'BEDEUTUNGEN: Nur Bedeutungen die im Duden oder Wiktionary explizit stehen. Erfinde KEINE Bedeutungen. Im Zweifel weglassen. '
+    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" schreiben – nie beides, außer das Verb hat tatsächlich beide Hilfsverben (z.B. fahren: hat/ist gefahren). Zustandsbeschreibungen wie "Die Brille ist beschlagen" sind KEIN Perfekt – dort kein Hilfsverb im 📐-Abschnitt angeben. '
+    + 'KOLLOKATIONEN: Bei gut beschlagen sein immer die typische Verstärkung gut hinzufügen. Natürlichkeit vor Korrektheit – Beispiele sollen so klingen wie ein Muttersprachler sie sagen würde. '
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
@@ -5375,7 +5376,7 @@ async function analyseSchilderung(prefix){
     + '        [ترجمه] ([فرم])\n\n'
 
     + '📐 نکات دستوری\n'
-    + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat/ist + PII]\n'
+    + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Verb Bewegung/Zustandswechsel ausdrückt)\n'
     + '     trennbar: ja/nein | reflexiv: ja/nein | Rektion: + Akk./Dat.\n'
     + '   – یا (اسم): [Artikel Singular, Plural, Genitiv]\n'
     + '   – [اشتباه رایج یا نکته کلیدی]\n\n'
