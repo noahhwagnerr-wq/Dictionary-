@@ -5376,11 +5376,13 @@ async function analyseSchilderung(prefix){
     + 'Schreib die Analyse EXAKT in diesem Format (ersetze die Beispiele durch echte Inhalte):\n\n'
 
     + '🔍 تشخیص فرم و پایه کلمه\n'
-    + '   – پایه: [مصدر / مفرد / حالت اصلی]\n'
-    + '   – فرم ورودی: [توضیح: Partizip II / Plural / Genitiv / ...]\n\n'
+    + '   – پایه: [EXAKT das deutsche Wort als Lemma – z.B. "beschlagen" oder "Gaumen", NICHT "مفرد" oder "مصدر"]\n'
+    + '   – نوع: [Verb / Substantiv / Adjektiv / Adverb / ...]\n'
+    + '   – جنسیت: [der/die/das – nur bei Substantiven, sonst weglassen]\n'
+    + '   – فرم ورودی: [Partizip II / Plural / Genitiv / Nominativ Singular / ...]\n\n'
 
     + '📌 معانی\n'
-    + '   ۱. [معادل فارسی روان] – [رسمی / محاوره / تخصصی / selten]\n'
+    + '   ۱. [معادل فارسی روان] – [روزمره / استاندارد / رسمی / تخصصی / محاوره / selten]\n'
     + '      • [جمله آلمانی]\n'
     + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Zustandsbeschreibung / Vorgangspassiv])\n'
     + '      • [جمله آلمانی ۲]\n'
@@ -5392,9 +5394,9 @@ async function analyseSchilderung(prefix){
     + '        [ترجمه] ([فرم])\n\n'
 
     + '📐 نکات دستوری\n'
-    + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Verb Bewegung/Zustandswechsel ausdrückt)\n'
+    + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Bewegung/Zustandswechsel)\n'
     + '     trennbar: ja/nein | reflexiv: ja/nein | Rektion: + Akk./Dat.\n'
-    + '   – یا (اسم): [Artikel Singular, Plural, Genitiv]\n'
+    + '   – یا (اسم): Nominativ: [der/die/das X] | Genitiv: [des/der Xs] | Plural: [die Xe]\n'
     + '   – [اشتباه رایج یا نکته کلیدی]\n\n'
 
     + '🗣️ اصطلاحات و ترکیب‌های ثابت\n'
@@ -5402,9 +5404,8 @@ async function analyseSchilderung(prefix){
     + '   – [کالوکیشن]: [معادل فارسی]\n\n'
 
     + '⚡ نکات برای زبان‌آموز\n'
-    + '   – تفاوت با: [واژه مشابه گمراه‌کننده]\n'
-    + '   – سطح: [A1–C2]\n'
-    + '   – [نکته سبکی یا کاربردی]';
+    + '   – تفاوت با: [واژه مشابه گمراه‌کننده و چرا باید بین آن‌ها تفاوت گذاشت]\n'
+    + '   – [نکته سبکی یا کاربردی دقیق – KEIN "wird selten verwendet" ohne Kontext]';
 
 
   try {
