@@ -5328,11 +5328,20 @@ async function analyseSchilderung(prefix){
   if(existing) context += `\n\nBereits vorhandene Schilderung:\n${existing}`;
 
   const sysPrompt =
-    'تو یک زبان‌شناس، استاد زبان آلمانی و مترجم حرفه‌ای آلمانی-فارسی هستی. '
-    + 'تخصص تو تحلیل جامع واژگان آلمانی برای فارسی‌زبانان در سطح منابع معتبری مثل Duden، DWDS و Langenscheidt است. '
-    + 'فارسی تو باید روان، طبیعی و حرفه‌ای باشد – نه ترجمه تحت‌اللفظی، بلکه معادل‌سازی سنجیده، ادبی و متناسب با بافت. '
-    + 'مستقیم شروع به نوشتن تحلیل کن. هیچ مقدمه، معرفی، تعارف یا توضیح اضافه ننویس. '
-    + 'از علامت‌های Markdown مثل ** یا ## استفاده نکن.';
+    'تو یک زبان‌شناس دقیق، استاد زبان آلمانی و مترجم حرفه‌ای آلمانی-فارسی هستی. '
+    + 'تخصص تو تحلیل جامع واژگان آلمانی برای فارسی‌زبانان است. معیار تو Duden، DWDS و Wiktionary است. '
+    + 'فارسی تو باید روان، طبیعی و حرفه‌ای باشد – نه ترجمه تحت‌اللفظی، بلکه معادل‌سازی سنجیده و متناسب با بافت. '
+    + 'مستقیم شروع به نوشتن تحلیل کن. هیچ مقدمه یا تعارف ننویس. از ** یا ## استفاده نکن.\n\n'
+    + 'قوانین سخت‌گیرانه دستوری که باید رعایت کنی:\n'
+    + '① فقط معانی‌ای را بنویس که در Duden یا DWDS تأیید شده‌اند. هیچ معنایی را اختراع نکن.\n'
+    + '② معانی نادر، تاریخی یا تخصصی را با برچسب مشخص کن: (historisch) / (fachsprachlich) / (selten).\n'
+    + '③ برای برچسب‌گذاری فرم فعلی در جملات نمونه این تفاوت را رعایت کن:\n'
+    + '   – "sein/ist + Partizip II" = NICHT Passiv! → درست: (adjektivischer Gebrauch des Partizips II) یا (Zustandsbeschreibung)\n'
+    + '   – "wird/wurde + Partizip II" = Vorgangspassiv\n'
+    + '   – "hat/haben + Partizip II" = Perfekt Aktiv\n'
+    + '   – "ist/sein + Partizip II" bei Bewegungsverben = Perfekt mit sein\n'
+    + '④ Partizip II als Adjektiv (z.B. "die Scheibe ist beschlagen") ist eine Zustandsbeschreibung, kein Passiv.\n'
+    + '⑤ Trennbare Verben, Reflexivverben und Rektion immer korrekt angeben.';
 
   const userPrompt = context + '\n\n'
     + 'یک تحلیل زبانی جامع و حرفه‌ای برای این واژه به فارسی بنویس. دقیقاً طبق ساختار زیر:\n\n'
@@ -5346,12 +5355,13 @@ async function analyseSchilderung(prefix){
 
     + '📌 معانی و مفاهیم – با جملات نمونه\n'
     + '   برای هر معنا به‌طور جداگانه:\n'
-    + '   – شماره‌گذاری معنا + معادل فارسی روان و طبیعی\n'
+    + '   – شماره‌گذاری معنا + معادل فارسی روان (اگر نادر است برچسب بزن: historisch / selten / fachsprachlich)\n'
     + '   – موقعیت استفاده: رسمی / محاوره / ادبی / تخصصی\n'
-    + '   – حداقل ۲ جمله نمونه برای همین معنا:\n'
-    + '       • جمله آلمانی (با فرم کامل: Perfekt با hat/ist، یا Präsens، یا ترکیب واقعی)\n'
-    + '       ← ترجمه فارسی روان\n'
-    + '   – فرم فعلی که در جمله به کار رفته را مشخص کن (z.B. „hat gespielt" = Perfekt mit haben)\n\n'
+    + '   – حداقل ۲ جمله نمونه واقعی برای همین معنا:\n'
+    + '       • جمله آلمانی ← ترجمه فارسی روان\n'
+    + '       • برچسب دقیق فرم فعلی: Präsens / Perfekt mit haben / Perfekt mit sein /\n'
+    + '         Zustandsbeschreibung (ist + Partizip II) / Vorgangspassiv (wird + Partizip II)\n'
+    + '   ⚠ تذکر: „ist/sind + Partizip II" تقریباً هرگز Passiv نیست – معمولاً Zustandsbeschreibung است!\n\n'
 
     + '📐 نکات دستوری ضروری\n'
     + '   – اسم: جنس (der/die/das)، جمع، Genitiv، الگوی صرف\n'
