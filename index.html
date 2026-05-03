@@ -1064,12 +1064,12 @@ border:1px solid rgba(79,158,255,.18);font-family:inherit;
 .gen-ex-btn.loading{opacity:.6;pointer-events:none;}
 
 /* ── TRANSLATION ANALYSIS ── */
-.trans-suggestions{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+.trans-suggestions{margin-top:10px;display:flex;flex-direction:column;gap:10px;}
 .trans-suggestion-item{
-display:flex;align-items:center;gap:8px;
+display:flex;align-items:center;gap:10px;
 background:rgba(124,95,230,.07);
 border:1px solid rgba(124,95,230,.18);
-border-radius:12px;padding:10px 12px;
+border-radius:12px;padding:12px 14px;
 animation:suggFadeIn .3s ease both;
 transition:transform .15s;
 }
@@ -5706,40 +5706,39 @@ async function analyseTranslation(prefix){
   // STUFE 1: Deutsches Wort professionell analysieren
   btn.textContent = '⏳ Schritt 1/2: Analysiere Wort…';
 
-  const step1Sys = 'You are a world-class German-to-Persian (Farsi) linguist and translator and register specialist. '
-    + 'Your task: analyze a German word and produce ALL accurate Persian equivalents — covering ALL language registers. '
+  const step1Sys = 'You are a world-class German-to-Persian (Farsi) linguist and translator. '
     + 'Think like an educated native Persian speaker in Iran who is also fluent in German. '
-    + 'Use modern, living Persian — not classical, not overly formal. '
-    + 'REGISTER SYSTEM — detect and label each translation: '
-    + '  "standard": neutral, correct in any context '
-    + '  "umgangssprachlich": colloquial, everyday spoken Persian '
-    + '  "derb": coarse, crude but not offensive '
+    + 'Use modern, everyday living Persian — not classical, not literary, not overly formal. '
+    + 'CONTEXT RULE: For polysemous verbs/words, identify the main usage domains (medical, botanical, technical, everyday) and give the most NATURAL Persian equivalent per domain. '
+    + 'NATURALNESS RULE: Ask yourself "what would a Persian speaker actually say in conversation?" before choosing a translation. '
+    + 'AVOID: literary/poetic/archaic words (e.g. فنا شدن، برافتادن) unless the German word itself is literary. '
+    + 'AVOID: overly specific words that only cover one narrow context (e.g. منقرض شدن = only for species extinction). '
+    + 'REGISTER SYSTEM — label each translation: '
+    + '  "standard": natural and neutral, correct in any context '
+    + '  "umgangssprachlich": colloquial, everyday spoken '
+    + '  "derb": coarse/crude '
     + '  "vulgär": vulgar/offensive '
-    + '  "ungebräuchlich": unusual, rare, or non-standard — flag these! '
-    + 'Also detect the register of the GERMAN word itself and include it as "word_register". '
-    + 'ORTHOGRAPHY rules: '
-    + '(1) Correct spacing: prefixes بی/نا/با/هم/غیر are separate words (بی ادعا not بیادعا). '
-    + '(2) No ZWNJ (U+200C) — use plain space. '
-    + '(3) If unsure whether two parts join, use the spaced form. '
-    + 'Output format: JSON object with "word_register" and "translations" array. '
-    + 'Each translation: {"fa": "Persian text", "register": "standard|umgangssprachlich|derb|vulgär|ungebräuchlich", "note": "optional short note in Persian"}.';
+    + '  "ungebräuchlich": rare, literary, archaic, or overly formal for everyday use — ALWAYS flag these with a note! '
+    + 'Also detect the register of the GERMAN word itself as "word_register". '
+    + 'ORTHOGRAPHY: prefixes بی/نا/با/هم/غیر are separate words; use plain space, no ZWNJ (U+200C). '
+    + 'Output ONLY JSON: {"word_register":"...","translations":[{"fa":"...","register":"...","note":"..."}]}';
 
   const step1User = 'German word/phrase: "' + germanWord + '"\n\n'
-    + 'Analyze this word completely:\n'
-    + '1. Detect its own register (is it standard, colloquial, derb, or vulgar in German?)\n'
-    + '2. List ALL Persian translations across ALL registers\n'
-    + '3. Flag any unusual/non-standard Persian word as "ungebräuchlich" with a note\n'
-    + '4. Verify orthography of every Persian word before outputting\n\n'
-    + 'Output ONLY this JSON (no Markdown, no extra text):\n'
-    + '{\n'
-    + '  "word_register": "standard|umgangssprachlich|derb|vulgär",\n'
-    + '  "translations": [\n'
-    + '    {"fa": "Persian text", "register": "standard|umgangssprachlich|derb|vulgär|ungebräuchlich", "note": ""},\n'
-    + '    ...\n'
-    + '  ]\n'
-    + '}\n'
-    + 'Example for "der Popel":\n'
-    + '{"word_register":"umgangssprachlich","translations":[{"fa":"مخاط بینی","register":"standard","note":""},{"fa":"عن دماغ","register":"derb","note":""},{"fa":"فیتیله بینی","register":"ungebräuchlich","note":"غیر متداول در فارسی معیار"}]}';
+    + 'Steps:\n'
+    + '1. Identify the main usage DOMAINS of this word (e.g. medical / botanical / technical / everyday / legal / etc.)\n'
+    + '2. For each domain, provide the most NATURAL and COMMON Persian equivalent — what a native speaker would actually say\n'
+    + '3. Mark any literary, poetic, archaic, or overly specific Persian word as "ungebräuchlich" with a short Persian note explaining why\n'
+    + '4. Include colloquial alternatives where they exist\n'
+    + '5. Check orthography: prefixes بی/نا/با/هم/غیر must be written as separate words\n\n'
+    + 'Output ONLY JSON (no Markdown):\n'
+    + '{"word_register":"standard|umgangssprachlich|derb|vulgär","translations":[{"fa":"...","register":"...","note":"..."}]}\n\n'
+    + 'Example "absterben": {"word_register":"standard","translations":['
+    + '{"fa":"از بین رفتن","register":"standard","note":"برای سلول، بافت، عصب"},'
+    + '{"fa":"خشک شدن","register":"standard","note":"برای گیاهان"},'
+    + '{"fa":"خاموش شدن تدریجی","register":"standard","note":"برای دستگاه‌ها، صدا"},'
+    + '{"fa":"تحلیل رفتن","register":"standard","note":""},'
+    + '{"fa":"فنا شدن","register":"ungebräuchlich","note":"بار ادبی و فلسفی دارد؛ در گفتار روزمره نادر است"}'
+    + ']}';
 
   try {
     let step1Raw = null, _s1Err = [];
@@ -5915,7 +5914,7 @@ async function analyseTranslation(prefix){
         const regCols={'umgangssprachlich':'#fbbf24','derb':'#fb923c','vulgär':'#f87171','ungebräuchlich':'#94a3b8'};
         if(tObj.register&&tObj.register!=='standard'){
           const rb=document.createElement('span');
-          rb.style.cssText='font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;letter-spacing:.3px;background:rgba(255,255,255,0.06);color:'+(regCols[tObj.register]||'#94a3b8')+';';
+          rb.style.cssText='font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;letter-spacing:.3px;background:rgba(255,255,255,0.06);color:'+(regCols[tObj.register]||'#94a3b8')+';direction:ltr;unicode-bidi:isolate;flex-shrink:0;';
           rb.textContent=regMap[tObj.register]||tObj.register;
           txt.appendChild(mk); txt.appendChild(rb);
         } else { txt.appendChild(mk); }
