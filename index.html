@@ -5405,7 +5405,7 @@ async function analyseSchilderung(prefix){
     if(!result && keys.groq){
       try{
         result = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 2000, 0.3);
+          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 1400, 0.3);
       }catch(e){ _schErr.push('Groq: '+e.message); }
     }
     if(!result && keys.gemini){
@@ -5729,7 +5729,7 @@ async function analyseTranslation(prefix){
     if(!step1Raw && keys.groq){
       try{
         step1Raw = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
-          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1800, 0.15, false);
+          [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1200, 0.15, false);
       }catch(e){ _s1Err.push('Groq: '+e.message); }
     }
     if(!step1Raw && keys.gemini){
