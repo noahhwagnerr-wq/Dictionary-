@@ -5217,16 +5217,68 @@ const stripZWNJ = s => (s||'').replace(/‌/g,'');
 })();
 
 
+async function fetchWiktionaryData(word) {
+  try {
+    const url = `https://de.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(word)}&prop=text&format=json&origin=*`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(9000) });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const htmlStr = data?.parse?.text?.['*'];
+    if (!htmlStr) return null;
+
+    const doc = new DOMParser().parseFromString(htmlStr, 'text/html');
+
+    function getSectionItems(headerText) {
+      const allHeaders = [...doc.querySelectorAll('h3 .mw-headline, h4 .mw-headline')];
+      const header = allHeaders.find(h => h.textContent.trim().startsWith(headerText));
+      if (!header) return [];
+      const section = header.closest('h3, h4');
+      const items = [];
+      let el = section.nextElementSibling;
+      while (el && !el.matches('h2,h3,h4')) {
+        if (el.matches('dl,ol,ul')) {
+          el.querySelectorAll('dd,li').forEach(li => {
+            const text = li.textContent.replace(/\[\d+\]/g, '').replace(/\s+/g, ' ').trim();
+            if (text.length > 3) items.push(text);
+          });
+        }
+        el = el.nextElementSibling;
+      }
+      return items;
+    }
+
+    const meanings      = getSectionItems('Bedeutungen').slice(0, 8);
+    const examples      = getSectionItems('Beispiele').slice(0, 6);
+    const idioms        = getSectionItems('Redewendungen').slice(0, 6);
+    const collocations  = getSectionItems('Charakteristische Wortkombinationen').slice(0, 5);
+    const synonyms      = getSectionItems('Synonyme').slice(0, 5);
+
+    const grammarPairs = {};
+    doc.querySelectorAll('table tr').forEach(row => {
+      const cells = row.querySelectorAll('th,td');
+      if (cells.length >= 2) {
+        const k = cells[0].textContent.replace(/\s+/g, ' ').trim();
+        const v = cells[1].textContent.replace(/\s+/g, ' ').trim();
+        if (k && v && k.length < 40 && !grammarPairs[k]) grammarPairs[k] = v;
+      }
+    });
+
+    return { meanings, examples, idioms, collocations, synonyms, grammarPairs };
+  } catch(e) {
+    console.warn('Wiktionary:', e.message);
+    return null;
+  }
+}
+
 async function analyseSchilderung(prefix){
   const germanWord = (document.getElementById(prefix==='edit'?'edit-german':'addword-german')||{}).value||'';
   const gw = germanWord.trim();
-  const formsField    = document.getElementById(prefix+'-forms');
-  const persianField  = document.getElementById(prefix+'-persian');
-  const btn           = document.getElementById('schilderung-btn-'+prefix);
+  const formsField   = document.getElementById(prefix+'-forms');
+  const persianField = document.getElementById(prefix+'-persian');
+  const btn          = document.getElementById('schilderung-btn-'+prefix);
   if(!formsField||!btn) return;
   if(!gw){ showToast('Bitte zuerst das deutsche Wort eingeben','error'); return; }
 
-  // Wortart + Artikel aus UI lesen
   const activeTypeBtn = document.querySelector('#'+prefix+'-wtype-row .wtype-btn.active');
   const wordType = activeTypeBtn ? activeTypeBtn.dataset.type : 'other';
   const singular = (document.getElementById(prefix+'-singular')||{}).value||'';
@@ -5237,64 +5289,111 @@ async function analyseSchilderung(prefix){
   const existing = formsField.value.trim();
 
   const keys = getApiKeys();
-  if(!keys.openai && !keys.gemini){
+  if(!keys.openai && !keys.gemini && !keys.groq){
     showToast('Kein API-Key konfiguriert','error'); return;
   }
   btn.classList.add('loading');
+  btn.textContent = '⏳ Wiktionary…';
+
+  const wikiData = await fetchWiktionaryData(gw);
+
   btn.textContent = '⏳ Analysiere…';
 
-  // Kontext aufbauen
-  let context = 'Deutsches Wort: "'+gw+'"';
-  if(wordType && wordType!=='other') context += '\nWortart: '+wordType;
-  if(singular) context += '\nSingular: '+singular;
-  if(plural)   context += '\nPlural: '+plural;
-  if(praet)    context += '\nPräteritum: '+praet;
-  if(perf)     context += '\nPerfekt: '+perf;
-  if(persian)  context += '\nPersische Übersetzung(en): '+persian;
-  if(existing) context += '\n\nBereits vorhandene Schilderung:\n'+existing;
+  let context = `Deutsches Wort: "${gw}"`;
+  if(wordType && wordType!=='other') context += `\nWortart: ${wordType}`;
+  if(singular) context += `\nSingular/Artikel: ${singular}`;
+  if(plural)   context += `\nPlural: ${plural}`;
+  if(praet)    context += `\nPräteritum: ${praet}`;
+  if(perf)     context += `\nPerfekt: ${perf}`;
+  if(persian)  context += `\nVorhandene persische Übersetzung(en): ${persian}`;
 
-  const sysPrompt = 'تو یک استاد زبان آلمانی، زبان‌شناس و نویسنده فرهنگ لغت حرفه‌ای هستی. '
-    + 'کیفیت توضیحات تو باید در سطح بهترین کتاب‌های مرجع آموزش زبان آلمانی به فارسی باشد. '
-    + 'مثل Duden یا Langenscheidt ولی به فارسی. ساختارمند، دقیق، جامع و قابل فهم برای زبان‌آموز فارسی‌زبان.';
+  if(wikiData) {
+    context += '\n\n── Daten aus Wiktionary ──';
+    if(wikiData.meanings.length)
+      context += `\nBedeutungen:\n${wikiData.meanings.map((m,i)=>`  ${i+1}. ${m}`).join('\n')}`;
+    if(wikiData.examples.length)
+      context += `\nBeispiele:\n${wikiData.examples.map(e=>`  • ${e}`).join('\n')}`;
+    if(wikiData.idioms.length)
+      context += `\nRedewendungen:\n${wikiData.idioms.map(e=>`  • ${e}`).join('\n')}`;
+    if(wikiData.collocations.length)
+      context += `\nTypische Kombinationen:\n${wikiData.collocations.map(e=>`  • ${e}`).join('\n')}`;
+    if(wikiData.synonyms.length)
+      context += `\nSynonyme:\n${wikiData.synonyms.map(e=>`  • ${e}`).join('\n')}`;
+    const gKeys = Object.keys(wikiData.grammarPairs).slice(0, 12);
+    if(gKeys.length)
+      context += `\nGrammatik-Tabelle:\n${gKeys.map(k=>`  ${k}: ${wikiData.grammarPairs[k]}`).join('\n')}`;
+  }
+  if(existing) context += `\n\nBereits vorhandene Schilderung:\n${existing}`;
+
+  const sysPrompt =
+    'تو یک زبان‌شناس، استاد زبان آلمانی و مترجم حرفه‌ای آلمانی-فارسی هستی. '
+    + 'تخصص تو تحلیل جامع واژگان آلمانی برای فارسی‌زبانان در سطح منابع معتبری مثل Duden، DWDS و Langenscheidt است. '
+    + 'فارسی تو باید روان، طبیعی و حرفه‌ای باشد – نه ترجمه تحت‌اللفظی، بلکه معادل‌سازی سنجیده، ادبی و متناسب با بافت.';
 
   const userPrompt = context + '\n\n'
-    + 'یک Schilderung (توضیح/معرفی کامل) حرفه‌ای برای این کلمه بنویس. شامل:\n\n'
-    + '📌 معنا و تعریف اصلی\n'
-    + '   – معادل(های) فارسی با توضیح کوتاه\n'
-    + '   – اگر چند معنا دارد: همه معانی مهم\n\n'
-    + '📐 نکات دستوری\n'
-    + '   – برای اسم: جنس (der/die/das)، جمع، Genitiv\n'
-    + '   – برای فعل: ساخت با haben/sein، فعل جدانوشتنی بودن\n'
-    + '   – برای صفت: مقایسه (Komparativ/Superlativ)\n'
-    + '   – برای حرف اضافه: حالت دستوری (Akkusativ/Dativ/Genitiv)\n\n'
-    + '💬 کاربرد در جمله (۲–۳ مثال)\n'
-    + '   – هر مثال: جمله آلمانی → ترجمه فارسی\n\n'
-    + '⚡ نکات مهم (در صورت لزوم)\n'
-    + '   – تفاوت با کلمات مشابه\n'
-    + '   – موارد استفاده رایج یا غیررسمی\n'
+    + 'یک تحلیل زبانی جامع و حرفه‌ای برای این واژه به فارسی بنویس. دقیقاً طبق ساختار زیر:\n\n'
+
+    + '🔍 تشخیص فرم و پایه کلمه\n'
+    + '   – اگر فعل صرف‌شده است: مصدر اصلی را ذکر کن\n'
+    + '   – اگر اسم جمع است: مفرد را بنویس\n'
+    + '   – اگر حالت‌دار (dekliniert) است: حالت اصلی (Nominativ) را بنویس\n'
+    + '   – اگر صفت تفضیلی/عالی است: پایه را بنویس\n'
+    + '   – اگر کلمه مرکب است: اجزای سازنده را توضیح بده\n\n'
+
+    + '📌 معانی و مفاهیم\n'
+    + '   – همه معانی مهم با شماره‌گذاری\n'
+    + '   – معادل فارسی روان و طبیعی برای هر معنا (نه کلمه به کلمه)\n'
+    + '   – موقعیت استفاده: رسمی / محاوره / ادبی / تخصصی\n\n'
+
+    + '📐 نکات دستوری ضروری\n'
+    + '   – اسم: جنس (der/die/das)، جمع، Genitiv، الگوی صرف\n'
+    + '   – فعل: کمکی (haben/sein)، جدانوشتنی (trennbar)، بازتابی (reflexiv)، حالت مفعولی (Rektion)\n'
+    + '   – صفت: مقایسه (Komparativ/Superlativ)، کاربرد با کاسوس مختلف\n'
+    + '   – حرف اضافه: کاسوس حاکم\n'
     + '   – اشتباهات رایج زبان‌آموزان\n\n'
-    + 'قالب: متن روان و خوانا (نه JSON). فارسی اصلی، آلمانی فقط برای مثال‌ها و اصطلاح فنی.';
+
+    + '💬 جملات نمونه (از Wiktionary / Duden / DWDS)\n'
+    + '   – ۳ تا ۵ جمله با سطح‌های مختلف (روزمره، رسمی، ادبی)\n'
+    + '   – هر جمله: متن آلمانی ← ترجمه فارسی روان\n\n'
+
+    + '🗣️ اصطلاحات، ترکیب‌ها و کاربردهای ثابت\n'
+    + '   – Redewendungen و اصطلاحات رایج حاوی این کلمه\n'
+    + '   – کالوکیشن‌های متداول (ترکیب‌های پرکاربرد)\n'
+    + '   – فعل‌های مرکب یا مشتقات مهم\n'
+    + '   – معادل یا توضیح فارسی برای هر مورد\n\n'
+
+    + '⚡ نکات ویژه برای زبان‌آموز\n'
+    + '   – تفاوت با واژگان مشابه یا گمراه‌کننده\n'
+    + '   – سطح زبانی تقریبی (A1–C2)\n'
+    + '   – نکات سبکی یا کاربردی مهم\n\n'
+
+    + 'قالب: متن روان و خوانا، بدون JSON. فارسی زبان اصلی است، آلمانی فقط در مثال‌ها و اصطلاحات فنی.';
 
   try {
     let result = null;
     if(keys.openai){
       try{
         result = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
-          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 1200);
+          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 2000, 0.3);
       }catch(e){ console.warn('analyseSchilderung OpenAI:',e.message); }
+    }
+    if(!result && keys.groq){
+      try{
+        result = await _callOpenAICompat('https://api.groq.com/openai/v1', keys.groq, 'llama-3.3-70b-versatile',
+          [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 2000, 0.3);
+      }catch(e){ console.warn('analyseSchilderung Groq:',e.message); }
     }
     if(!result && keys.gemini){
       try{
         const d = await callGemini(keys.gemini,{
           contents:[{role:'user',parts:[{text:sysPrompt+'\n\n'+userPrompt}]}],
-          generationConfig:{temperature:0.2,maxOutputTokens:1200}
+          generationConfig:{temperature:0.3,maxOutputTokens:2000}
         });
         result = _extractGeminiText(d);
       }catch(e){ console.warn('analyseSchilderung Gemini:',e.message); }
     }
     if(!result) throw new Error('Keine KI-Antwort');
 
-    // ── Preview anzeigen (NICHT direkt in Feld eintragen) ──
     const previewEl = document.getElementById('schilderung-preview-' + prefix);
     if (previewEl) {
       const resultText = result.trim();
@@ -5302,9 +5401,9 @@ async function analyseSchilderung(prefix){
       previewEl.style.cssText = 'margin-top:10px;background:rgba(79,142,247,0.07);border:1px solid rgba(79,142,247,0.25);border-radius:12px;overflow:hidden;animation:scFadeIn .25s ease both;';
       const previewHeader = document.createElement('div');
       previewHeader.style.cssText = 'padding:9px 14px 6px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2);border-bottom:1px solid rgba(79,142,247,0.15);';
-      previewHeader.textContent = 'VORSCHAU – Schilderung';
+      previewHeader.textContent = 'VORSCHAU – Schilderung' + (wikiData ? ' · Wiktionary ✓' : '');
       const previewBody = document.createElement('div');
-      previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;white-space:pre-wrap;max-height:200px;overflow-y:auto;';
+      previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);direction:rtl;text-align:right;white-space:pre-wrap;max-height:260px;overflow-y:auto;';
       previewBody.textContent = resultText;
       const adoptBtn = document.createElement('button');
       adoptBtn.style.cssText = 'display:flex;align-items:center;gap:6px;width:100%;padding:11px 14px;border:none;background:rgba(79,142,247,0.12);color:var(--accent2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border-top:1px solid rgba(79,142,247,0.15);transition:background .15s;';
