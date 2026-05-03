@@ -5629,12 +5629,15 @@ async function checkExamplesGrammar(prefix){
 
     const jMatch = raw.match(/\[[\s\S]*\]/);
     if(!jMatch) throw new Error('Ungültige KI-Antwort');
+    // Replace ZWNJ (U+200C) with plain space — do NOT just delete it, or joined
+    // chars would merge incorrectly (برتری‌طلبی → برتریطلبی instead of برتری طلبی)
+    const _noZWNJ = s => (s||'').replace(/‌/g,' ').replace(/ {2,}/g,' ').trim();
     const results = JSON.parse(jMatch[0]).map(r=>({
       ...r,
-      fa_correction: stripZWNJ(r.fa_correction||''),
-      fa_note:       stripZWNJ(r.fa_note||''),
-      de_correction: stripZWNJ(r.de_correction||''),
-      de_note:       stripZWNJ(r.de_note||''),
+      fa_correction: _noZWNJ(r.fa_correction||''),
+      fa_note:       _noZWNJ(r.fa_note||''),
+      de_correction: _noZWNJ(r.de_correction||''),
+      de_note:       _noZWNJ(r.de_note||''),
     }));
 
     panel.innerHTML='';
@@ -5691,7 +5694,7 @@ async function checkExamplesGrammar(prefix){
         applyDE.textContent='Korrektur übernehmen (DE)';
         applyDE.addEventListener('click',()=>{
           const inp=ex.row.querySelector('.ex-row-de');
-          if(inp){inp.value=res.de_correction; applyDE.textContent='✓ Übernommen'; applyDE.disabled=true;}
+          if(inp){inp.value=_noZWNJ(res.de_correction); applyDE.textContent='✓ Übernommen'; applyDE.disabled=true;}
         });
         card.appendChild(applyDE);
       }
@@ -5715,7 +5718,7 @@ async function checkExamplesGrammar(prefix){
         applyFA.textContent='Korrektur übernehmen (FA)';
         applyFA.addEventListener('click',()=>{
           const inp=ex.row.querySelector('.ex-row-fa');
-          if(inp){inp.value=res.fa_correction; applyFA.textContent='✓ Übernommen'; applyFA.disabled=true;}
+          if(inp){inp.value=_noZWNJ(res.fa_correction); applyFA.textContent='✓ Übernommen'; applyFA.disabled=true;}
         });
         card.appendChild(applyFA);
       }
