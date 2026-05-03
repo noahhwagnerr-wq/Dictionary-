@@ -5330,7 +5330,9 @@ async function analyseSchilderung(prefix){
   const sysPrompt =
     'تو یک زبان‌شناس، استاد زبان آلمانی و مترجم حرفه‌ای آلمانی-فارسی هستی. '
     + 'تخصص تو تحلیل جامع واژگان آلمانی برای فارسی‌زبانان در سطح منابع معتبری مثل Duden، DWDS و Langenscheidt است. '
-    + 'فارسی تو باید روان، طبیعی و حرفه‌ای باشد – نه ترجمه تحت‌اللفظی، بلکه معادل‌سازی سنجیده، ادبی و متناسب با بافت.';
+    + 'فارسی تو باید روان، طبیعی و حرفه‌ای باشد – نه ترجمه تحت‌اللفظی، بلکه معادل‌سازی سنجیده، ادبی و متناسب با بافت. '
+    + 'مستقیم شروع به نوشتن تحلیل کن. هیچ مقدمه، معرفی، تعارف یا توضیح اضافه ننویس. '
+    + 'از علامت‌های Markdown مثل ** یا ## استفاده نکن.';
 
   const userPrompt = context + '\n\n'
     + 'یک تحلیل زبانی جامع و حرفه‌ای برای این واژه به فارسی بنویس. دقیقاً طبق ساختار زیر:\n\n'
@@ -5395,6 +5397,17 @@ async function analyseSchilderung(prefix){
       }catch(e){ console.warn('analyseSchilderung Gemini:',e.message); }
     }
     if(!result) throw new Error('Keine KI-Antwort');
+
+    // Preamble (KI-Selbsteinleitung) und Markdown-Formatierung entfernen
+    result = result
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/^#{1,4}\s+/gm, '')
+      .replace(/^---+$/gm, '')
+      .trim();
+    // Einleitungszeilen entfernen (vor dem ersten Abschnitts-Emoji)
+    const firstSection = result.search(/[🔍📌📐💬🗣️⚡]/u);
+    if (firstSection > 0) result = result.slice(firstSection).trim();
 
     const previewEl = document.getElementById('schilderung-preview-' + prefix);
     if (previewEl) {
