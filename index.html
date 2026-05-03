@@ -5690,6 +5690,7 @@ async function checkExamplesGrammar(prefix){
 
 async function analyseTranslation(prefix){
   const germanWord = document.getElementById(prefix==='edit'?'edit-german':'addword-german')?.value?.trim()||'';
+  const baseWord = germanWord.replace(/\s*\(.*?\)\s*/g,'').replace(/\s+/g,' ').trim();
   const persianField  = document.getElementById(prefix+'-persian');
   const suggestionsEl = document.getElementById('trans-suggestions-'+prefix);
   const btn = document.getElementById('trans-analyse-btn'+(prefix==='addword'?'-add':''));
@@ -5710,7 +5711,8 @@ async function analyseTranslation(prefix){
   const step1Sys = 'You are a world-class German-to-Persian (Farsi) linguist and translator. '
     + 'Think like an educated native Persian speaker in Iran who is also fluent in German. '
     + 'Use modern, everyday living Persian — not classical, not literary, not overly formal. '
-    + 'CONTEXT RULE: For polysemous verbs/words, identify the main usage domains (medical, botanical, technical, everyday) and give the most NATURAL Persian equivalent per domain. '
+    + 'COMPLETENESS RULE: Always cover ALL lexical meanings from Duden/Wiktionary — literal, figurative, technical, botanical, medical, legal, etc. Never stop after one or two meanings. '
+    + 'CONTEXT RULE: For each meaning/domain, give the most NATURAL Persian equivalent — what a native speaker would actually say. '
     + 'NATURALNESS RULE: Ask yourself "what would a Persian speaker actually say in conversation?" before choosing a translation. '
     + 'AVOID: literary/poetic/archaic words (e.g. فنا شدن، برافتادن) unless the German word itself is literary. '
     + 'AVOID: overly specific words that only cover one narrow context (e.g. منقرض شدن = only for species extinction). '
@@ -5724,12 +5726,14 @@ async function analyseTranslation(prefix){
     + 'ORTHOGRAPHY: prefixes بی/نا/با/هم/غیر are separate words; use plain space, no ZWNJ (U+200C). '
     + 'Output ONLY JSON: {"word_register":"...","translations":[{"fa":"...","register":"...","note":"..."}]}';
 
-  const step1User = 'German word/phrase: "' + germanWord + '"\n\n'
+  const step1User = 'German base word: "' + baseWord + '"'
+    + (baseWord !== germanWord ? ' (entered as: "' + germanWord + '")' : '') + '\n\n'
+    + 'IMPORTANT: Analyze ALL meanings of "' + baseWord + '" as listed in Duden and Wiktionary — do NOT limit yourself to one domain.\n\n'
     + 'Steps:\n'
-    + '1. Identify the main usage DOMAINS of this word (e.g. medical / botanical / technical / everyday / legal / etc.)\n'
-    + '2. For each domain, provide the most NATURAL and COMMON Persian equivalent — what a native speaker would actually say\n'
+    + '1. List EVERY distinct Duden/Wiktionary meaning of "' + baseWord + '" (e.g. literal, figurative, technical, colloquial)\n'
+    + '2. For each meaning, give the most NATURAL Persian equivalent — what a native speaker would actually say\n'
     + '3. Mark any literary, poetic, archaic, or overly specific Persian word as "ungebräuchlich" with a short Persian note explaining why\n'
-    + '4. Include colloquial alternatives where they exist\n'
+    + '4. Add a brief Persian domain note for each entry (e.g. "برای گیاهان", "پزشکی", "مجازی") when helpful\n'
     + '5. Check orthography: prefixes بی/نا/با/هم/غیر must be written as separate words\n\n'
     + 'Output ONLY JSON (no Markdown):\n'
     + '{"word_register":"standard|umgangssprachlich|derb|vulgär","translations":[{"fa":"...","register":"...","note":"..."}]}\n\n'
