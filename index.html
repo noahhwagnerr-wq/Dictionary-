@@ -2582,9 +2582,9 @@ color:var(–accent3);
 <div id="edit-other-fields">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;">توضیحات Schilderung</div>
-      <button type="button" onclick="if(document.getElementById('edit-forms').value.trim())if(confirm('Schilderung löschen?')){document.getElementById('edit-forms').value='';}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
+      <button type="button" onclick="if(document.getElementById('edit-forms').value.trim())if(confirm('Schilderung löschen?')){const _ef=document.getElementById('edit-forms');_ef.value='';_ef.style.display='none';}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
     </div>
-    <textarea class="edit-input schilderung-textarea" id="edit-forms" placeholder="توضیحات Schilderung..." autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+    <textarea class="edit-input schilderung-textarea" id="edit-forms" autocorrect="off" autocapitalize="off" spellcheck="false" style="display:none"></textarea>
   <button class="schilderung-analyse-btn" id="schilderung-btn-edit" onclick="analyseSchilderung('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
     Schilderung erzeugen
@@ -2715,9 +2715,9 @@ color:var(–accent3);
 <div id="addword-other-fields">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;">توضیحات Schilderung</div>
-      <button type="button" onclick="if(document.getElementById('addword-forms').value.trim())if(confirm('Schilderung löschen?')){document.getElementById('addword-forms').value='';}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
+      <button type="button" onclick="if(document.getElementById('addword-forms').value.trim())if(confirm('Schilderung löschen?')){const _af=document.getElementById('addword-forms');_af.value='';_af.style.display='none';}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
     </div>
-    <textarea class="edit-input schilderung-textarea" id="addword-forms" placeholder="توضیحات Schilderung..." autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+    <textarea class="edit-input schilderung-textarea" id="addword-forms" autocorrect="off" autocapitalize="off" spellcheck="false" style="display:none"></textarea>
   <button class="schilderung-analyse-btn" id="schilderung-btn-addword" onclick="analyseSchilderung('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
     Schilderung erzeugen
@@ -3360,7 +3360,7 @@ function openAddWord(word){
   const _suggA=document.getElementById('trans-suggestions-addword');
   if(_suggA) _suggA.innerHTML='';
   document.getElementById('addword-german').value=word||'';
-  document.getElementById('addword-forms').value='';
+  const _awForms=document.getElementById('addword-forms'); _awForms.value=''; _awForms.style.display='none';
   document.getElementById('addword-persian').value='';
   document.getElementById('addword-examples-list').innerHTML='';
   const _awArtFld=document.getElementById('addword-article-field'); if(_awArtFld) _awArtFld.style.display='none';
@@ -4319,6 +4319,8 @@ function openEdit(){
     const _othDiv=document.getElementById('edit-other-fields');
     if(_othDiv) _othDiv.style.display='';
   }
+  const _efta=document.getElementById('edit-forms');
+  _efta.style.display=_efta.value.trim()?'':'none';
   renderExRows(e.ex || []);
   document.getElementById('edit-overlay').classList.add('open');
   setTimeout(() => document.getElementById('edit-german').focus(), 60);
@@ -5421,6 +5423,8 @@ async function analyseSchilderung(prefix){
     + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben – weder im ⚡-Abschnitt noch irgendwo sonst. '
     + 'VERBOTEN: Das Label "(Zustandsbeschreibung)" NIEMALS hinter Beispielsätzen verwenden. '
     + 'NATÜRLICHKEIT: Beispiele wie ein Muttersprachler formulieren. '
+    + 'SEMANTISCHE PRÄZISION: Analysiere EXAKT die im Duden und DWDS dokumentierten Bedeutungen — keine freien Assoziationen oder verwechselten Bedeutungen. Beispiel: "absterben" bedeutet Gewebetod/Nekrose oder langsames Vergehen (Pflanzen, Nerven), NICHT "بی‌حس شدن" (= einschlafen/taub werden → das ist "einschlafen" oder "taub werden"). Jede Bedeutung muss dem tatsächlichen Duden-Eintrag entsprechen. '
+    + 'BEISPIEL-QUALITÄT: Wähle alltagsnahe, für Deutschlernende relevante Beispiele. Vermeide extreme medizinische oder forensische Szenarien (z.B. "ist der Arm abgestorben" klingt nach Gewebetod nach Trauma — besser: "Durch schlechte Durchblutung kann Gewebe absterben"). Bevorzuge Sätze über Pflanzen, alltägliche Körpervorgänge oder bekannte Situationen. '
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
@@ -5516,6 +5520,7 @@ async function analyseSchilderung(prefix){
       adoptBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Als Schilderung übernehmen';
       adoptBtn.addEventListener('click', () => {
         formsField.value = resultText;
+        formsField.style.display = '';
         formsField.style.height = 'auto';
         formsField.style.height = formsField.scrollHeight + 'px';
         previewEl.innerHTML = '';
