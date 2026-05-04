@@ -589,12 +589,10 @@ font-size:14px;line-height:1.9;color:var(--text);
 font-family:’Noto Naskh Arabic’,Tahoma,sans-serif !important;
 }
 .schilderung-textarea{
-display:none;
 width:100%;min-height:120px;resize:vertical;
 direction:rtl;text-align:right;font-family:’Noto Naskh Arabic’,Tahoma,sans-serif !important;
 line-height:1.8;font-size:13px;
 }
-.schilderung-textarea.visible{display:block;}
 .detail-section{
 background:rgba(255,255,255,.04);border-radius:var(–radius);
 padding:16px;margin-bottom:10px;
@@ -2582,17 +2580,18 @@ color:var(–accent3);
   </div>
 </div>
 <div id="edit-other-fields">
+  <div id="schilderung-content-edit" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;">توضیحات Schilderung</div>
-      <button type="button" onclick="if(document.getElementById('edit-forms').value.trim())if(confirm('Schilderung löschen?')){const _ef=document.getElementById('edit-forms');_ef.value='';_ef.classList.remove('visible');}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
+      <button type="button" onclick="if(document.getElementById('edit-forms').value.trim())if(confirm('Schilderung löschen?')){document.getElementById('edit-forms').value='';document.getElementById('schilderung-content-edit').style.display='none';}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
     </div>
     <textarea class="edit-input schilderung-textarea" id="edit-forms" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+  </div>
   <button class="schilderung-analyse-btn" id="schilderung-btn-edit" onclick="analyseSchilderung('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
     Schilderung erzeugen
   </button>
   <div id="schilderung-preview-edit"></div>
-  </div>
 </div>
 
 <div class="edit-field">
@@ -2715,17 +2714,18 @@ color:var(–accent3);
   </div>
 </div>
 <div id="addword-other-fields">
+  <div id="schilderung-content-addword" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;">توضیحات Schilderung</div>
-      <button type="button" onclick="if(document.getElementById('addword-forms').value.trim())if(confirm('Schilderung löschen?')){const _af=document.getElementById('addword-forms');_af.value='';_af.classList.remove('visible');}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
+      <button type="button" onclick="if(document.getElementById('addword-forms').value.trim())if(confirm('Schilderung löschen?')){document.getElementById('addword-forms').value='';document.getElementById('schilderung-content-addword').style.display='none';}" style="background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--text3);font-size:16px;line-height:1;-webkit-tap-highlight-color:transparent;" title="Schilderung löschen">🗑</button>
     </div>
     <textarea class="edit-input schilderung-textarea" id="addword-forms" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+  </div>
   <button class="schilderung-analyse-btn" id="schilderung-btn-addword" onclick="analyseSchilderung('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
     Schilderung erzeugen
   </button>
   <div id="schilderung-preview-addword"></div>
-  </div>
 </div>
 <div class="edit-field">
   <label class="edit-label">ترجمه فارسی</label>
@@ -3362,7 +3362,8 @@ function openAddWord(word){
   const _suggA=document.getElementById('trans-suggestions-addword');
   if(_suggA) _suggA.innerHTML='';
   document.getElementById('addword-german').value=word||'';
-  const _awForms=document.getElementById('addword-forms'); _awForms.value=''; _awForms.classList.remove('visible');
+  const _awForms=document.getElementById('addword-forms'); if(_awForms) _awForms.value='';
+  const _awSchCont=document.getElementById('schilderung-content-addword'); if(_awSchCont) _awSchCont.style.display='none';
   document.getElementById('addword-persian').value='';
   document.getElementById('addword-examples-list').innerHTML='';
   const _awArtFld=document.getElementById('addword-article-field'); if(_awArtFld) _awArtFld.style.display='none';
@@ -4316,12 +4317,12 @@ function openEdit(){
   document.getElementById('edit-superlativ').value = detected.superlativ || '';
   document.getElementById('edit-forms').value      = detected.forms      || '';
   // Schilderung laden (separates Feld, unabhängig von Wortform)
-  const _efta=document.getElementById('edit-forms');
+  const _schCont = document.getElementById('schilderung-content-edit');
   if(e.sch){
-    _efta.value = e.sch;
-    _efta.classList.add('visible');
+    document.getElementById('edit-forms').value = e.sch;
+    if(_schCont) _schCont.style.display = '';
   } else {
-    _efta.classList.remove('visible');
+    if(_schCont) _schCont.style.display = 'none';
   }
   renderExRows(e.ex || []);
   document.getElementById('edit-overlay').classList.add('open');
@@ -5522,7 +5523,8 @@ async function analyseSchilderung(prefix){
       adoptBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Als Schilderung übernehmen';
       adoptBtn.addEventListener('click', () => {
         formsField.value = resultText;
-        formsField.classList.add('visible');
+        const _sc = document.getElementById('schilderung-content-' + prefix);
+        if(_sc) _sc.style.display = '';
         formsField.style.height = 'auto';
         formsField.style.height = formsField.scrollHeight + 'px';
         previewEl.innerHTML = '';
