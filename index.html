@@ -2306,6 +2306,187 @@ color:var(–accent3);
 #move-ex-cancel{padding:12px;border-radius:12px;border:none;width:100%;background:rgba(255,255,255,0.07);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;}
 /* .ex-move-btn – via globale Icon-Button-Regel definiert */
 
+/* ══════════════════════════════════════════════════════
+   ✦ PREMIUM BUTTON SYSTEM v2 — Hover · Loading · Pulse
+   ══════════════════════════════════════════════════════ */
+
+/* ── Idle Glow-Puls on Save Button ── */
+@keyframes savePulse {
+  0%,100% { box-shadow: 0 6px 24px rgba(124,95,230,0.50), 0 1px 0 rgba(255,255,255,0.18) inset; }
+  50%     { box-shadow: 0 8px 36px rgba(124,95,230,0.72), 0 0 60px rgba(79,158,255,0.28), 0 1px 0 rgba(255,255,255,0.22) inset; }
+}
+.btn-primary {
+  animation: savePulse 3s ease-in-out infinite !important;
+}
+.btn-primary:active {
+  animation: none !important;
+}
+
+/* ── Loading: alle KI-Buttons – Icon rotiert, kein Opacity-Flimmern ── */
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+
+.trans-analyse-btn.loading,
+.schilderung-analyse-btn.loading,
+.grammar-check-btn.loading,
+.gen-ex-btn.loading,
+.wortform-ai-btn.loading {
+  opacity: 0.72 !important;
+  pointer-events: none !important;
+  filter: none !important;
+}
+.trans-analyse-btn.loading svg:first-child,
+.schilderung-analyse-btn.loading svg:first-child,
+.grammar-check-btn.loading svg:first-child,
+.gen-ex-btn.loading svg:first-child,
+.wortform-ai-btn.loading svg:first-child {
+  animation: spinSlow 1.1s linear infinite !important;
+  transform-origin: center !important;
+}
+
+/* ── Hover-States für Desktop/Tablet ── */
+@media (hover: hover) {
+  .btn-primary:hover:not(:active) {
+    filter: brightness(1.14) !important;
+    box-shadow: 0 10px 40px rgba(124,95,230,0.72), 0 2px 0 rgba(255,255,255,0.22) inset !important;
+    animation: none !important;
+  }
+  .btn-cancel:hover:not(:active) {
+    background: rgba(255,255,255,0.10) !important;
+    border-color: rgba(255,255,255,0.22) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.10) inset !important;
+  }
+  .trans-analyse-btn:hover:not(:active) {
+    border-color: rgba(124,95,230,0.52) !important;
+    box-shadow: 0 4px 22px rgba(124,95,230,0.30) !important;
+    filter: brightness(1.06) !important;
+  }
+  .schilderung-analyse-btn:hover:not(:active) {
+    border-color: rgba(45,212,160,0.48) !important;
+    box-shadow: 0 4px 22px rgba(45,212,160,0.28) !important;
+    filter: brightness(1.06) !important;
+  }
+  .grammar-check-btn:hover:not(:active) {
+    border-color: rgba(245,166,35,0.52) !important;
+    box-shadow: 0 4px 22px rgba(245,166,35,0.30) !important;
+    filter: brightness(1.06) !important;
+  }
+  .gen-ex-btn:hover:not(:active) {
+    border-color: rgba(79,158,255,0.48) !important;
+    box-shadow: 0 4px 22px rgba(79,158,255,0.28) !important;
+    filter: brightness(1.06) !important;
+  }
+  .wortform-ai-btn:hover:not(:active) {
+    background: rgba(124,95,230,0.17) !important;
+    border-color: rgba(124,95,230,0.50) !important;
+    box-shadow: 0 4px 18px rgba(124,95,230,0.32) !important;
+  }
+  .wtype-btn:hover:not(.active):not(:active) {
+    background: rgba(255,255,255,0.10) !important;
+    border-color: rgba(124,95,230,0.35) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 3px 12px rgba(124,95,230,0.18) !important;
+  }
+  .wtype-btn.active:hover:not(:active) {
+    filter: brightness(1.10) !important;
+  }
+  .trans-add-btn:hover:not(:active) {
+    background: rgba(45,212,160,0.22) !important;
+    box-shadow: 0 3px 14px rgba(45,212,160,0.35) !important;
+  }
+  .trans-del-btn:hover:not(:active) {
+    background: rgba(255,107,107,0.22) !important;
+    box-shadow: 0 3px 14px rgba(255,107,107,0.35) !important;
+  }
+  .grammar-apply-btn:hover:not(:active) {
+    background: rgba(245,166,35,0.22) !important;
+    box-shadow: 0 3px 14px rgba(245,166,35,0.35) !important;
+  }
+  .add-ex-btn:hover:not(:active) {
+    background: rgba(79,158,255,0.10) !important;
+    border-color: rgba(79,158,255,0.50) !important;
+    box-shadow: 0 4px 18px rgba(79,158,255,0.22) !important;
+  }
+  .icon-btn:hover:not(:active) {
+    transform: scale(1.08) !important;
+    filter: brightness(1.12) !important;
+  }
+  .hero-edit-btn:hover:not(:active),
+  .hero-delete-btn:hover:not(:active),
+  .hero-fav-btn:hover:not(:active) {
+    transform: scale(1.10) !important;
+    filter: brightness(1.12) !important;
+  }
+  .quick-search-btn:hover:not(:active) {
+    border-color: rgba(124,95,230,0.35) !important;
+    box-shadow: 0 4px 18px rgba(124,95,230,0.18), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  }
+  .add-word-btn:hover:not(:active) {
+    filter: brightness(1.10) !important;
+    box-shadow: 0 10px 34px rgba(124,95,230,0.62), 0 2px 0 rgba(255,255,255,0.22) inset !important;
+  }
+}
+
+/* ── Verbesserte Ripple – heller & schneller ── */
+.ripple {
+  background: rgba(255,255,255,0.30) !important;
+  animation: rippleAnim .45s cubic-bezier(0.22,1,0.36,1) forwards !important;
+}
+
+/* ── Trans-Add & Trans-Del: modernere Optik ── */
+.trans-add-btn {
+  border: 1px solid rgba(45,212,160,0.28) !important;
+  letter-spacing: 0.2px !important;
+  padding: 6px 11px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 1px 6px rgba(45,212,160,0.15) !important;
+}
+.trans-del-btn {
+  border: 1px solid rgba(255,107,107,0.28) !important;
+  letter-spacing: 0.2px !important;
+  padding: 6px 11px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 1px 6px rgba(255,107,107,0.15) !important;
+}
+.grammar-apply-btn {
+  border: 1px solid rgba(245,166,35,0.25) !important;
+  letter-spacing: 0.2px !important;
+  box-shadow: 0 1px 6px rgba(245,166,35,0.14) !important;
+}
+
+/* ── Active-State: federnder Druckpunkt ── */
+.trans-add-btn:active {
+  transform: scale(0.88) !important;
+  box-shadow: 0 0 16px rgba(45,212,160,0.55) !important;
+  filter: brightness(1.15) !important;
+}
+.trans-del-btn:active {
+  transform: scale(0.88) !important;
+  box-shadow: 0 0 16px rgba(255,107,107,0.55) !important;
+  filter: brightness(1.15) !important;
+}
+
+/* ── Wtype-Btn: schärfere aktive Kante ── */
+.wtype-btn {
+  border-width: 1.5px !important;
+}
+.wtype-btn.active {
+  border-color: rgba(124,95,230,0.55) !important;
+}
+
+/* ── AI-Button Gradient-Border on focus ── */
+.trans-analyse-btn:focus-visible,
+.schilderung-analyse-btn:focus-visible,
+.grammar-check-btn:focus-visible,
+.gen-ex-btn:focus-visible {
+  outline: 2px solid rgba(124,95,230,0.60) !important;
+  outline-offset: 2px !important;
+}
+.btn-primary:focus-visible,
+.btn-cancel:focus-visible {
+  outline: 2px solid rgba(124,95,230,0.70) !important;
+  outline-offset: 3px !important;
+}
+
 </style>
 
 </head>
@@ -4230,11 +4411,9 @@ Antworte NUR als reines JSON ohne Markdown oder Erklärung:
         if (result.corrected) {
           const _gwField = document.getElementById(`${prefix}-german`);
           const _applyBtn = document.createElement('button');
-          _applyBtn.style.cssText = 'display:block;margin-top:6px;border:none;' +
-            'background:rgba(245,166,35,0.18);color:#f5c842;border-radius:8px;' +
-            'padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;' +
-            'font-family:inherit;-webkit-tap-highlight-color:transparent;';
-          _applyBtn.textContent = 'Korrigieren zu: "' + result.corrected + '"';
+          _applyBtn.className = 'grammar-apply-btn';
+          _applyBtn.style.cssText = 'display:inline-flex;align-items:center;gap:5px;margin-top:6px;';
+          _applyBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Korrigieren zu: „' + result.corrected + '“';
           _applyBtn.addEventListener('click', () => {
             if (_gwField) {
               _gwField.value = result.corrected;
@@ -4242,7 +4421,7 @@ Antworte NUR als reines JSON ohne Markdown oder Erklärung:
             }
             _corrDiv.style.opacity = '0.5';
             _applyBtn.disabled = true;
-            _applyBtn.textContent = '✓ Übernommen';
+            _applyBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Übernommen';
           });
           _corrDiv.appendChild(_applyBtn);
         }
@@ -4951,7 +5130,7 @@ function adoptTranslation(prefix, suggestion, item, btn, note){
   field.value = parts.join('، ');
   field.scrollTop = field.scrollHeight;
   if(item) item.style.opacity='0.45';
-  if(btn){ btn.textContent='✓'; btn.style.background='rgba(52,211,153,0.05)'; btn.disabled=true; }
+  if(btn){ btn.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'; btn.style.background='rgba(52,211,153,0.05)'; btn.disabled=true; }
   showToast(noteStr ? 'Übernommen: ' + text : 'Vorschlag übernommen');
 }
 
@@ -5427,7 +5606,9 @@ async function analyseSchilderung(prefix){
     + 'VERBOTEN: Das Label "(Zustandsbeschreibung)" NIEMALS hinter Beispielsätzen verwenden. '
     + 'NATÜRLICHKEIT: Beispiele wie ein Muttersprachler formulieren. '
     + 'SEMANTISCHE PRÄZISION: Analysiere EXAKT die im Duden und DWDS dokumentierten Bedeutungen — keine freien Assoziationen oder verwechselten Bedeutungen. Beispiel: "absterben" bedeutet Gewebetod/Nekrose oder langsames Vergehen (Pflanzen, Nerven), NICHT "بی‌حس شدن" (= einschlafen/taub werden → das ist "einschlafen" oder "taub werden"). Jede Bedeutung muss dem tatsächlichen Duden-Eintrag entsprechen. '
-    + 'BEISPIEL-QUALITÄT: Wähle alltagsnahe, für Deutschlernende relevante Beispiele. Vermeide extreme medizinische oder forensische Szenarien (z.B. "ist der Arm abgestorben" klingt nach Gewebetod nach Trauma — besser: "Durch schlechte Durchblutung kann Gewebe absterben"). Bevorzuge Sätze über Pflanzen, alltägliche Körpervorgänge oder bekannte Situationen. '
+    + 'BEISPIEL-QUALITÄT: Wähle alltagsnahe, für Deutschlernende relevante Beispiele. Vermeide extreme medizinische oder forensische Szenarien. Bevorzuge Sätze über Pflanzen, alltägliche Körpervorgänge oder bekannte Situationen. '
+    + 'ANGLIZISMEN & NEOLOGISMEN: Wenn das Wort ein Anglizismus oder Neologismus ist (z.B. wrapen, downloaden, googeln), erkläre NUR die tatsächlich im Deutschen verbreitete Bedeutung. Erfinde KEINE Bedeutungen, die aus dem Englischen übertragen wurden, wenn sie im Deutschen nicht gebräuchlich sind. Weise darauf hin, dass es sich um einen Anglizismus handelt und nenne die deutschen Entsprechungen (z.B. wrapen → einpacken/einwickeln für Geschenke ist FALSCH; wrapen wird im Deutschen fast ausschließlich für Fahrzeugbeschichtung/Folierung verwendet). '
+    + 'NICHT-STANDARDISIERTE WÖRTER: Wenn ein Wort in Duden/DWDS nicht oder kaum dokumentiert ist, schreibe das explizit. Gib keine erfundenen Bedeutungen an. '
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
@@ -5705,10 +5886,10 @@ async function checkExamplesGrammar(prefix){
         } else { card.appendChild(orig); card.appendChild(corr); }
         const applyDE=document.createElement('button');
         applyDE.className='grammar-apply-btn'; applyDE.type='button';
-        applyDE.textContent='Korrektur übernehmen (DE)';
+        applyDE.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Übernehmen (DE)';
         applyDE.addEventListener('click',()=>{
           const inp=ex.row.querySelector('.ex-row-de');
-          if(inp){inp.value=_noZWNJ(res.de_correction); applyDE.textContent='✓ Übernommen'; applyDE.disabled=true;}
+          if(inp){inp.value=_noZWNJ(res.de_correction); applyDE.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Übernommen'; applyDE.disabled=true;}
         });
         card.appendChild(applyDE);
       }
@@ -5729,10 +5910,10 @@ async function checkExamplesGrammar(prefix){
         } else { card.appendChild(origFA); card.appendChild(corrFA); }
         const applyFA=document.createElement('button');
         applyFA.className='grammar-apply-btn'; applyFA.type='button';
-        applyFA.textContent='Korrektur übernehmen (FA)';
+        applyFA.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Übernehmen (FA)';
         applyFA.addEventListener('click',()=>{
           const inp=ex.row.querySelector('.ex-row-fa');
-          if(inp){inp.value=_noZWNJ(res.fa_correction); applyFA.textContent='✓ Übernommen'; applyFA.disabled=true;}
+          if(inp){inp.value=_noZWNJ(res.fa_correction); applyFA.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Übernommen'; applyFA.disabled=true;}
         });
         card.appendChild(applyFA);
       }
@@ -5938,7 +6119,7 @@ async function analyseTranslation(prefix){
         const db=document.createElement('button');
         db.className='trans-del-btn';
         db.type='button';
-        db.textContent='Löschen';
+        db.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg> Löschen';
         db.addEventListener('click',()=>{
           // Eintrag aus dem Persisch-Feld entfernen
           const cur=persianField.value.split(/[،,;]/).map(s=>s.trim()).filter(s=>s&&s!==wp);
@@ -5999,7 +6180,7 @@ async function analyseTranslation(prefix){
           txt.appendChild(nt);
         }
         const ab=document.createElement('button'); ab.className='trans-add-btn';
-        ab.type='button'; ab.textContent=isUnusual?'⚠ Eintrag':'Eintrag';
+        ab.type='button'; ab.innerHTML=isUnusual?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Eintrag':'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Eintrag';
         if(isUnusual) ab.style.opacity='0.6';
         ab.dataset.note = noteText;
         ab.addEventListener('click',()=>adoptTranslation(prefix,s,item,ab,ab.dataset.note));
