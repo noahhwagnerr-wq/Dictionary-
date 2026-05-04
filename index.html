@@ -3915,7 +3915,9 @@ function _parseExamplesJSON(raw) {
     const mapped = arr.slice(0, 3).map(ex => ({
       de: String(ex.de || ex.De || ex.DE || '').trim(),
       fa: String(ex.fa || ex.Fa || ex.FA || '').trim()
-            .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u200C\u200D\s\d،؛؟!.:«»()\-–…]+/g, '').trim()
+            .replace(/\u200C|\u200D/g, ' ')
+            .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\d،؛؟!.:«»()\-–…]+/g, '')
+            .replace(/ {2,}/g, ' ').trim()
     })).filter(ex => ex.de && ex.fa);
     return mapped.length ? mapped : null;
   } catch { return null; }
@@ -5071,6 +5073,7 @@ ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1–C2):
 PERSISCHE ÜBERSETZUNG:
 • Ausschließlich persisch-arabische Schrift (U+0600–U+06FF) – KEIN Latein, KEIN Kyrillisch
 • Gehobenes Persisch (فارسی معیار) – keine umgangssprachlichen Ausdrücke
+• KEIN ZWNJ (U+200C / نیم فاصله) – nur einfache Leerzeichen
 
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
@@ -5124,6 +5127,7 @@ ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1–C2):
 PERSISCHE ÜBERSETZUNG:
 • Ausschließlich persisch-arabische Schrift (U+0600–U+06FF) – KEIN Latein, KEIN Kyrillisch
 • Gehobenes Persisch (فارسی معیار) – keine umgangssprachlichen Ausdrücke
+• KEIN ZWNJ (U+200C / نیم فاصله) – nur einfache Leerzeichen
 
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
@@ -5172,6 +5176,7 @@ ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1–C2):
 PERSISCHE ÜBERSETZUNG:
 • Ausschließlich persisch-arabische Schrift (U+0600–U+06FF) – KEIN Latein, KEIN Kyrillisch
 • Gehobenes Persisch (فارسی معیار) – keine umgangssprachlichen Ausdrücke
+• KEIN ZWNJ (U+200C / نیم فاصله) – nur einfache Leerzeichen
 
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
