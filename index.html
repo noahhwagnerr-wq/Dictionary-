@@ -2481,7 +2481,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05a</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05b</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -5607,46 +5607,47 @@ async function analyseSchilderung(prefix){
     + 'Verwende EXAKT die vorgegebene Vorlage mit den Emoji-Überschriften. '
     + 'GRAMMATIKREGEL 1: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
     + 'GRAMMATIKREGEL 2: "wurde/wurden + Partizip II" = Vorgangspassiv Präteritum, NIEMALS "Perfekt". Perfekt Passiv = "ist/sind ... worden". '
-    + 'REGISTER-LABELS (exakt): روزمره = alltäglich (Brille beschlagen), استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. Alltagsvorgänge wie Glas/Brille beschlagen sind روزمره, NICHT رسمی. '
-    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" -- nie beides, außer Verb hat tatsächlich beide Formen. Zustandsbeschreibungen sind KEIN Perfekt. '
-    + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben -- weder im ⚡-Abschnitt noch irgendwo sonst. '
+    + 'REGISTER-LABELS (exakt): روزمره = alltäglich, استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. '
+    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" -- nie beides, außer Verb hat tatsächlich beide Formen. '
+    + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben. '
     + 'VERBOTEN: Das Label "(Zustandsbeschreibung)" NIEMALS hinter Beispielsätzen verwenden. '
     + 'NATÜRLICHKEIT: Beispiele wie ein Muttersprachler formulieren. '
-    + 'SEMANTISCHE PRÄZISION: Analysiere EXAKT die im Duden und DWDS dokumentierten Bedeutungen — keine freien Assoziationen oder verwechselten Bedeutungen. Beispiel: "absterben" bedeutet Gewebetod/Nekrose oder langsames Vergehen (Pflanzen, Nerven), NICHT "بی‌حس شدن" (= einschlafen/taub werden → das ist "einschlafen" oder "taub werden"). Jede Bedeutung muss dem tatsächlichen Duden-Eintrag entsprechen. '
-    + 'BEISPIEL-QUALITÄT: Wähle alltagsnahe, für Deutschlernende relevante Beispiele. Vermeide extreme medizinische oder forensische Szenarien. Bevorzuge Sätze über Pflanzen, alltägliche Körpervorgänge oder bekannte Situationen. '
-    + 'ANGLIZISMEN & NEOLOGISMEN: Wenn das Wort ein Anglizismus oder Neologismus ist (z.B. wrapen, downloaden, googeln), erkläre NUR die tatsächlich im Deutschen verbreitete Bedeutung. Erfinde KEINE Bedeutungen, die aus dem Englischen übertragen wurden, wenn sie im Deutschen nicht gebräuchlich sind. Weise darauf hin, dass es sich um einen Anglizismus handelt und nenne die deutschen Entsprechungen (z.B. wrapen → einpacken/einwickeln für Geschenke ist FALSCH; wrapen wird im Deutschen fast ausschließlich für Fahrzeugbeschichtung/Folierung verwendet). '
-    + 'NICHT-STANDARDISIERTE WÖRTER: Wenn ein Wort in Duden/DWDS nicht oder kaum dokumentiert ist, schreibe das explizit. Gib keine erfundenen Bedeutungen an. '
+    + 'SEMANTISCHE PRÄZISION: Analysiere EXAKT die im Duden und DWDS dokumentierten Bedeutungen — keine freien Assoziationen. '
+    + 'BEISPIEL-QUALITÄT: Alltagsnahe, für Deutschlernende relevante Beispiele. '
+    + 'ANGLIZISMEN & NEOLOGISMEN: Nur tatsächlich im Deutschen verbreitete Bedeutungen erklären. Auf Anglizismus hinweisen und deutsche Entsprechungen nennen. '
+    + 'ETYMOLOGIE: Erkläre kurz die Herkunft des Wortes (Latein, Englisch, Französisch usw.) und den ursprünglichen Kernbegriff. '
+    + 'BEDEUTUNGSVIELFALT: Decke ALLE relevanten Kontexte ab, in denen das Wort vorkommt (Alltag, Fachsprache, Technik, Musik, Wissenschaft usw.), sofern sie im Deutschen belegt sind. '
+    + 'KONJUGATION: Bei Verben gib im 📐-Abschnitt die vollständige Gegenwartskonjugation an (ich/du/er/wir/ihr/sie). '
+    + 'SEMANTISCHER KERN: Schließe mit einem 🌐-Abschnitt ab, der in 2–3 Sätzen das gemeinsame semantische Konzept aller Bedeutungen beschreibt. '
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
-    + `WICHTIG: Analysiere ALLE Bedeutungen der Basisform "${wikiWord}", unabhängig davon, in welcher Form das Wort eingegeben wurde ("${gw}"). Liste jede Duden-belegte Bedeutung auf -- auch fachsprachliche (z.B. Pferd beschlagen, Schloss beschlagen).\n\n`
-    + 'Schreib die Analyse EXAKT in diesem Format (ersetze die Beispiele durch echte Inhalte):\n\n'
+    + `WICHTIG: Analysiere ALLE Bedeutungen der Basisform "${wikiWord}", unabhängig davon, in welcher Form das Wort eingegeben wurde ("${gw}"). Liste jede Duden-belegte Bedeutung auf -- auch fachsprachliche.\n\n`
+    + 'Schreib die Analyse EXAKT in diesem Format:\n\n'
 
     + '🔍 تشخیص فرم و پایه کلمه\n'
     + `   -- پایه: ${wikiWord}\n`
     + '   -- نوع: [Verb / Substantiv / Adjektiv / Adverb]\n'
-    + '   -- جنسیت: [der/die/das -- nur bei Substantiven, sonst diese Zeile weglassen]\n'
-    + '   -- فرم ورودی: [Partizip II / Plural / Genitiv / Nominativ Singular / ...]\n\n'
+    + '   -- جنسیت: [der/die/das -- nur bei Substantiven, sonst weglassen]\n'
+    + '   -- فرم ورودی: [Partizip II / Plural / Genitiv / Nominativ Singular / ...]\n'
+    + '   -- ریشه: [Herkunftssprache + Grundbedeutung, z.B. "از انگلیسی wrap به معنای پیچیدن و پوشاندن"]\n\n'
 
     + '📌 معانی\n'
     + '   ۱. [معادل فارسی روان] -- [روزمره / استاندارد / رسمی / تخصصی / محاوره / selten]\n'
     + '      • [جمله آلمانی]\n'
-    + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Vorgangspassiv])\n'
+    + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Vorgangspassiv / ...])\n'
     + '      • [جمله آلمانی ۲]\n'
     + '        [ترجمه فارسی] ([فرم])\n'
-    + '   ۲. [معادل فارسی روان] -- [روزمره / رسمی / تخصصی / ...]\n'
-    + '      • [جمله]\n'
-    + '        [ترجمه] ([فرم])\n'
+    + '   ۲. [معادل فارسی روان -- Kontext z.B. در برنامه‌نویسی / در موسیقی / در صنعت] -- [register]\n'
     + '      • [جمله]\n'
     + '        [ترجمه] ([فرم])\n\n'
 
     + '📐 نکات دستوری\n'
-    + '   -- فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Bewegung/Zustandswechsel)\n'
+    + '   -- فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat/ist + PII]\n'
+    + '     Konjugation: ich [x] | du [x]st | er/sie [x]t | wir [x]en | ihr [x]t | sie [x]en\n'
     + '     trennbar: ja/nein | reflexiv: ja/nein | Rektion: + Akk./Dat.\n'
-    + '   -- اسم:\n'
-    + '     Nominativ: [der/die/das Wort]\n'
-    + '     Genitiv: [des/der Wortes]\n'
-    + '     Plural: [die Wörter]\n'
+    + '   -- اسم (nur bei Substantiven):\n'
+    + '     Nominativ: [der/die/das Wort] | Genitiv: [...] | Plural: [...]\n'
     + '   -- [اشتباه رایج یا نکته کلیدی]\n\n'
 
     + '🗣️ اصطلاحات و ترکیب‌های ثابت\n'
@@ -5655,7 +5656,10 @@ async function analyseSchilderung(prefix){
 
     + '⚡ نکات برای زبان‌آموز\n'
     + '   -- تفاوت با: [واژه مشابه و چرا باید بین آن‌ها تفاوت گذاشت]\n'
-    + '   -- [نکته کاربردی دقیق]';
+    + '   -- [نکته کاربردی دقیق]\n\n'
+
+    + '🌐 هستهٔ معنایی\n'
+    + '   [2–3 Sätze auf Persisch, die das gemeinsame semantische Konzept aller Bedeutungen beschreiben. Z.B.: "در همه معناها، مفهوم مشترک X وجود دارد..."]';
 
 
   try {
