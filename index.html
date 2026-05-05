@@ -287,33 +287,6 @@ text-transform:uppercase;
 }
 .section-header-sub{font-size:11px;color:var(--text3);}
 
-/* ── HOME SHORTCUTS ── */
-.home-shortcuts{
-display:flex;gap:10px;padding:0 16px 14px;
-overflow-x:auto;scrollbar-width:none;
-justify-content:center;align-items:center;width:100%;
-}
-.home-shortcuts::-webkit-scrollbar{display:none;}
-.home-shortcuts::before,.home-shortcuts::after{content:””;display:block;flex:0 0 0;}
-.home-shortcut{
-border:1px solid rgba(255,255,255,0.12);
-background:rgba(255,255,255,0.06);
-color:var(--text2);
-display:flex;align-items:center;justify-content:center;
-min-width:48px;width:48px;height:48px;padding:0;border-radius:50%;
-cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;
-transition:all .25s cubic-bezier(.34,1.56,.64,1);
-}
-.home-shortcut:active{transform:scale(0.88);}
-.home-shortcut.active{
-background:linear-gradient(135deg,var(--accent),var(--accent2));
-color:#fff;border-color:transparent;
-box-shadow:0 6px 20px var(--glow-purple),0 0 0 1px rgba(124,95,230,0.3);
-}
-.home-shortcut svg{
-width:20px;height:20px;stroke:currentColor;fill:none;
-stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
-}
 .home-fav-card{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 
 /* ── SEARCH ── */
@@ -1428,14 +1401,6 @@ background:linear-gradient(180deg,rgba(255,107,107,0.6),rgba(255,107,107,0.2));
 border-radius:0 2px 2px 0;
 }
 
-/* ── Home Shortcut: Active Bloom ── */
-.home-shortcut.active {
-box-shadow:
-0 6px 20px rgba(124,95,230,0.45),
-0 0 0 1px rgba(124,95,230,0.35),
-0 0 30px rgba(124,95,230,0.20) !important;
-}
-
 /* ── Scroll Shadow Top Fade ── */
 .scroll-area::before {
 content:’’;position:sticky;top:0;display:block;height:16px;
@@ -1470,14 +1435,14 @@ border-color:rgba(124,95,230,0.40) !important;
 ══════════════════════════════════════════════════════ */
 
 /* ── Base: every interactive element gets will-change ── */
-.btn, .tab-btn, .home-shortcut, .dir-btn, .wtype-btn,
+.btn, .tab-btn, .dir-btn, .wtype-btn,
 .icon-btn, .speak-btn, .fav-btn, .back-link,
 .hero-edit-btn, .hero-delete-btn, .hero-fav-btn,
 .wortform-ai-btn, .trans-analyse-btn, .schilderung-analyse-btn,
 .grammar-check-btn, .gen-ex-btn, .add-word-btn,
 .add-ex-btn, .grammar-apply-btn, .trans-add-btn, .trans-del-btn,
 .ex-promote-btn, .example-ai-btn, .quick-search-btn,
-.home-shortcut, .search-clear, .settings-row,
+.search-clear, .settings-row,
 .import-zone, .error-item, .word-card, .quiz-card {
 will-change: transform;
 -webkit-tap-highlight-color: transparent;
@@ -1582,32 +1547,6 @@ transform: scale(0.82) !important;
 }
 .tab-btn:active::after {
 background: rgba(124,95,230,0.18);
-}
-
-/* ══════════════════════════
-HOME SHORTCUT BUTTONS
-══════════════════════════ */
-.home-shortcut {
-transition: all .25s cubic-bezier(.34,1.56,.64,1) !important;
-position: relative; overflow: hidden;
-}
-.home-shortcut::before {
-content: ‘’;
-position: absolute; inset: 0; border-radius: 50%;
-background: radial-gradient(circle at 35% 35%,
-rgba(255,255,255,0.14) 0%,
-transparent 65%);
-pointer-events: none;
-}
-.home-shortcut:active {
-transform: scale(0.82) !important;
-}
-.home-shortcut.active {
-box-shadow:
-0 6px 22px rgba(124,95,230,0.55),
-0 0 0 1px rgba(124,95,230,0.40),
-0 0 40px rgba(79,158,255,0.25),
-inset 0 1px 0 rgba(255,255,255,0.20) !important;
 }
 
 /* ══════════════════════════
@@ -2497,7 +2436,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05n</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05o</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2505,20 +2444,7 @@ color:var(--accent3);
 </button>
 
 
-<div class="home-shortcuts" aria-label="Schnellnavigation Startseite" style="margin-left:auto;margin-right:auto;">
-  <button class="home-shortcut active" onclick="switchTab('home')" aria-label="خانه" title="خانه">
-    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
-  </button>
-  <button class="home-shortcut" onclick="switchTab('search')" aria-label="جستجو" title="جستجو">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-  </button>
-  <button class="home-shortcut" onclick="switchTab('favorites')" aria-label="علاقه‌مندی" title="علاقه‌مندی">
-    <svg viewBox="0 0 24 24"><path d="m12 20-7-4.5V5.5L12 9l7-3.5v10z"/><path d="M12 9v11"/></svg>
-  </button>
-  <button class="home-shortcut" onclick="switchTab('settings')" aria-label="تنظیمات" title="تنظیمات">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2.8a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 8.4a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 8.4 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2.8a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 .6 1.1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 8.4c0 .38.14.74.4 1 .3.28.69.43 1.1.4h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.1.4 1.7 1.7 0 0 0-.4 1z"/></svg>
-  </button>
-</div>
+
 
 <div class="section-header">
   <span class="section-header-title">واژه‌های تصادفی</span>
@@ -6551,7 +6477,7 @@ async function analyseTranslation(prefix){
 (function(){
   const RIPPLE_TARGETS = [
     '.btn-primary', '.btn-cancel', '.btn',
-    '.tab-btn', '.home-shortcut', '.dir-btn',
+    '.tab-btn', '.dir-btn',
     '.wtype-btn', '.icon-btn', '.speak-btn',
     '.hero-edit-btn', '.hero-delete-btn', '.hero-fav-btn',
     '.wortform-ai-btn', '.trans-analyse-btn',
