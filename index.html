@@ -2436,7 +2436,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-05x</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-05y</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2907,10 +2907,12 @@ window.addEventListener('unhandledrejection', function(ev){
   const m={name:"Wörterbuch",short_name:"Wörterbuch",start_url:"./",display:"standalone",orientation:"portrait",background_color:"#080618",theme_color:"#080618",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23080618'/%3E%3Ctext x='96' y='130' font-size='110' text-anchor='middle'%3E📚%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
   const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'}));document.head.appendChild(l);
 })();
-if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }
-// Alten ?_v-Cache-Buster aus der URL entfernen (hinterlassen von _forceUpdate),
-// damit iOS-PWA beim nächsten Start wieder die saubere URL öffnet.
-(function(){if(location.search.includes('_v=')){const u=new URL(location.href);u.searchParams.delete('_v');history.replaceState(null,'',u.pathname+(u.search||'')+(u.hash||''));}})();
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  navigator.serviceWorker.addEventListener('message', e => {
+    if(e.data === 'RELOAD') location.reload();
+  });
+}
 
 // ── IndexedDB ──
 let db=null;
@@ -4862,14 +4864,14 @@ function _resetUnsavedChanges(){}
 async function _forceUpdate(){
   const sub=document.getElementById('update-row-sub');
   if(sub) sub.textContent='Wird aktualisiert…';
-  try{
-    if('caches' in window){
-      const keys=await caches.keys();
-      await Promise.all(keys.map(k=>caches.delete(k)));
-    }
-  }catch(e){}
-  if(sub) sub.textContent='App schließen und neu öffnen';
-  showToast('✓ App schließen und neu öffnen für die neueste Version');
+  const sw=navigator.serviceWorker?.controller;
+  if(sw){
+    sw.postMessage('FORCE_UPDATE');
+    if(sub) sub.textContent='Neueste Version wird geladen…';
+  } else {
+    if(sub) sub.textContent='App schließen und neu öffnen';
+    showToast('✓ App schließen und neu öffnen für die neueste Version');
+  }
 }
 async function exportData(){
   const all=await dbGetAll();
