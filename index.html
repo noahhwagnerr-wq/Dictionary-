@@ -2481,7 +2481,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05b</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05c</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -5188,11 +5188,41 @@ function getDraftExampleContext(mode){
   const listId=isEdit?'edit-examples-list':'addword-examples-list';
   const list=document.getElementById(listId);
   const existingDe=list?[...list.querySelectorAll('.ex-row-de')].map(el=>el.value.trim()).filter(Boolean):[];
+  const activeTypeBtn=document.querySelector('#'+(isEdit?'edit':'addword')+'-wtype-row .wtype-btn.active');
   return {
     german:document.getElementById(isEdit?'edit-german':'addword-german').value.trim(),
     persian:document.getElementById(isEdit?'edit-persian':'addword-persian').value.trim(),
+    wordType:activeTypeBtn?activeTypeBtn.dataset.type:'other',
     listId,existingDe
   };
+}
+
+// Baut Prompt-Regel + Validierungsfunktion: Zielwort muss in jedem Beispielsatz vorkommen
+function _exWordRule(word, wordType){
+  const base=word.replace(/^(der|die|das|ein|eine)\s+/i,'').trim();
+  const bl=base.toLowerCase();
+  // Stamm: letzte 2 Zeichen entfernen (Flexionsendungen), mind. 4 Zeichen
+  const stem=bl.length>5?bl.slice(0,bl.length-2):bl;
+  const check=s=>s.toLowerCase().includes(stem);
+  let rule;
+  if(wordType==='nomen'){
+    rule=`⚠️ PFLICHT – ZIELWORT-REGEL: Jeder Satz MUSS das Nomen "${base}" explizit enthalten `
+        +`(Singular oder Plural). Ableitungen wie "${bl}isch", "${bl}ologie" ersetzen das Nomen NICHT. `
+        +`Satz verwerfen und neu generieren, falls "${base}" in keiner Form vorkommt.`;
+  }else if(wordType==='verb'){
+    const vstam=bl.replace(/ieren$|en$|n$/,'');
+    rule=`⚠️ PFLICHT – ZIELWORT-REGEL: Jeder Satz MUSS das Verb "${base}" in einer konjugierten Form enthalten `
+        +`(Präsens, Präteritum, Perfekt, Passiv, Konjunktiv usw.). Wortstamm: "${vstam}". `
+        +`Satz verwerfen, falls der Verbstamm nicht erkennbar ist.`;
+  }else if(wordType==='adjektiv'){
+    rule=`⚠️ PFLICHT – ZIELWORT-REGEL: Jeder Satz MUSS das Adjektiv "${base}" enthalten `
+        +`(flektierte Formen erlaubt: ${base}e, ${base}en, ${base}em, ${base}er, ${base}es). `
+        +`Satz verwerfen, falls "${base}" in keiner Form vorkommt.`;
+  }else{
+    rule=`⚠️ PFLICHT – ZIELWORT-REGEL: Jeder Satz MUSS das Wort "${base}" enthalten `
+        +`(grammatikalische Flexionen erlaubt). Satz verwerfen, falls es fehlt.`;
+  }
+  return{rule,check,base};
 }
 function appendGeneratedExamples(mode,newEx){
   if(mode==='edit'){
@@ -5233,9 +5263,10 @@ async function generateExamplesForField(btnEl){
   btnEl.innerHTML=`<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
 
   try{
+    const wr=_exWordRule(entry.g||seed, entry.wordType||'other');
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${seed}"
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${entry.g||seed}"
 
 ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
@@ -5250,10 +5281,13 @@ PERSISCHE ÜBERSETZUNG:
 • Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
 • KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
+${wr.rule}
+
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
-    const newEx = await callAIMultiProvider(prompt, null);
+    let newEx = await callAIMultiProvider(prompt, null);
     if(!newEx||!newEx.length)throw new Error('Keine verwertbaren Beispiele');
+    newEx=newEx.filter(ex=>wr.check(ex.de||''));
 
     entry.ex.splice(fieldIdx+1,0,...newEx);
     await dbPut(entry);
@@ -5284,6 +5318,7 @@ async function generateDraftExamples(mode,btnEl){
   btnEl.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generiere...`;
 
   try{
+    const wr=_exWordRule(ctx.german, ctx.wordType||'other');
     const lengthHint = ctx.existingDe.length
       ? `\nVORHANDENE SÄTZE (Länge und Stil beibehalten):\n`+ctx.existingDe.map((s,i)=>`  ${i+1}. ${s}`).join('\n')
       : '';
@@ -5304,10 +5339,13 @@ PERSISCHE ÜBERSETZUNG:
 • Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
 • KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
+${wr.rule}
+
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
-    const newEx = await callAIMultiProvider(prompt, ctx.german);
+    let newEx = await callAIMultiProvider(prompt, ctx.german);
     if(!newEx||!newEx.length)throw new Error('Keine verwertbaren Beispiele');
+    newEx=newEx.filter(ex=>wr.check(ex.de||''));
     appendGeneratedExamples(mode,newEx);
     showToast(`✓ ${newEx.length} KI-Beispiele hinzugefügt!`);
   }catch(err){
@@ -5332,6 +5370,7 @@ async function generateExamples(btnEl){
   btnEl.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generiere...`;
 
   try{
+    const wr=_exWordRule(entry.g, entry.wordType||'other');
     const existingDe=(entry.ex||[]).map(x=>(x.de||'').trim()).filter(Boolean);
     const lengthHint2=existingDe.length
       ? `\nVORHANDENE SÄTZE (Länge und Stil beibehalten):\n`+existingDe.map((s,i)=>`  ${i+1}. ${s}`).join('\n')
@@ -5353,10 +5392,13 @@ PERSISCHE ÜBERSETZUNG:
 • Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
 • KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
+${wr.rule}
+
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
-    const newEx = await callAIMultiProvider(prompt, entry.g);
+    let newEx = await callAIMultiProvider(prompt, entry.g);
     if(!newEx||!newEx.length)throw new Error('Keine verwertbaren Beispiele');
+    newEx=newEx.filter(ex=>wr.check(ex.de||''));
 
     entry.ex=[...(entry.ex||[]),...newEx];
     await dbPut(entry);
