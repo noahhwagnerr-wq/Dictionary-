@@ -19,55 +19,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 
 :root {
-–bg:#080616;
-–bg2:#0d0a22;
-–surface:rgba(255,255,255,0.055);
-–surface2:rgba(255,255,255,0.09);
-–surface3:rgba(255,255,255,0.14);
-–border:rgba(255,255,255,0.09);
-–border2:rgba(255,255,255,0.18);
-–accent:#7c5fe6;
-–accent2:#4f9eff;
-–accent3:#c2aaff;
-–gold:#f5a623;
-–red:#ff6b6b;
-–green:#2dd4a0;
-–text:#edeaff;
-–text2:#9487c5;
-–text3:#584f7d;
-–safe-top:max(env(safe-area-inset-top, 44px), 44px);
-–safe-bottom:env(safe-area-inset-bottom,20px);
-–radius:18px;
-–radius-sm:12px;
-–tabbar-height:76px;
-–card-bg:linear-gradient(145deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.025) 100%);
-–glow-purple:rgba(124,95,230,0.35);
-–glow-blue:rgba(79,158,255,0.35);
-}
-
-/* Map old em-dash vars to double-dash vars for compatibility */
-:root {
-–bg:var(–bg);
-–bg2:var(–bg2);
-–surface:var(–surface);
-–surface2:var(–surface2);
-–surface3:var(–surface3);
-–border:var(–border);
-–border2:var(–border2);
-–accent:var(–accent);
-–accent2:var(–accent2);
-–accent3:var(–accent3);
-–gold:var(–gold);
-–red:var(–red);
-–green:var(–green);
-–text:var(–text);
-–text2:var(–text2);
-–text3:var(–text3);
-–safe-top:var(–safe-top);
-–safe-bottom:var(–safe-bottom);
-–radius:var(–radius);
-–radius-sm:var(–radius-sm);
-–tabbar-height:var(–tabbar-height);
+--bg:#080616;
+--bg2:#0d0a22;
+--surface:rgba(255,255,255,0.055);
+--surface2:rgba(255,255,255,0.09);
+--surface3:rgba(255,255,255,0.14);
+--border:rgba(255,255,255,0.09);
+--border2:rgba(255,255,255,0.18);
+--accent:#7c5fe6;
+--accent2:#4f9eff;
+--accent3:#c2aaff;
+--gold:#f5a623;
+--red:#ff6b6b;
+--green:#2dd4a0;
+--text:#edeaff;
+--text2:#9487c5;
+--text3:#584f7d;
+--safe-top:max(env(safe-area-inset-top, 44px), 44px);
+--safe-bottom:env(safe-area-inset-bottom,20px);
+--radius:18px;
+--radius-sm:12px;
+--tabbar-height:76px;
+--card-bg:linear-gradient(145deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.025) 100%);
+--glow-purple:rgba(124,95,230,0.35);
+--glow-blue:rgba(79,158,255,0.35);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -77,12 +52,12 @@ button,input,textarea,select,a{touch-action:manipulation;}
 html{
 height:100%;overflow:hidden;
 -webkit-text-size-adjust:100%;
-background:var(–bg);
+background:var(--bg);
 }
 body{
 height:100%;overflow:hidden;
-background:var(–bg);
-color:var(–text);
+background:var(--bg);
+color:var(--text);
 font-family:‘Inter’,‘Helvetica Neue’,Helvetica,Arial,sans-serif;
 -webkit-font-smoothing:antialiased;
 overscroll-behavior:none;
@@ -108,7 +83,7 @@ flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
 -webkit-overflow-scrolling:touch;
 overscroll-behavior-y:contain;
 scrollbar-width:none;
-padding-bottom:calc(var(–safe-bottom) + var(–tabbar-height));
+padding-bottom:calc(var(--safe-bottom) + var(--tabbar-height));
 background:transparent;
 scroll-behavior:smooth;
 }
@@ -120,7 +95,7 @@ display:flex;align-items:stretch;
 background:rgba(6,4,18,0.96);
 backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
 border-top:1px solid rgba(255,255,255,0.07);
-padding-bottom:calc(var(–safe-bottom) + 2px);
+padding-bottom:calc(var(--safe-bottom) + 2px);
 flex-shrink:0;z-index:40;
 position:relative;
 box-shadow:0 -1px 0 rgba(255,255,255,0.04), 0 -12px 40px rgba(0,0,0,0.5);
@@ -130,7 +105,7 @@ flex:1;border:none;background:none;cursor:pointer;
 padding:10px 4px 6px;
 display:flex;flex-direction:column;
 align-items:center;gap:4px;
-color:var(–text3);
+color:var(--text3);
 transition:color .25s;
 -webkit-tap-highlight-color:transparent;
 position:relative;
@@ -142,14 +117,14 @@ transition:transform .25s cubic-bezier(.34,1.56,.64,1);
 .tab-btn span{
 display:none;
 }
-.tab-btn.active{color:var(–accent2);}
+.tab-btn.active{color:var(--accent2);}
 .tab-btn.active svg{transform:translateY(-1px) scale(1.1);}
 .tab-btn.active span{opacity:1;}
 .tab-btn:active{transform:scale(0.88);}
 .tab-btn.active::before{
 content:’’;position:absolute;top:0;left:50%;transform:translateX(-50%);
 width:36px;height:3px;
-background:linear-gradient(90deg,var(–accent),var(–accent2));
+background:linear-gradient(90deg,var(--accent),var(--accent2));
 border-radius:0 0 6px 6px;
 box-shadow:0 0 12px rgba(79,158,255,0.6);
 }
@@ -168,7 +143,7 @@ to{opacity:1;transform:translateY(0);}
 .edit-header,
 .error-header{
 display:flex;align-items:center;gap:8px;
-padding:calc(var(–safe-top) + 14px) 16px 16px;
+padding:calc(var(--safe-top) + 14px) 16px 16px;
 flex-shrink:0;
 border-bottom:1px solid rgba(255,255,255,0.07);
 background:rgba(6,4,18,0.92);
@@ -179,7 +154,7 @@ backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
 .overlay-title,
 .edit-header-title{
 flex:1;font-size:17px;font-weight:700;
-color:var(–text);text-align:center;letter-spacing:-.2px;
+color:var(--text);text-align:center;letter-spacing:-.2px;
 }
 .overlay-title{font-family:Georgia,serif;}
 
@@ -187,7 +162,7 @@ color:var(–text);text-align:center;letter-spacing:-.2px;
 .back-link{
 display:flex;align-items:center;gap:4px;
 border:none;background:none;
-color:var(–accent2);font-size:14px;font-weight:600;
+color:var(--accent2);font-size:14px;font-weight:600;
 cursor:pointer;padding:6px 8px 6px 2px;border-radius:10px;
 -webkit-tap-highlight-color:transparent;flex-shrink:0;
 transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .2s;
@@ -222,18 +197,18 @@ background:rgba(124,95,230,0.15);
 border:1px solid rgba(124,95,230,0.35);
 border-radius:20px;padding:4px 12px;
 font-size:10px;font-weight:700;letter-spacing:1.5px;
-text-transform:uppercase;color:var(–accent3);
+text-transform:uppercase;color:var(--accent3);
 margin-bottom:12px;
 }
 .hero-title{
 font-size:clamp(22px,6.5vw,32px);
-font-weight:900;color:var(–text);
+font-weight:900;color:var(--text);
 letter-spacing:-.5px;line-height:1.15;
 font-family:‘Vazirmatn’,Tahoma,Arial,sans-serif;
 direction:rtl;text-align:center;max-width:100%;
 }
 .hero-sub{
-font-size:13px;color:var(–text2);
+font-size:13px;color:var(--text2);
 margin-top:6px;font-weight:500;text-align:center;
 }
 
@@ -241,11 +216,11 @@ margin-top:6px;font-weight:500;text-align:center;
 .quick-search-btn{
 margin:0 16px 14px;
 padding:14px 18px;
-border-radius:var(–radius);
+border-radius:var(--radius);
 border:1px solid rgba(255,255,255,0.12);
 background:rgba(255,255,255,0.06);
 display:flex;align-items:center;gap:12px;
-cursor:pointer;color:var(–text2);font-size:14px;font-weight:500;
+cursor:pointer;color:var(--text2);font-size:14px;font-weight:500;
 width:calc(100% - 32px);
 -webkit-tap-highlight-color:transparent;
 transition:background .15s,border-color .2s,transform .15s;
@@ -254,7 +229,7 @@ position:relative;overflow:hidden;
 
 .quick-search-btn:active::before{opacity:1;}
 .quick-search-btn:active{transform:scale(0.99);}
-.quick-search-btn svg{color:var(–accent2);flex-shrink:0;}
+.quick-search-btn svg{color:var(--accent2);flex-shrink:0;}
 
 /* ── STAT GRID ── */
 .stat-grid{
@@ -262,7 +237,7 @@ display:grid;grid-template-columns:1fr 1fr;
 gap:10px;padding:0 16px 16px;
 }
 .stat-card{
-border-radius:var(–radius);padding:20px 16px;
+border-radius:var(--radius);padding:20px 16px;
 border:1px solid rgba(124,95,230,0.20);
 text-align:center;position:relative;overflow:hidden;
 background:linear-gradient(145deg,rgba(124,95,230,0.12) 0%,rgba(79,158,255,0.06) 100%);
@@ -279,15 +254,15 @@ pointer-events:none;
 }
 .stat-num{
 font-size:30px;font-weight:900;letter-spacing:-1.5px;
-background:linear-gradient(135deg,var(–accent3),var(–accent2));
+background:linear-gradient(135deg,var(--accent3),var(--accent2));
 -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 background-clip:text;
 }
 .stat-label{
-font-size:11px;color:var(–text2);margin-top:4px;
+font-size:11px;color:var(--text2);margin-top:4px;
 font-family:‘Vazirmatn’,Tahoma,sans-serif;font-weight:600;
 }
-.stat-sub{font-size:10px;color:var(–text3);margin-top:2px;font-weight:500;}
+.stat-sub{font-size:10px;color:var(--text3);margin-top:2px;font-weight:500;}
 
 /* ── SECTION HEADER ── */
 .section-header{
@@ -295,10 +270,10 @@ display:flex;justify-content:space-between;align-items:center;
 padding:4px 20px 10px;
 }
 .section-header-title{
-font-size:13px;font-weight:800;color:var(–text2);letter-spacing:.3px;
+font-size:13px;font-weight:800;color:var(--text2);letter-spacing:.3px;
 text-transform:uppercase;
 }
-.section-header-sub{font-size:11px;color:var(–text3);}
+.section-header-sub{font-size:11px;color:var(--text3);}
 
 /* ── HOME SHORTCUTS ── */
 .home-shortcuts{
@@ -311,7 +286,7 @@ justify-content:center;align-items:center;width:100%;
 .home-shortcut{
 border:1px solid rgba(255,255,255,0.12);
 background:rgba(255,255,255,0.06);
-color:var(–text2);
+color:var(--text2);
 display:flex;align-items:center;justify-content:center;
 min-width:48px;width:48px;height:48px;padding:0;border-radius:50%;
 cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;
@@ -319,9 +294,9 @@ transition:all .25s cubic-bezier(.34,1.56,.64,1);
 }
 .home-shortcut:active{transform:scale(0.88);}
 .home-shortcut.active{
-background:linear-gradient(135deg,var(–accent),var(–accent2));
+background:linear-gradient(135deg,var(--accent),var(--accent2));
 color:#fff;border-color:transparent;
-box-shadow:0 6px 20px var(–glow-purple),0 0 0 1px rgba(124,95,230,0.3);
+box-shadow:0 6px 20px var(--glow-purple),0 0 0 1px rgba(124,95,230,0.3);
 }
 .home-shortcut svg{
 width:20px;height:20px;stroke:currentColor;fill:none;
@@ -343,40 +318,40 @@ font-size:12px;font-weight:700;
 transition:all .25s cubic-bezier(.34,1.56,.64,1);
 -webkit-tap-highlight-color:transparent;
 background:rgba(255,255,255,0.06);
-color:var(–text2);
+color:var(--text2);
 border:1px solid rgba(255,255,255,0.08);
 }
 .dir-btn:active{transform:scale(0.94);}
 .dir-btn.active{
-background:linear-gradient(135deg,var(–accent),var(–accent2));
+background:linear-gradient(135deg,var(--accent),var(--accent2));
 color:#fff;border-color:transparent;
-box-shadow:0 4px 14px var(–glow-purple);
+box-shadow:0 4px 14px var(--glow-purple);
 }
 .search-input-wrap{position:relative;}
 .search-input{
 width:100%;padding:14px 42px 14px 44px;
-border-radius:var(–radius);
+border-radius:var(--radius);
 border:1px solid rgba(255,255,255,0.12);
 outline:none;
 background:rgba(255,255,255,0.07);
-color:var(–text);font-size:16px;
+color:var(--text);font-size:16px;
 transition:border-color .2s,background .2s,box-shadow .2s;
 font-family:inherit;touch-action:manipulation;
 }
 .search-input:focus{
-border-color:var(–accent);
+border-color:var(--accent);
 background:rgba(255,255,255,0.09);
 box-shadow:0 0 0 3px rgba(124,95,230,0.20);
 }
-.search-input::placeholder{color:var(–text3);}
+.search-input::placeholder{color:var(--text3);}
 .search-icon{
 position:absolute;left:14px;top:50%;transform:translateY(-50%);
-color:var(–text2);pointer-events:none;
+color:var(--text2);pointer-events:none;
 }
 .search-clear{
 position:absolute;right:11px;top:50%;transform:translateY(-50%);
 width:24px;height:24px;border-radius:50%;border:none;
-background:rgba(255,255,255,0.10);color:var(–text2);cursor:pointer;
+background:rgba(255,255,255,0.10);color:var(--text2);cursor:pointer;
 display:none;align-items:center;justify-content:center;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
@@ -390,7 +365,7 @@ display:flex;align-items:center;gap:12px;
 padding:14px 14px 14px 18px;
 margin:0 12px 8px;
 background:rgba(255,255,255,0.04);
-border-radius:var(–radius);
+border-radius:var(--radius);
 border:1px solid rgba(255,255,255,0.08);
 cursor:pointer;-webkit-tap-highlight-color:transparent;
 transition:background .15s,border-color .15s,transform .15s;
@@ -399,7 +374,7 @@ position:relative;overflow:hidden;
 }
 .word-card::before{
 content:’’;position:absolute;left:0;top:0;bottom:0;width:3px;
-background:linear-gradient(180deg,var(–accent),var(–accent2));
+background:linear-gradient(180deg,var(--accent),var(--accent2));
 border-radius:3px 0 0 3px;opacity:0;transition:opacity .2s;
 }
 .word-card:active{
@@ -410,12 +385,12 @@ transform:scale(0.99);
 .word-card:active::before{opacity:1;}
 .word-card-text{flex:1;min-width:0;}
 .word-german{
-font-size:17px;font-weight:700;color:var(–text);
+font-size:17px;font-weight:700;color:var(--text);
 white-space:nowrap;overflow:visible;text-overflow:clip;
 font-family:Georgia,serif;letter-spacing:-.3px;
 }
 .word-persian{
-font-size:13px;color:var(–text2);margin-top:3px;
+font-size:13px;color:var(--text2);margin-top:3px;
 direction:rtl;text-align:right;
 font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif !important;
 white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -426,12 +401,12 @@ font-weight:500;
 width:34px;height:34px;border-radius:50%;border:none;
 background:transparent;cursor:pointer;
 display:flex;align-items:center;justify-content:center;
-color:var(–text3);-webkit-tap-highlight-color:transparent;
+color:var(--text3);-webkit-tap-highlight-color:transparent;
 transition:color .2s,transform .2s cubic-bezier(.34,1.56,.64,1);
 }
 .fav-btn:active{transform:scale(1.3);}
-.fav-btn.active{color:var(–gold);}
-.chevron-icon{color:var(–text3);flex-shrink:0;}
+.fav-btn.active{color:var(--gold);}
+.chevron-icon{color:var(--text3);flex-shrink:0;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
 /* ── WORD BADGES ── */
@@ -441,13 +416,13 @@ display:inline-flex;align-items:center;
 padding:3px 8px;border-radius:999px;
 font-size:10px;font-weight:700;letter-spacing:.2px;
 border:1px solid rgba(255,255,255,.07);
-background:rgba(255,255,255,.04);color:var(–text2);
+background:rgba(255,255,255,.04);color:var(--text2);
 }
-.word-badge.primary{background:rgba(79,158,255,.14);color:var(–accent2);border-color:rgba(79,158,255,.22);}
-.word-badge.secondary{background:rgba(124,95,230,.14);color:var(–accent3);border-color:rgba(124,95,230,.22);}
-.word-match-note{margin-top:6px;font-size:11px;color:var(–text3);}
+.word-badge.primary{background:rgba(79,158,255,.14);color:var(--accent2);border-color:rgba(79,158,255,.22);}
+.word-badge.secondary{background:rgba(124,95,230,.14);color:var(--accent3);border-color:rgba(124,95,230,.22);}
+.word-match-note{margin-top:6px;font-size:11px;color:var(--text3);}
 .word-match-context{
-font-size:12.5px;color:var(–text2);margin-top:3px;
+font-size:12.5px;color:var(--text2);margin-top:3px;
 font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.4;
 }
 .word-match-context mark.search-hit{
@@ -479,46 +454,46 @@ animation:detailHitPulse 1.8s ease .35s both;
 display:flex;align-items:center;justify-content:center;
 width:64px;height:64px;border-radius:50%;
 background:rgba(124,95,230,.10);border:1px solid rgba(124,95,230,.18);
-margin:0 auto 14px;color:var(–text3);
+margin:0 auto 14px;color:var(--text3);
 }
 .no-result-title{
-font-size:16px;font-weight:700;color:var(–text2);
+font-size:16px;font-weight:700;color:var(--text2);
 font-family:Vazirmatn,Tahoma,sans-serif;margin-bottom:4px;
 }
-.no-result-sub{font-size:13px;color:var(–text3);margin-bottom:4px;}
+.no-result-sub{font-size:13px;color:var(--text3);margin-bottom:4px;}
 .similar-section-label{
 display:flex;align-items:center;gap:8px;
 margin:12px 12px 6px;padding:0 4px;
 font-size:11px;font-weight:800;letter-spacing:.8px;
-text-transform:uppercase;color:var(–text2);
+text-transform:uppercase;color:var(--text2);
 }
 .similar-section-label::before{
 content:’’;width:18px;height:2px;border-radius:2px;
-background:linear-gradient(135deg,var(–accent),var(–accent2));opacity:.9;
+background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:.9;
 }
 
 /* ── ADD WORD SUGGESTION ── */
 .add-word-suggestion{
-margin:14px 12px 8px;padding:16px;border-radius:var(–radius);
+margin:14px 12px 8px;padding:16px;border-radius:var(--radius);
 background:rgba(79,158,255,.07);border:1px dashed rgba(79,158,255,.3);
 display:flex;flex-direction:column;gap:10px;
 }
 .add-word-suggestion-text{
-font-size:13px;color:var(–text2);
+font-size:13px;color:var(--text2);
 font-family:‘Vazirmatn’,Tahoma,sans-serif;line-height:1.6;
 }
-.add-word-suggestion-text strong{color:var(–accent2);}
+.add-word-suggestion-text strong{color:var(--accent2);}
 .add-word-btn{
-padding:10px 18px;border-radius:var(–radius-sm);
-background:linear-gradient(135deg,var(–accent),var(–accent2));
+padding:10px 18px;border-radius:var(--radius-sm);
+background:linear-gradient(135deg,var(--accent),var(--accent2));
 color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:700;
 -webkit-tap-highlight-color:transparent;
 touch-action:manipulation;
 display:flex;align-items:center;gap:6px;align-self:flex-start;
-box-shadow:0 6px 20px var(–glow-purple);
+box-shadow:0 6px 20px var(--glow-purple);
 transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
 }
-.add-word-btn:active{transform:scale(0.95);box-shadow:0 2px 8px var(–glow-purple);}
+.add-word-btn:active{transform:scale(0.95);box-shadow:0 2px 8px var(--glow-purple);}
 
 /* ── DETAIL OVERLAY ── */
 .overlay{
@@ -533,7 +508,7 @@ max-width:430px;margin:0 auto;left:0;right:0;
 .overlay-actions{display:flex;gap:8px;}
 .overlay-scroll{
 flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-padding:0 16px calc(var(–safe-bottom) + var(–tabbar-height) + 8px);
+padding:0 16px calc(var(--safe-bottom) + var(--tabbar-height) + 8px);
 scrollbar-width:none;
 }
 .overlay-scroll::-webkit-scrollbar{display:none;}
@@ -543,7 +518,7 @@ scrollbar-width:none;
 .detail-word-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
 .detail-word{
 font-size:clamp(22px,9vw,40px);
-font-weight:900;color:var(–text);
+font-weight:900;color:var(--text);
 font-family:Georgia,serif;letter-spacing:-1px;
 text-shadow:0 0 60px rgba(194,170,255,.25);
 word-break:break-word;
@@ -552,7 +527,7 @@ max-width:100%;
 line-height:1.15;
 }
 .detail-langform{
-font-size:13px;font-weight:500;color:var(–text2);
+font-size:13px;font-weight:500;color:var(--text2);
 letter-spacing:0.3px;opacity:0.82;font-style:italic;
 margin-top:4px;text-align:center;
 }
@@ -561,7 +536,7 @@ margin-top:4px;text-align:center;
 .detail-wortformen-block{
 background:linear-gradient(135deg,rgba(124,95,230,.08),rgba(79,158,255,.05));
 border:1px solid rgba(124,95,230,.22);
-border-radius:var(–radius);
+border-radius:var(--radius);
 padding:16px 14px;margin-bottom:6px;
 }
 .detail-wortformen-label{
@@ -598,18 +573,18 @@ direction:rtl;text-align:right;font-family:’Noto Naskh Arabic’,Tahoma,sans-s
 line-height:1.8;font-size:13px;
 }
 .detail-section{
-background:rgba(255,255,255,.04);border-radius:var(–radius);
+background:rgba(255,255,255,.04);border-radius:var(--radius);
 padding:16px;margin-bottom:10px;
 border:1px solid rgba(255,255,255,.07);
 transition:border-color .2s;
 }
 .detail-section-label{
-font-size:10px;font-weight:700;color:var(–text2);
+font-size:10px;font-weight:700;color:var(--text2);
 letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;
 font-family:‘Vazirmatn’,Tahoma,sans-serif;
 }
 .detail-persian{
-font-size:20px;font-weight:600;color:var(–text);
+font-size:20px;font-weight:600;color:var(--text);
 font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif !important;
 direction:rtl;line-height:1.8;
 }
@@ -628,7 +603,7 @@ display:flex;flex-direction:column;gap:4px;
 .example-ai-btn{
 display:inline-flex;align-items:center;justify-content:center;
 width:26px;height:26px;border:none;border-radius:8px;
-background:rgba(124,95,230,.18);color:var(–accent3);
+background:rgba(124,95,230,.18);color:var(--accent3);
 cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);touch-action:manipulation;
 }
@@ -651,10 +626,10 @@ cursor:pointer;-webkit-tap-highlight-color:transparent;
 transition:all .22s cubic-bezier(.34,1.56,.64,1);
 position:relative;overflow:hidden;
 }
-.hero-edit-btn   { color:var(–accent2); border:1px solid rgba(79,158,255,.28); background:rgba(79,158,255,.10); }
+.hero-edit-btn   { color:var(--accent2); border:1px solid rgba(79,158,255,.28); background:rgba(79,158,255,.10); }
 .hero-delete-btn { color:#ff6b6b;        border:1px solid rgba(255,107,107,.28); background:rgba(255,107,107,.10); }
-.hero-fav-btn    { color:var(–text2);   border:1px solid rgba(245,166,35,.25); background:rgba(245,166,35,.08); }
-.hero-fav-btn.active { color:var(–gold); border-color:rgba(245,166,35,.55); background:rgba(245,166,35,.16); box-shadow:0 0 18px rgba(245,166,35,.28); }
+.hero-fav-btn    { color:var(--text2);   border:1px solid rgba(245,166,35,.25); background:rgba(245,166,35,.08); }
+.hero-fav-btn.active { color:var(--gold); border-color:rgba(245,166,35,.55); background:rgba(245,166,35,.16); box-shadow:0 0 18px rgba(245,166,35,.28); }
 .hero-edit-btn:active   { transform:scale(0.88); background:rgba(79,158,255,.22); }
 .hero-delete-btn:active { transform:scale(0.88); background:rgba(255,107,107,.22); }
 .hero-fav-btn:active    { transform:scale(0.88); }
@@ -662,19 +637,19 @@ position:relative;overflow:hidden;
 /* ── ICON BUTTON ── */
 .icon-btn{
 width:36px;height:36px;border-radius:50%;border:none;
-background:rgba(255,255,255,.08);color:var(–text);cursor:pointer;
+background:rgba(255,255,255,.08);color:var(--text);cursor:pointer;
 display:flex;align-items:center;justify-content:center;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
 }
 .icon-btn:active{transform:scale(0.86);}
-.icon-btn.gold{background:rgba(245,166,35,.15);color:var(–gold);}
-.icon-btn.blue{background:rgba(79,158,255,.15);color:var(–accent2);}
+.icon-btn.gold{background:rgba(245,166,35,.15);color:var(--gold);}
+.icon-btn.blue{background:rgba(79,158,255,.15);color:var(--accent2);}
 
 /* ── SPEAK BUTTON ── */
 .speak-btn{
 display:inline-flex;align-items:center;justify-content:center;
-border:none;background:rgba(79,158,255,.12);color:var(–accent2);
+border:none;background:rgba(79,158,255,.12);color:var(--accent2);
 border-radius:50%;width:32px;height:32px;cursor:pointer;flex-shrink:0;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
@@ -704,22 +679,22 @@ padding:16px 16px 8px;scrollbar-width:none;
 .edit-scroll::-webkit-scrollbar{display:none;}
 .edit-field{margin-bottom:16px;}
 .edit-label{
-font-size:10px;font-weight:700;color:var(–text2);
+font-size:10px;font-weight:700;color:var(--text2);
 text-transform:uppercase;letter-spacing:1.5px;
 margin-bottom:6px;font-family:‘Vazirmatn’,Tahoma,sans-serif;display:block;
 }
 
 /* ── EDIT INPUTS ── */
 .edit-input{
-width:100%;padding:13px 14px;border-radius:var(–radius-sm);
+width:100%;padding:13px 14px;border-radius:var(--radius-sm);
 border:1px solid rgba(255,255,255,.12);
 background:rgba(255,255,255,.06);
-color:var(–text);font-size:16px;outline:none;
+color:var(--text);font-size:16px;outline:none;
 transition:border-color .2s,background .2s,box-shadow .2s;
 font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif !important;
 }
 .edit-input:focus{
-border-color:var(–accent2);
+border-color:var(--accent2);
 background:rgba(255,255,255,.08);
 box-shadow:0 0 0 3px rgba(79,158,255,.18);
 }
@@ -738,7 +713,7 @@ font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif !important;
 /* ── EXAMPLE ROWS (EDIT) ── */
 .examples-list{display:flex;flex-direction:column;gap:10px;margin-bottom:10px;}
 .ex-row{
-background:rgba(255,255,255,.03);border-radius:var(–radius-sm);
+background:rgba(255,255,255,.03);border-radius:var(--radius-sm);
 border:1px solid rgba(255,255,255,.07);overflow:hidden;
 }
 .ex-row-de{
@@ -747,14 +722,14 @@ border-bottom:1px solid rgba(255,255,255,.06);
 background:transparent;color:#c0b8e8;font-size:14px;font-style:italic;
 outline:none;font-family:inherit;
 }
-.ex-row-de::placeholder{color:var(–text3);font-style:italic;}
+.ex-row-de::placeholder{color:var(--text3);font-style:italic;}
 .ex-row-fa{
 width:100%;padding:10px 12px;border:none;background:transparent;
 color:#9b87d0;font-size:15px;direction:rtl;text-align:right;
 outline:none;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif !important;
 line-height:1.7;-webkit-font-smoothing:antialiased;
 }
-.ex-row-fa::placeholder{color:var(–text3);}
+.ex-row-fa::placeholder{color:var(--text3);}
 .ex-drag-handle{
 display:flex;align-items:center;justify-content:center;
 width:34px;min-height:36px;cursor:grab;
@@ -790,9 +765,9 @@ background:rgba(255,255,255,.01);
   pointer-events:none;
 }
 .add-ex-btn{
-width:100%;padding:12px;border-radius:var(–radius-sm);
+width:100%;padding:12px;border-radius:var(--radius-sm);
 border:1px dashed rgba(79,158,255,.28);background:rgba(79,158,255,.04);
-color:var(–accent2);font-size:14px;font-weight:600;cursor:pointer;
+color:var(--accent2);font-size:14px;font-weight:600;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s;
 }
@@ -801,7 +776,7 @@ transition:all .2s;
 /* ── SAVE BAR ── */
 .edit-save-bar{
 display:flex;gap:10px;padding:12px 16px;
-padding-bottom:calc(var(–safe-bottom) + 12px);
+padding-bottom:calc(var(--safe-bottom) + 12px);
 border-top:1px solid rgba(255,255,255,.07);
 background:rgba(6,4,18,0.92);
 backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
@@ -810,26 +785,26 @@ flex-shrink:0;
 
 /* ── BUTTONS ── */
 .btn{
-flex:1;padding:14px;border-radius:var(–radius);border:none;cursor:pointer;
+flex:1;padding:14px;border-radius:var(--radius);border:none;cursor:pointer;
 font-size:15px;font-weight:700;
 transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,opacity .18s;
 -webkit-tap-highlight-color:transparent;font-family:inherit;
 }
 .btn:active{transform:scale(0.96);opacity:.88;}
 .btn-primary{
-background:linear-gradient(135deg,var(–accent),var(–accent2));
-color:#fff;box-shadow:0 6px 22px var(–glow-purple);
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+color:#fff;box-shadow:0 6px 22px var(--glow-purple);
 }
-.btn-primary:active{box-shadow:0 2px 10px var(–glow-purple);}
+.btn-primary:active{box-shadow:0 2px 10px var(--glow-purple);}
 .btn-cancel{
-background:rgba(255,255,255,.07);color:var(–text2);
+background:rgba(255,255,255,.07);color:var(--text2);
 border:1px solid rgba(255,255,255,.10);
 }
 
 /* ── QUIZ ── */
 .quiz-page{
 flex:1;min-height:0;
-padding:20px 14px calc(var(–safe-bottom) + var(–tabbar-height) + 16px);
+padding:20px 14px calc(var(--safe-bottom) + var(--tabbar-height) + 16px);
 overflow-y:auto;
 -webkit-overflow-scrolling:touch;
 scrollbar-width:none;
@@ -869,29 +844,29 @@ animation:quizFlip .42s cubic-bezier(.22,1,.36,1);
 }
 .quiz-lang-label{
 font-size:10px;font-weight:700;letter-spacing:2px;
-text-transform:uppercase;color:var(–text2);margin-bottom:16px;
+text-transform:uppercase;color:var(--text2);margin-bottom:16px;
 }
 .quiz-word{
-font-size:30px;font-weight:900;color:var(–text);
+font-size:30px;font-weight:900;color:var(--text);
 font-family:Georgia,serif;letter-spacing:-1px;
 text-shadow:0 0 50px rgba(194,170,255,.30);
 }
-.quiz-hint{font-size:13px;color:var(–text3);margin-top:16px;}
+.quiz-hint{font-size:13px;color:var(--text3);margin-top:16px;}
 .quiz-actions{display:flex;gap:10px;flex-shrink:0;}
 
 /* ── EMPTY STATE ── */
-.empty-state{text-align:center;padding:60px 20px;color:var(–text3);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
 .empty-icon{
 font-size:52px;margin-bottom:14px;
-display:flex;align-items:center;justify-content:center;color:var(–text3);
+display:flex;align-items:center;justify-content:center;color:var(--text3);
 }
-.empty-title{font-size:16px;font-weight:600;color:var(–text2);font-family:‘Vazirmatn’,Tahoma,sans-serif;}
+.empty-title{font-size:16px;font-weight:600;color:var(--text2);font-family:‘Vazirmatn’,Tahoma,sans-serif;}
 .empty-sub{font-size:13px;margin-top:4px;}
 
 /* ── SETTINGS ── */
 .settings-section{padding:0 16px 14px;}
 .settings-label{
-font-size:10px;font-weight:700;color:var(–text2);
+font-size:10px;font-weight:700;color:var(--text2);
 text-transform:uppercase;letter-spacing:1.5px;
 padding:0 4px 8px;font-family:‘Vazirmatn’,Tahoma,sans-serif;
 }
@@ -899,7 +874,7 @@ padding:0 4px 8px;font-family:‘Vazirmatn’,Tahoma,sans-serif;
 display:flex;align-items:center;gap:14px;
 padding:15px 16px;
 background:rgba(255,255,255,.04);
-border-radius:var(–radius);margin-bottom:8px;cursor:pointer;
+border-radius:var(--radius);margin-bottom:8px;cursor:pointer;
 border:1px solid rgba(255,255,255,.07);
 -webkit-tap-highlight-color:transparent;
 transition:background .15s,transform .15s,border-color .15s;
@@ -907,13 +882,13 @@ transition:background .15s,transform .15s,border-color .15s;
 .settings-row:active{background:rgba(124,95,230,.08);border-color:rgba(124,95,230,.2);transform:scale(0.99);}
 .settings-row-icon{font-size:20px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(255,255,255,.05);}
 .settings-row-text{flex:1;}
-.settings-row-title{font-size:15px;color:var(–text);font-weight:500;}
-.settings-row-sub{font-size:12px;color:var(–text2);margin-top:2px;font-weight:400;}
-.settings-row-chevron{color:var(–text3);}
+.settings-row-title{font-size:15px;color:var(--text);font-weight:500;}
+.settings-row-sub{font-size:12px;color:var(--text2);margin-top:2px;font-weight:400;}
+.settings-row-chevron{color:var(--text3);}
 
 /* ── IMPORT ZONE ── */
 .import-zone{
-margin:0 0 16px;padding:26px 20px;border-radius:var(–radius);
+margin:0 0 16px;padding:26px 20px;border-radius:var(--radius);
 border:2px dashed rgba(79,158,255,.22);
 background:rgba(79,158,255,.04);
 text-align:center;cursor:pointer;
@@ -921,19 +896,19 @@ text-align:center;cursor:pointer;
 transition:all .3s cubic-bezier(.22,1,.36,1);display:block;
 }
 .import-zone:hover,.import-zone.drag{
-border-color:var(–accent2);background:rgba(79,158,255,.08);
+border-color:var(--accent2);background:rgba(79,158,255,.08);
 transform:scale(1.02);box-shadow:0 0 30px rgba(79,158,255,.15);
 }
 .import-zone-icon{font-size:36px;margin-bottom:10px;}
-.import-zone-title{font-size:15px;font-weight:700;color:var(–text);margin-bottom:4px;}
-.import-zone-sub{font-size:12px;color:var(–text2);}
+.import-zone-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.import-zone-sub{font-size:12px;color:var(--text2);}
 
 /* ── PROGRESS ── */
 .progress-wrap{margin-bottom:12px;}
 .progress-bar-bg{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
 .progress-bar-fill{
 height:100%;border-radius:3px;transition:width .1s;width:0%;
-background:linear-gradient(90deg,var(–accent),var(–accent2));
+background:linear-gradient(90deg,var(--accent),var(--accent2));
 position:relative;overflow:hidden;
 }
 .progress-bar-fill::after{
@@ -942,34 +917,34 @@ background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.35) 50%,transp
 animation:shimmer 1.4s ease infinite;transform:translateX(-100%);
 }
 @keyframes shimmer{to{transform:translateX(200%);}}
-.progress-text{font-size:11px;color:var(–text2);margin-top:4px;text-align:center;}
-.result-count{text-align:center;font-size:12px;color:var(–text3);padding:8px;}
+.progress-text{font-size:11px;color:var(--text2);margin-top:4px;text-align:center;}
+.result-count{text-align:center;font-size:12px;color:var(--text3);padding:8px;}
 .search-section-label,.section-header-title{display:flex;align-items:center;gap:8px;}
-.search-section-label{margin:14px 12px 8px;padding:0 4px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(–text2);}
-.search-section-label::before{content:’’;width:18px;height:2px;border-radius:2px;background:linear-gradient(135deg,var(–accent),var(–accent2));opacity:.9;}
+.search-section-label{margin:14px 12px 8px;padding:0 4px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);}
+.search-section-label::before{content:’’;width:18px;height:2px;border-radius:2px;background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:.9;}
 
 /* ── ABOUT CARD ── */
 .about-card{
 margin:0 16px 14px;padding:20px;
 background:linear-gradient(135deg,rgba(124,95,230,.10),rgba(79,158,255,.07));
-border-radius:var(–radius);border:1px solid rgba(124,95,230,.18);
+border-radius:var(--radius);border:1px solid rgba(124,95,230,.18);
 transition:border-color .2s;
 }
 .about-card-title{
 display:flex;align-items:center;gap:8px;flex-direction:column;
-font-size:15px;font-weight:700;color:var(–text);margin-bottom:14px;text-align:center;
+font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;text-align:center;
 }
 .about-card-count{
 font-size:11px;font-weight:600;background:rgba(124,95,230,.2);
-border-radius:10px;padding:2px 8px;color:var(–accent3);
+border-radius:10px;padding:2px 8px;color:var(--accent3);
 }
-.about-card-de{font-size:13px;color:var(–text2);line-height:1.7;margin-bottom:8px;}
+.about-card-de{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;}
 .about-card-fa{
-font-size:13px;color:var(–text2);line-height:1.7;margin-bottom:8px;
+font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;
 font-family:‘Vazirmatn’,Tahoma,Arial,sans-serif;direction:rtl;text-align:right;
 }
 .about-card-year{
-font-size:11px;color:var(–text3);text-align:center;
+font-size:11px;color:var(--text3);text-align:center;
 padding-top:8px;border-top:1px solid rgba(255,255,255,.07);margin-top:4px;
 }
 
@@ -977,7 +952,7 @@ padding-top:8px;border-top:1px solid rgba(255,255,255,.07);margin-top:4px;
 .toast{
 position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 90px);left:50%;
 transform:translateX(-50%) translateY(16px) scale(0.95);
-background:rgba(18,14,44,0.97);color:var(–text);
+background:rgba(18,14,44,0.97);color:var(--text);
 padding:11px 20px;border-radius:20px;font-size:12px;font-weight:600;
 border:1px solid rgba(124,95,230,.38);opacity:0;
 transition:all .32s cubic-bezier(.34,1.56,.64,1);
@@ -994,7 +969,7 @@ backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 .wtype-btn{
 padding:6px 13px;border-radius:20px;
 border:1px solid rgba(255,255,255,.10);
-background:rgba(255,255,255,.05);color:var(–text2);
+background:rgba(255,255,255,.05);color:var(--text2);
 font-size:10px;font-weight:700;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
@@ -1002,9 +977,9 @@ letter-spacing:.3px;font-family:inherit;touch-action:manipulation;
 }
 .wtype-btn:active{transform:scale(0.92);}
 .wtype-btn.active{
-background:linear-gradient(135deg,var(–accent),var(–accent2));
+background:linear-gradient(135deg,var(--accent),var(--accent2));
 color:#fff;border-color:transparent;
-box-shadow:0 3px 12px var(–glow-purple);
+box-shadow:0 3px 12px var(--glow-purple);
 }
 
 /* ── AI BUTTONS (unified) ── */
@@ -1012,7 +987,7 @@ box-shadow:0 3px 12px var(–glow-purple);
 display:inline-flex;align-items:center;gap:5px;
 border:1px solid rgba(124,95,230,.28);border-radius:20px;
 background:rgba(124,95,230,.10);
-color:var(–accent3);font-size:11px;font-weight:700;
+color:var(--accent3);font-size:11px;font-weight:700;
 padding:6px 12px;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
@@ -1021,9 +996,9 @@ transition:all .2s cubic-bezier(.34,1.56,.64,1);
 .wortform-ai-btn.loading{opacity:.55;pointer-events:none;}
 .trans-analyse-btn{
 display:inline-flex;align-items:center;gap:6px;
-border:1px solid rgba(124,95,230,.25);border-radius:var(–radius-sm);
+border:1px solid rgba(124,95,230,.25);border-radius:var(--radius-sm);
 background:rgba(124,95,230,.09);
-color:var(–accent3);font-size:12px;font-weight:700;
+color:var(--accent3);font-size:12px;font-weight:700;
 padding:8px 14px;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
@@ -1033,7 +1008,7 @@ margin-top:8px;font-family:inherit;width:100%;justify-content:center;
 .trans-analyse-btn.loading{opacity:.6;pointer-events:none;}
 .schilderung-analyse-btn{
 display:inline-flex;align-items:center;gap:6px;
-border:1px solid rgba(45,212,160,.22);border-radius:var(–radius-sm);
+border:1px solid rgba(45,212,160,.22);border-radius:var(--radius-sm);
 background:rgba(45,212,160,.08);
 color:#2dd4a0;font-size:12px;font-weight:700;
 padding:8px 14px;cursor:pointer;
@@ -1046,7 +1021,7 @@ margin-top:8px;font-family:inherit;width:100%;justify-content:center;
 .grammar-check-btn{
 display:inline-flex;align-items:center;gap:7px;border:none;
 background:rgba(245,166,35,.10);border:1px solid rgba(245,166,35,.25);
-color:#f5a623;border-radius:var(–radius-sm);
+color:#f5a623;border-radius:var(--radius-sm);
 padding:10px 18px;font-size:13px;font-weight:700;
 width:100%;justify-content:center;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
@@ -1057,7 +1032,7 @@ transition:all .2s cubic-bezier(.34,1.56,.64,1);font-family:inherit;
 .gen-ex-btn{
 display:inline-flex;align-items:center;gap:7px;border:none;
 background:rgba(255,255,255,.05);
-color:var(–text);border-radius:var(–radius-sm);
+color:var(--text);border-radius:var(--radius-sm);
 padding:11px 18px;font-size:13px;font-weight:700;
 width:100%;justify-content:center;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
@@ -1081,7 +1056,7 @@ transition:transform .15s;
 @keyframes suggFadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 .trans-suggestion-text{
 flex:1;font-size:14px;direction:rtl;text-align:right;
-color:var(–text);line-height:1.6;
+color:var(--text);line-height:1.6;
 font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;
 }
 .trans-suggestion-text mark{
@@ -1123,7 +1098,7 @@ transition:all .2s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;font-family:i
 .trans-del-btn:active{transform:scale(0.90);}
 .trans-section-label{
 font-size:10px;font-weight:700;letter-spacing:.6px;
-text-transform:uppercase;color:var(–text3);padding:8px 4px 4px;
+text-transform:uppercase;color:var(--text3);padding:8px 4px 4px;
 }
 
 /* ── GRAMMAR CHECK ── */
@@ -1135,9 +1110,9 @@ text-transform:uppercase;color:var(–text3);padding:8px 4px 4px;
 .grammar-badge{font-size:10px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap;}
 .grammar-badge.ok{background:rgba(45,212,160,.14);color:#2dd4a0;}
 .grammar-badge.error{background:rgba(255,107,107,.14);color:#ff6b6b;}
-.grammar-original{font-size:12px;color:var(–text3);text-decoration:line-through;direction:rtl;text-align:right;margin-bottom:3px;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;}
-.grammar-correction{font-size:13px;font-weight:600;color:var(–text);direction:rtl;text-align:right;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;}
-.grammar-note{font-size:11px;color:var(–text3);margin-top:4px;direction:rtl;text-align:right;font-style:italic;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;}
+.grammar-original{font-size:12px;color:var(--text3);text-decoration:line-through;direction:rtl;text-align:right;margin-bottom:3px;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;}
+.grammar-correction{font-size:13px;font-weight:600;color:var(--text);direction:rtl;text-align:right;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;}
+.grammar-note{font-size:11px;color:var(--text3);margin-top:4px;direction:rtl;text-align:right;font-style:italic;font-family:‘Noto Naskh Arabic’,Tahoma,sans-serif;}
 .grammar-apply-btn{
 margin-top:7px;border:none;border-radius:8px;
 background:rgba(245,166,35,.12);color:#f5a623;
@@ -1161,22 +1136,22 @@ max-width:430px;margin:0 auto;left:0;right:0;
 .error-scroll::-webkit-scrollbar{display:none;}
 .error-item{
 background:rgba(255,107,107,.05);border:1px solid rgba(255,107,107,.14);
-border-radius:var(–radius);padding:13px 16px;margin-bottom:8px;cursor:pointer;
+border-radius:var(--radius);padding:13px 16px;margin-bottom:8px;cursor:pointer;
 transition:transform .15s,background .15s;
 }
 .error-item:active{transform:scale(0.99);background:rgba(255,107,107,.09);}
-.error-item-word{font-size:15px;font-weight:700;color:var(–text);font-family:Georgia,serif;}
-.error-item-type{font-size:10px;color:var(–red);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
-.error-item-detail{font-size:12px;color:var(–text2);margin-top:4px;font-family:‘Vazirmatn’,Tahoma,sans-serif;}
+.error-item-word{font-size:15px;font-weight:700;color:var(--text);font-family:Georgia,serif;}
+.error-item-type{font-size:10px;color:var(--red);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.error-item-detail{font-size:12px;color:var(--text2);margin-top:4px;font-family:‘Vazirmatn’,Tahoma,sans-serif;}
 
 /* ── DEFINITION BOX ── */
 .detail-defbox{
 background:linear-gradient(135deg,rgba(96,73,201,.12),rgba(79,158,255,.07));
-border-radius:var(–radius);
+border-radius:var(--radius);
 border:1px solid rgba(96,73,201,.20);
 padding:16px 18px;margin:16px 16px 0;
 }
-.detail-defbox-line{color:var(–text);font-size:14.5px;line-height:1.7;display:inline;margin:0;}
+.detail-defbox-line{color:var(--text);font-size:14.5px;line-height:1.7;display:inline;margin:0;}
 .detail-defbox-line:not(:last-child)::after{content:” “;}
 .detail-defbox>*{display:inline;}
 
@@ -1242,7 +1217,7 @@ position:relative;
 }
 .word-card::after {
 content:’’;
-position:absolute;inset:0;border-radius:var(–radius);
+position:absolute;inset:0;border-radius:var(--radius);
 padding:1px;
 background:linear-gradient(135deg,rgba(124,95,230,0.35),rgba(255,255,255,0.04),rgba(79,158,255,0.30));
 -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
@@ -1260,9 +1235,9 @@ border:none !important;
 }
 .stat-card::after {
 content:’’;
-position:absolute;inset:0;border-radius:var(–radius);
+position:absolute;inset:0;border-radius:var(--radius);
 padding:1px;
-background:conic-gradient(from var(–angle,0deg) at 50% 50%,
+background:conic-gradient(from var(--angle,0deg) at 50% 50%,
 rgba(124,95,230,0.0) 0%,
 rgba(124,95,230,0.7) 25%,
 rgba(79,158,255,0.7) 50%,
@@ -1274,12 +1249,12 @@ mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
 pointer-events:none;
 animation:rotateBorder 4s linear infinite;
 }
-@property –angle { syntax:’<angle>’; initial-value:0deg; inherits:false; }
+@property --angle { syntax:’<angle>’; initial-value:0deg; inherits:false; }
 /* Firefox-Fallback: statischer Gradient-Border wenn @property nicht unterstützt */
 @supports not (background: conic-gradient(from 0deg, red, blue)) {
 .stat-card::after { background: linear-gradient(135deg, rgba(124,95,230,0.4), rgba(79,158,255,0.4)); animation: none; }
 }
-@keyframes rotateBorder { to { –angle:360deg; } }
+@keyframes rotateBorder { to { --angle:360deg; } }
 
 /* ── Glow Pulse on Active Tab ── */
 .tab-btn.active::before {
@@ -1387,7 +1362,7 @@ position:relative;overflow:hidden;
 .settings-row::before {
 content:’’;
 position:absolute;left:0;top:20%;bottom:20%;width:3px;
-background:linear-gradient(180deg,var(–accent),var(–accent2));
+background:linear-gradient(180deg,var(--accent),var(--accent2));
 border-radius:0 3px 3px 0;opacity:0;
 transition:opacity .2s;
 }
@@ -1544,7 +1519,7 @@ CANCEL / SECONDARY BUTTON
 .btn-cancel {
 background: rgba(255,255,255,0.06) !important;
 border: 1px solid rgba(255,255,255,0.12) !important;
-color: var(–text2) !important;
+color: var(--text2) !important;
 box-shadow: 0 2px 8px rgba(0,0,0,0.20),
 0 1px 0 rgba(255,255,255,0.07) inset !important;
 transition: transform .18s cubic-bezier(.34,1.56,.64,1),
@@ -1926,7 +1901,7 @@ transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
 }
 .add-ex-btn::after {
 content: ‘’;
-position: absolute; inset: 0; border-radius: var(–radius-sm);
+position: absolute; inset: 0; border-radius: var(--radius-sm);
 background: linear-gradient(90deg,
 transparent, rgba(79,158,255,0.14), transparent);
 animation: exBtnPulse 2.5s ease-in-out infinite;
@@ -2010,7 +1985,7 @@ box-shadow .18s, border-color .18s !important;
 }
 .quick-search-btn::before {
 content: ‘’;
-position: absolute; inset: 0; border-radius: var(–radius);
+position: absolute; inset: 0; border-radius: var(--radius);
 background: linear-gradient(90deg,
 transparent, rgba(124,95,230,0.12), transparent);
 transform: translateX(-120%);
@@ -2042,7 +2017,7 @@ transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
 .search-clear:active {
 transform: translateY(-50%) scale(0.82) rotate(90deg) !important;
 background: rgba(255,107,107,0.18) !important;
-color: var(–red) !important;
+color: var(--red) !important;
 }
 
 /* ══════════════════════════
@@ -2067,7 +2042,7 @@ transition: all .3s cubic-bezier(.22,1,.36,1) !important;
 }
 .import-zone::before {
 content: ‘’;
-position: absolute; inset: 0; border-radius: var(–radius);
+position: absolute; inset: 0; border-radius: var(--radius);
 background: radial-gradient(ellipse at 50% 0%,
 rgba(79,158,255,0.10) 0%, transparent 70%);
 animation: importGlow 3s ease-in-out infinite;
@@ -2092,7 +2067,7 @@ position: relative; overflow: hidden;
 }
 .settings-row::after {
 content: ‘’;
-position: absolute; inset: 0; border-radius: var(–radius);
+position: absolute; inset: 0; border-radius: var(--radius);
 background: linear-gradient(90deg,
 transparent, rgba(124,95,230,0.10), transparent);
 opacity: 0; pointer-events: none;
@@ -2118,7 +2093,7 @@ filter: brightness(1.10) !important;
 }
 
 /* ══════════════════════════
-RIPPLE – all eligible
+RIPPLE -- all eligible
 ══════════════════════════ */
 .ripple {
 background: rgba(255,255,255,0.22) !important;
@@ -2126,7 +2101,7 @@ animation: rippleAnim .55s ease-out forwards !important;
 }
 
 /* ══════════════════════════════════════════════════
-✦ SPELL-CHECK PANEL – Neues Wort
+✦ SPELL-CHECK PANEL -- Neues Wort
 ══════════════════════════════════════════════════ */
 #addword-spell-panel:empty { display:none; }
 #edit-spell-panel:empty { display:none; }
@@ -2143,9 +2118,9 @@ display:flex;align-items:center;gap:10px;
 padding:11px 14px;border-radius:12px;
 background:rgba(255,255,255,.04);
 border:1px solid rgba(255,255,255,.08);
-font-size:12.5px;color:var(–text2);font-weight:500;
+font-size:12.5px;color:var(--text2);font-weight:500;
 }
-.sc-loading svg { animation:spin 1s linear infinite;flex-shrink:0;color:var(–accent2); }
+.sc-loading svg { animation:spin 1s linear infinite;flex-shrink:0;color:var(--accent2); }
 
 
 /* ── Spell-Check Meta-Tags ── */
@@ -2193,12 +2168,12 @@ padding:11px 14px 7px;font-size:12.5px;font-weight:700;
 
 .sc-note {
 padding:0 14px 9px;
-font-size:12px;color:var(–text2);line-height:1.55;
+font-size:12px;color:var(--text2);line-height:1.55;
 }
 .sc-chips-label {
 padding:4px 14px 6px;
 font-size:10px;font-weight:800;letter-spacing:.8px;
-text-transform:uppercase;color:var(–text3);
+text-transform:uppercase;color:var(--text3);
 }
 .sc-chips {
 display:flex;flex-wrap:wrap;gap:8px;
@@ -2209,7 +2184,7 @@ display:inline-flex;align-items:center;gap:5px;
 padding:8px 14px;border-radius:22px;
 background:rgba(124,95,230,.14);
 border:1px solid rgba(124,95,230,.32);
-color:var(–accent3);
+color:var(--accent3);
 font-size:13.5px;font-weight:700;font-family:Georgia,serif;
 cursor:pointer;-webkit-tap-highlight-color:transparent;
 transition:all .2s cubic-bezier(.34,1.56,.64,1);
@@ -2264,7 +2239,7 @@ animation:scFadeIn .25s ease both;
 }
 .wf-suggestions-header{
 padding:9px 14px 7px;font-size:10px;font-weight:800;
-letter-spacing:.8px;text-transform:uppercase;color:var(–accent3);
+letter-spacing:.8px;text-transform:uppercase;color:var(--accent3);
 border-bottom:1px solid rgba(124,95,230,0.15);
 }
 .wf-suggestion-item{
@@ -2279,19 +2254,19 @@ border-bottom:1px solid rgba(255,255,255,0.05);
 .wf-suggestion-content{flex:1;}
 .wf-suggestion-type{
 font-size:10px;font-weight:700;letter-spacing:.4px;
-color:var(–accent2);text-transform:uppercase;margin-bottom:3px;
+color:var(--accent2);text-transform:uppercase;margin-bottom:3px;
 }
 .wf-suggestion-forms{
-font-size:13px;color:var(–text);font-family:Georgia,serif;
+font-size:13px;color:var(--text);font-family:Georgia,serif;
 }
 .wf-suggestion-note{
-font-size:11px;color:var(–text2);margin-top:2px;
+font-size:11px;color:var(--text2);margin-top:2px;
 }
 .wf-apply-icon{
 width:30px;height:30px;border-radius:50%;flex-shrink:0;
 background:rgba(124,95,230,0.15);
 display:flex;align-items:center;justify-content:center;
-color:var(–accent3);
+color:var(--accent3);
 }
 
 /* ═══════════ MOVE-EXAMPLE OVERLAY ═══════════ */
@@ -2308,7 +2283,7 @@ color:var(–accent3);
 .move-ex-result-de{font-size:14px;font-weight:600;color:var(--text1);}
 .move-ex-result-fa{font-size:12px;color:var(--text3);direction:rtl;}
 #move-ex-cancel{padding:12px;border-radius:12px;border:none;width:100%;background:rgba(255,255,255,0.07);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;}
-/* .ex-move-btn – via globale Icon-Button-Regel definiert */
+/* .ex-move-btn -- via globale Icon-Button-Regel definiert */
 
 /* ══════════════════════════════════════════════════════
    ✦ PREMIUM BUTTON SYSTEM v2 — Hover · Loading · Pulse
@@ -2326,7 +2301,7 @@ color:var(–accent3);
   animation: none !important;
 }
 
-/* ── Loading: alle KI-Buttons – Icon rotiert, kein Opacity-Flimmern ── */
+/* ── Loading: alle KI-Buttons -- Icon rotiert, kein Opacity-Flimmern ── */
 @keyframes spinSlow { to { transform: rotate(360deg); } }
 
 .trans-analyse-btn.loading,
@@ -2430,7 +2405,7 @@ color:var(–accent3);
   }
 }
 
-/* ── Verbesserte Ripple – heller & schneller ── */
+/* ── Verbesserte Ripple -- heller & schneller ── */
 .ripple {
   background: rgba(255,255,255,0.30) !important;
   animation: rippleAnim .45s cubic-bezier(0.22,1,0.36,1) forwards !important;
@@ -2506,7 +2481,7 @@ color:var(–accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-04ab</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05a</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3382,7 +3357,7 @@ function doSearch(q){
     let note='';
 
     if(isFA){
-      // Persische Suche – unverändert
+      // Persische Suche -- unverändert
       const pScore=fieldMatchScoreNorm(e._pNorm, query, 10000, 9000, 3000);
       const eScore=arrayMatchScoreNorm(e._exFaNorm, query, 2000, 1500, 1000);
       if(pScore>=9000){ mainScore=pScore; badges.push({label:'فارسی', kind:'primary'}); note='Treffer in فارسی'; }
@@ -3400,7 +3375,7 @@ function doSearch(q){
         badges.push({label:'Deutsches Wort', kind:'primary'});
         note = mainScore===10000 ? 'Exakter Treffer (Groß-/Kleinschreibung)' : 'Exakter Treffer';
       } else {
-        // ── WEITERE TREFFER – strikte Reihenfolge ──
+        // ── WEITERE TREFFER -- strikte Reihenfolge ──
 
         // Kat 1: Beispielsätze mit EXAKT dem gesuchten Wort (case-sensitive, Wortgrenze)
         if(_wbRx && e.ex && e.ex.some(ex=>_wbRx.test(ex.de||''))) {
@@ -3556,6 +3531,7 @@ function checkArticleSuggestionFor(word, prefix){
 }
 
 function openAddWord(word){
+  document.getElementById('addword-overlay').classList.add('open');
   try{
   const _suggA=document.getElementById('trans-suggestions-addword');
   if(_suggA) _suggA.innerHTML='';
@@ -3573,7 +3549,6 @@ function openAddWord(word){
   document.getElementById('addword-perfekt').value='';
   const _awWfSugg=document.getElementById('addword-wf-suggestions');
   if(_awWfSugg) _awWfSugg.innerHTML='';
-  document.getElementById('addword-overlay').classList.add('open');
   _initExDrag('addword-examples-list');
   if(word) checkArticleSuggestionFor(word,'addword');
   if(word && word.trim().length >= 2){
@@ -3600,12 +3575,12 @@ async function autoTranslate(german) {
 کیفیت ترجمه‌هایت باید در سطح بهترین فرهنگ لغت دوزبانه آلمانی-فارسی باشد.
 
 قوانین مهم:
-- فارسی روان، طبیعی و امروزی بنویس – نه ادبی، نه کهنه، نه رسمی افراطی
-- تمام معانی رایج کلمه را پوشش بده – از پرکاربردترین تا کم‌کاربردترین
+- فارسی روان، طبیعی و امروزی بنویس -- نه ادبی، نه کهنه، نه رسمی افراطی
+- تمام معانی رایج کلمه را پوشش بده -- از پرکاربردترین تا کم‌کاربردترین
 - برای اسم‌ها: معادل فارسی رایج‌تر را ترجیح بده (اگر وجود دارد)
 - برای فعل‌ها: مصدر فارسی (کردن، شدن و غیره)
 - برای اصطلاحات: معنا را ترجمه کن، نه کلمه به کلمه
-- فقط معادل‌های فارسی را با ؛ جدا کن – هیچ توضیح، آلمانی، Markdown یا شماره‌گذاری نداشته باش
+- فقط معادل‌های فارسی را با ؛ جدا کن -- هیچ توضیح، آلمانی، Markdown یا شماره‌گذاری نداشته باش
 - اگر کلمه معانی متفاوت در حوزه‌های مختلف دارد (حقوقی، پزشکی، روزمره) همه را بیاور
 - نگارش صحیح فارسی: پیشوندهای بی/نا/با/هم/غیر با فاصله نوشته می‌شوند. هرگز از ZWNJ استفاده نکن.`;
 
@@ -3613,7 +3588,7 @@ async function autoTranslate(german) {
 
 تمام معادل‌های فارسی رایج را با ؛ جدا کن.
 با پرکاربردترین معنا شروع کن.
-فقط فارسی – هیچ چیز دیگری نه.`;
+فقط فارسی -- هیچ چیز دیگری نه.`;
 
   try {
     const keys2 = getApiKeys();
@@ -3684,7 +3659,7 @@ async function saveNewWord(){
       showToast('⚠ Übersetzung ausfüllen oder KI-Key eintragen');return;
     }
   }
-  // 2. Auto-Schilderung (OpenAI primär) – nur wenn leer und keine Nomen/Verb/Adjektiv
+  // 2. Auto-Schilderung (OpenAI primär) -- nur wenn leer und keine Nomen/Verb/Adjektiv
   const _addType = _addWordType || 'other';
   const _formsEl = document.getElementById('addword-forms');
   if (_formsEl && !_formsEl.value.trim() && ['other','adverb','pronomen','besondere','redewendung'].includes(_addType)) {
@@ -3780,7 +3755,7 @@ function deleteCurrentEntry(){
   if(!currentEntry) return;
   const word = currentEntry.g || '?';
   const btn = document.querySelector('.hero-delete-btn');
-  // Zweistufige Bestätigung – kein confirm() (funktioniert nicht in iOS Web-App)
+  // Zweistufige Bestätigung -- kein confirm() (funktioniert nicht in iOS Web-App)
   if(btn && btn.dataset.confirm !== '1'){
     btn.dataset.confirm = '1';
     btn.textContent = '⚠️ Wirklich löschen?';
@@ -3822,7 +3797,7 @@ function closeDetail(){
       sr.scrollTop=Math.max(0,sr.scrollTop+diff);
     }
     // Markierung: Klasse neu setzen nach 20ms
-    // Karte gefunden – kein Gold-Ring mehr
+    // Karte gefunden -- kein Gold-Ring mehr
   }, 420);
 }
 // ── Suchergebnis-Karte markieren / Markierung aufheben ──
@@ -3839,8 +3814,8 @@ function renderDetail(){
   if(!currentEntry)return;
   const e=currentEntry,fav=FAVS.has(e.id);
   document.getElementById('detail-overlay-title').textContent=e.g;
-  // Wortformen ODER Schilderung – je nach Inhalt
-  // Wortformen (nur Form-Tags – keine Schilderung im Hero)
+  // Wortformen ODER Schilderung -- je nach Inhalt
+  // Wortformen (nur Form-Tags -- keine Schilderung im Hero)
   let formsHtml='';
   if(e.f&&e.f.length){
     const _isSch = e.f.length===1 && (e.f[0].includes('\n') || e.f[0].length>80);
@@ -3850,7 +3825,7 @@ function renderDetail(){
       </div>`;
     }
   }
-  // Schilderung: aus e.sch ODER aus e.f[0] wenn Langtext – wird NACH Übersetzung angezeigt
+  // Schilderung: aus e.sch ODER aus e.f[0] wenn Langtext -- wird NACH Übersetzung angezeigt
   const _fIsSch = e.f&&e.f.length===1&&(e.f[0].includes('\n')||e.f[0].length>80);
   const _schSource = e.sch || (_fIsSch ? e.f[0] : '');
   let schHtml='';
@@ -4114,7 +4089,7 @@ function _parseExamplesJSON(raw) {
       de: String(ex.de || ex.De || ex.DE || '').trim(),
       fa: String(ex.fa || ex.Fa || ex.FA || '').trim()
             .replace(/\u200C|\u200D/g, ' ')
-            .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\d،؛؟!.:«»()\-–…]+/g, '')
+            .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\d،؛؟!.:«»()\---…]+/g, '')
             .replace(/ {2,}/g, ' ').trim()
     })).filter(ex => ex.de && ex.fa);
     return mapped.length ? mapped : null;
@@ -4184,7 +4159,7 @@ function _showWfSuggestions(alternatives, mode, prefix, container, btn, origBtnH
 
   const hdr = document.createElement('div');
   hdr.className = 'wf-suggestions-header';
-  hdr.textContent = 'Mehrere Bedeutungen – bitte auswählen:';
+  hdr.textContent = 'Mehrere Bedeutungen -- bitte auswählen:';
   panel.appendChild(hdr);
 
   alternatives.forEach((alt, i) => {
@@ -4286,7 +4261,7 @@ function _applyWfResult(result, mode, prefix) {
         }
       }
     }
-    showToast('✓ Abkürzung erkannt' + (_lfVal ? ' – ' + _lfVal : ''));
+    showToast('✓ Abkürzung erkannt' + (_lfVal ? ' -- ' + _lfVal : ''));
   } else if (['adverb','pronomen','besondere'].includes(result.type)) {
     _setWordTypeUI(mode, result.type);
     showToast('✓ Wortart: ' + result.type);
@@ -4317,7 +4292,7 @@ async function analyzeWordForms(mode) {
 Analysiere den deutschen Ausdruck: "${word}"
 
 ════════════════════════════════════════
-SCHRITT 1 – WORTART BESTIMMEN (POS-TAGGING) ← IMMER ZUERST!
+SCHRITT 1 -- WORTART BESTIMMEN (POS-TAGGING) ← IMMER ZUERST!
 ════════════════════════════════════════
 Bestimme ZUERST die Wortart von "${word}", BEVOR du irgendwelche Fehler oder Formen prüfst!
 
@@ -4342,7 +4317,7 @@ Ein einzelnes zusammengeschriebenes Wort (z.B. "Musterkampf", "Bundesland") ist 
 Redewendungen bestehen immer aus MEHREREN GETRENNTEN Wörtern mit idiomatischer Bedeutung.
 
 ════════════════════════════════════════
-SCHRITT 2 – WORTART BESTIMMEN
+SCHRITT 2 -- WORTART BESTIMMEN
 ════════════════════════════════════════
 - "nomen"       : Substantive mit Artikel (der/die/das)
 - "verb"        : Infinitivformen auf -en
@@ -4367,15 +4342,15 @@ FÜR PRÄPOSITIONEN / KONJUNKTIONEN / PARTIKEL / INTERJEKTION:
 Strukturierte persische Erklärung mit deutschen Beispielen und Übersetzungen.
 
 ════════════════════════════════════════
-SCHRITT 3 – KORREKTE FORMEN LIEFERN
+SCHRITT 3 -- KORREKTE FORMEN LIEFERN
 ════════════════════════════════════════
 Basierend auf der (ggf. korrigierten) Grundform die RICHTIGEN Formen:
 - Nomen    : Singular mit Artikel, Plural mit Artikel
 - Verb     : Präteritum (3. Ps. Sg.), Perfekt (mit haben/sein)
 - Adjektiv : Komparativ, Superlativ (am …)
-- Abkürzung: Langform MIT Artikel wenn vorhanden (z.B. "die Europäische Union", "der InterCity Express", "die Gesellschaft mit beschränkter Haftung") – KEIN "Langform:"-Prefix
+- Abkürzung: Langform MIT Artikel wenn vorhanden (z.B. "die Europäische Union", "der InterCity Express", "die Gesellschaft mit beschränkter Haftung") -- KEIN "Langform:"-Prefix
 
-WICHTIG – mehrdeutige Wörter (z.B. "Bank", "Kiefer", "Schloss"):
+WICHTIG -- mehrdeutige Wörter (z.B. "Bank", "Kiefer", "Schloss"):
 Alle Bedeutungen im "alternatives"-Array zurückgeben.
 
 Antworte NUR als reines JSON ohne Markdown oder Erklärung:
@@ -4750,7 +4725,7 @@ document.addEventListener('click',function(ev){
   else if(action==='gen-ex-field'){generateExamplesForField(btn);}
 });
 
-// ── Web Speech – Voice-Hilfe (getVoices VOR cancel – iOS-Fix) ──
+// ── Web Speech -- Voice-Hilfe (getVoices VOR cancel -- iOS-Fix) ──
 let _deVoiceName = null;
 function _sortDeVoices(vlist) {
   const de = (vlist || []).filter(v => v.lang.startsWith('de'));
@@ -4768,7 +4743,7 @@ if (typeof speechSynthesis !== 'undefined') {
   });
 }
 
-// ── Speech Synthesis – OpenAI tts-1 + <audio>-Element (iOS-sicher) ──
+// ── Speech Synthesis -- OpenAI tts-1 + <audio>-Element (iOS-sicher) ──
 // iOS erfordert: .play() synchron im Gesture-Kontext aufrufen.
 // Pattern: Silent-WAV unlock → fetch → blob → play (kein player.load())
 const _SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
@@ -4806,12 +4781,12 @@ async function speakText(text, lang, btnEl) {
   const resetBtn = () => { if (btnEl) btnEl.textContent = '🔉'; _currentSpeakBtn = null; };
 
   // iOS Gesture-Unlock: SYNCHRON vor jedem await.
-  // Dasselbe player-Element wird später für echtes Audio genutzt –
+  // Dasselbe player-Element wird später für echtes Audio genutzt --
   // iOS erlaubt .play() darauf auch nach awaits.
   player.src = _SILENT;
   player.play().catch(() => {});
 
-  // Blob-URL direkt abspielen – KEIN player.load() (spart ~300ms)
+  // Blob-URL direkt abspielen -- KEIN player.load() (spart ~300ms)
   function _playBlob(blobUrl) {
     return new Promise((res, rej) => {
       player.onended = null; player.onerror = null;
@@ -4829,7 +4804,7 @@ async function speakText(text, lang, btnEl) {
 
   const _errs = [];
 
-  // ── 1. OpenAI TTS – tts-1 (schnell: ~0.5–1.5 s) ──
+  // ── 1. OpenAI TTS -- tts-1 (schnell: ~0.5--1.5 s) ──
   const openaiKey = localStorage.getItem('faez_openai_key') || '';
   if (openaiKey) {
     try {
@@ -4852,8 +4827,8 @@ async function speakText(text, lang, btnEl) {
         const j = await resp.json().catch(() => ({}));
         const m = j?.error?.message || '';
         throw new Error(resp.status === 429
-          ? 'Quota überschritten – OpenAI Plan prüfen'
-          : 'HTTP ' + resp.status + (m ? ' – ' + m.slice(0, 40) : ''));
+          ? 'Quota überschritten -- OpenAI Plan prüfen'
+          : 'HTTP ' + resp.status + (m ? ' -- ' + m.slice(0, 40) : ''));
       }
       const ab  = await resp.arrayBuffer();
       const url = URL.createObjectURL(new Blob([ab], { type: 'audio/mpeg' }));
@@ -4863,13 +4838,13 @@ async function speakText(text, lang, btnEl) {
       const m = e.message || '';
       _errs.push('OpenAI: ' + (
         m.includes('429') || m.toLowerCase().includes('quota')
-          ? 'Quota überschritten – Plan prüfen'
+          ? 'Quota überschritten -- Plan prüfen'
           : m.slice(0, 55)
       ));
     }
   }
 
-  // ── 2. Gemini TTS – Fallback ──
+  // ── 2. Gemini TTS -- Fallback ──
   const geminiKey = localStorage.getItem('faez_gemini_key') || '';
   if (geminiKey) {
     try {
@@ -4899,13 +4874,13 @@ async function speakText(text, lang, btnEl) {
       const errJ = await resp.json().catch(() => ({}));
       const msg  = errJ?.error?.message || '';
       throw new Error(resp.status === 429
-        ? 'Quota überschritten – Gemini Plan prüfen'
-        : 'HTTP ' + resp.status + (msg ? ' – ' + msg.slice(0, 35) : ''));
+        ? 'Quota überschritten -- Gemini Plan prüfen'
+        : 'HTTP ' + resp.status + (msg ? ' -- ' + msg.slice(0, 35) : ''));
     } catch (e) { _errs.push('Gemini: ' + e.message.slice(0, 55)); }
   }
 
   if (!openaiKey && !geminiKey) {
-    showToast('⚠ Kein API-Key – bitte in Einstellungen eintragen');
+    showToast('⚠ Kein API-Key -- bitte in Einstellungen eintragen');
     resetBtn(); return;
   }
   showToast('⚠ ' + (_errs.join(' | ') || 'TTS-Fehler'));
@@ -4914,7 +4889,7 @@ async function speakText(text, lang, btnEl) {
 }
 
 
-// ── Fehlerfinder – Status & Rücknavigation ──
+// ── Fehlerfinder -- Status & Rücknavigation ──
 let _fromErrorFinder = false;
 let _errorFinderScrollY = 0;
 let _ignoredIssues = new Set(JSON.parse(localStorage.getItem('faez_ignored_issues') || '[]'));
@@ -4925,7 +4900,7 @@ function ignoreIssue(key, ev) {
   runErrorFinder();
 }
 
-// ── Fehlerfinder – Smart Error Scanner ──
+// ── Fehlerfinder -- Smart Error Scanner ──
 async function runErrorFinder() {
   const container = document.getElementById('error-content');
   container.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-title">Analysiere...</div><div class="empty-sub">Bitte warten</div></div>';
@@ -5000,24 +4975,24 @@ async function runErrorFinder() {
   }
 
   const rows = issues.map(issue =>
-    '<div style="display:flex;align-items:center;gap:8px;padding:10px 10px 10px 16px;border-bottom:1px solid var(–border);">'
+    '<div style="display:flex;align-items:center;gap:8px;padding:10px 10px 10px 16px;border-bottom:1px solid var(--border);">'
     +'<div onclick="openEditForId('+issue.id+',true)" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer;-webkit-tap-highlight-color:rgba(122,93,232,0.18);padding:3px 0;">'
     +'<div style="font-size:20px;width:28px;text-align:center;flex-shrink:0;">'+issue.icon+'</div>'
     +'<div style="flex:1;min-width:0;">'
     +'<div style="font-size:13px;font-weight:600;color:'+issue.color+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(issue.label)+'</div>'
-    +'<div style="font-size:11px;color:var(–text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(issue.sub)+'</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(issue.sub)+'</div>'
     +'</div>'
-    +'<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M5 2.5l4.5 4.5L5 11.5" stroke="var(–text3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    +'<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M5 2.5l4.5 4.5L5 11.5" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     +'</div>'
     +'<button onclick="ignoreIssue(\''+issue.ikey+'\',event)" title="Kein Fehler" style="flex-shrink:0;border:1px solid rgba(74,222,128,0.3);background:rgba(34,197,94,0.08);color:#4ade80;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">✓</button>'
     +'</div>'
   ).join('');
 
   container.innerHTML =
-    '<div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(–border);">'
-    +'<span style="font-size:11px;font-weight:700;color:var(–text3);text-transform:uppercase;letter-spacing:1px;">'
+    '<div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">'
+    +'<span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">'
     +issues.length+' Problem'+(issues.length!==1?'e':'')+' gefunden</span>'
-    +(_ignoredIssues.size>0?'<button onclick="_ignoredIssues.clear();localStorage.removeItem(\'faez_ignored_issues\');runErrorFinder();" style="border:none;background:none;color:var(–accent2);font-size:11px;cursor:pointer;font-family:inherit;">'+_ignoredIssues.size+' ignoriert · zurücksetzen</button>':'')
+    +(_ignoredIssues.size>0?'<button onclick="_ignoredIssues.clear();localStorage.removeItem(\'faez_ignored_issues\');runErrorFinder();" style="border:none;background:none;color:var(--accent2);font-size:11px;cursor:pointer;font-family:inherit;">'+_ignoredIssues.size+' ignoriert · zurücksetzen</button>':'')
     +'</div>'
     + rows
     + '<div style="padding:16px;text-align:center;font-size:11px;color:var(--text3);">Scan: '+new Date().toLocaleTimeString('de-DE')+'</div>';
@@ -5109,7 +5084,7 @@ function deleteCurrentEntry(){
   if(!currentEntry) return;
   const word = currentEntry.g || '?';
   const btn = document.querySelector('.hero-delete-btn');
-  // Zweistufige Bestätigung – kein confirm() (funktioniert nicht in iOS Web-App)
+  // Zweistufige Bestätigung -- kein confirm() (funktioniert nicht in iOS Web-App)
   if(btn && btn.dataset.confirm !== '1'){
     btn.dataset.confirm = '1';
     btn.textContent = '⚠️ Wirklich löschen?';
@@ -5260,20 +5235,20 @@ async function generateExamplesForField(btnEl){
   try{
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1–C2) für: "${seed}"
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${seed}"
 
-ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1–C2):
+ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
 • Gehobenes Vokabular und idiomatischer Ausdruck auf muttersprachlichem Niveau
 • Alltagsnahe, praxisorientierte Kontexte: Beruf, Gespräche, Medien, soziale Situationen, Reisen, Familie, Gesellschaft
 • KEINE philosophisch überhöhten, literarisch abstrakten oder akademisch-distanzierten Formulierungen
-• Sätze sollen natürlich klingen – so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
-• Satzlänge: mittlere Länge (ca. 15–25 Wörter) – nicht zu kurz, nicht übermäßig lang
+• Sätze sollen natürlich klingen -- so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
+• Satzlänge: mittlere Länge (ca. 15--25 Wörter) -- nicht zu kurz, nicht übermäßig lang
 
 PERSISCHE ÜBERSETZUNG:
-• Ausschließlich persisch-arabische Schrift (U+0600–U+06FF) – KEIN Latein, KEIN Kyrillisch
-• Gehobenes Persisch (فارسی معیار) – keine umgangssprachlichen Ausdrücke
-• KEIN ZWNJ (U+200C / نیم فاصله) – nur einfache Leerzeichen
+• Ausschließlich persisch-arabische Schrift (U+0600--U+06FF) -- KEIN Latein, KEIN Kyrillisch
+• Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
+• KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
@@ -5314,20 +5289,20 @@ async function generateDraftExamples(mode,btnEl){
       : '';
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1–C2) für: "${ctx.german}"${ctx.persian?` (Bedeutung: ${ctx.persian})`:''}${lengthHint}
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${ctx.german}"${ctx.persian?` (Bedeutung: ${ctx.persian})`:''}${lengthHint}
 
-ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1–C2):
+ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
 • Gehobenes Vokabular und idiomatischer Ausdruck auf muttersprachlichem Niveau
 • Alltagsnahe, praxisorientierte Kontexte: Beruf, Gespräche, Medien, soziale Situationen, Reisen, Familie, Gesellschaft
 • KEINE philosophisch überhöhten, literarisch abstrakten oder akademisch-distanzierten Formulierungen
-• Sätze sollen natürlich klingen – so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
-• Satzlänge: ähnliche Länge wie die vorhandenen Sätze (falls vorhanden), sonst ca. 15–25 Wörter
+• Sätze sollen natürlich klingen -- so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
+• Satzlänge: ähnliche Länge wie die vorhandenen Sätze (falls vorhanden), sonst ca. 15--25 Wörter
 
 PERSISCHE ÜBERSETZUNG:
-• Ausschließlich persisch-arabische Schrift (U+0600–U+06FF) – KEIN Latein, KEIN Kyrillisch
-• Gehobenes Persisch (فارسی معیار) – keine umgangssprachlichen Ausdrücke
-• KEIN ZWNJ (U+200C / نیم فاصله) – nur einfache Leerzeichen
+• Ausschließlich persisch-arabische Schrift (U+0600--U+06FF) -- KEIN Latein, KEIN Kyrillisch
+• Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
+• KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
@@ -5363,20 +5338,20 @@ async function generateExamples(btnEl){
       : '';
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1–C2) für: "${entry.g}" (Bedeutung: ${entry.p})${lengthHint2}
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${entry.g}" (Bedeutung: ${entry.p})${lengthHint2}
 
-ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1–C2):
+ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
 • Gehobenes Vokabular und idiomatischer Ausdruck auf muttersprachlichem Niveau
 • Alltagsnahe, praxisorientierte Kontexte: Beruf, Gespräche, Medien, soziale Situationen, Reisen, Familie, Gesellschaft
 • KEINE philosophisch überhöhten, literarisch abstrakten oder akademisch-distanzierten Formulierungen
-• Sätze sollen natürlich klingen – so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
-• Satzlänge: ähnliche Länge wie die vorhandenen Sätze (falls vorhanden), sonst ca. 15–25 Wörter
+• Sätze sollen natürlich klingen -- so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
+• Satzlänge: ähnliche Länge wie die vorhandenen Sätze (falls vorhanden), sonst ca. 15--25 Wörter
 
 PERSISCHE ÜBERSETZUNG:
-• Ausschließlich persisch-arabische Schrift (U+0600–U+06FF) – KEIN Latein, KEIN Kyrillisch
-• Gehobenes Persisch (فارسی معیار) – keine umgangssprachlichen Ausdrücke
-• KEIN ZWNJ (U+200C / نیم فاصله) – nur einfache Leerzeichen
+• Ausschließlich persisch-arabische Schrift (U+0600--U+06FF) -- KEIN Latein, KEIN Kyrillisch
+• Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
+• KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
 NUR JSON, kein Markdown:
 [{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"},{"de":"Satz.","fa":"ترجمه"}]`;
@@ -5429,6 +5404,21 @@ NUR JSON, kein Markdown:
     if(typeof switchTab === 'function') switchTab('home');
   }, {passive: true});
 })();
+
+// ── Add-Word Button: Event Delegation (iOS scroll container fix) ──
+document.getElementById('search-results').addEventListener('touchend', function(e){
+  const btn = e.target.closest('.add-word-btn');
+  if(!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openAddWord(btn.dataset.word||'');
+}, {passive:false});
+
+// ── DOM Teleport: Overlays direkt in <body> (iOS position:fixed Stacking-Context-Fix) ──
+['addword-overlay','edit-overlay','detail-overlay','error-overlay','move-ex-overlay'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el && el.parentNode !== document.body) document.body.appendChild(el);
+});
 
 // ── Init ──
 async function init(){
@@ -5618,8 +5608,8 @@ async function analyseSchilderung(prefix){
     + 'GRAMMATIKREGEL 1: "ist/sind/war + Partizip II" = Zustandsbeschreibung, NIEMALS Passiv. '
     + 'GRAMMATIKREGEL 2: "wurde/wurden + Partizip II" = Vorgangspassiv Präteritum, NIEMALS "Perfekt". Perfekt Passiv = "ist/sind ... worden". '
     + 'REGISTER-LABELS (exakt): روزمره = alltäglich (Brille beschlagen), استاندارد = neutral, رسمی = formell/schriftlich, تخصصی = Fachsprache, محاوره = umgangssprachlich. Alltagsvorgänge wie Glas/Brille beschlagen sind روزمره, NICHT رسمی. '
-    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" – nie beides, außer Verb hat tatsächlich beide Formen. Zustandsbeschreibungen sind KEIN Perfekt. '
-    + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben – weder im ⚡-Abschnitt noch irgendwo sonst. '
+    + 'GRAMMATIKREGEL 3: Im 📐-Abschnitt ENTWEDER "hat + PII" ODER "ist + PII" -- nie beides, außer Verb hat tatsächlich beide Formen. Zustandsbeschreibungen sind KEIN Perfekt. '
+    + 'VERBOTEN: Schwierigkeitsstufe (سطح A1/B2/C1/...) NIEMALS schreiben -- weder im ⚡-Abschnitt noch irgendwo sonst. '
     + 'VERBOTEN: Das Label "(Zustandsbeschreibung)" NIEMALS hinter Beispielsätzen verwenden. '
     + 'NATÜRLICHKEIT: Beispiele wie ein Muttersprachler formulieren. '
     + 'SEMANTISCHE PRÄZISION: Analysiere EXAKT die im Duden und DWDS dokumentierten Bedeutungen — keine freien Assoziationen oder verwechselten Bedeutungen. Beispiel: "absterben" bedeutet Gewebetod/Nekrose oder langsames Vergehen (Pflanzen, Nerven), NICHT "بی‌حس شدن" (= einschlafen/taub werden → das ist "einschlafen" oder "taub werden"). Jede Bedeutung muss dem tatsächlichen Duden-Eintrag entsprechen. '
@@ -5629,43 +5619,43 @@ async function analyseSchilderung(prefix){
     + 'PERSISCHE ORTHOGRAFIE: Halbleerzeichen (‌) oder Leerzeichen vor Suffixen های/ها/ای/ی. NIEMALS zusammenschreiben.';
 
   const userPrompt = context + '\n\n'
-    + `WICHTIG: Analysiere ALLE Bedeutungen der Basisform "${wikiWord}", unabhängig davon, in welcher Form das Wort eingegeben wurde ("${gw}"). Liste jede Duden-belegte Bedeutung auf – auch fachsprachliche (z.B. Pferd beschlagen, Schloss beschlagen).\n\n`
+    + `WICHTIG: Analysiere ALLE Bedeutungen der Basisform "${wikiWord}", unabhängig davon, in welcher Form das Wort eingegeben wurde ("${gw}"). Liste jede Duden-belegte Bedeutung auf -- auch fachsprachliche (z.B. Pferd beschlagen, Schloss beschlagen).\n\n`
     + 'Schreib die Analyse EXAKT in diesem Format (ersetze die Beispiele durch echte Inhalte):\n\n'
 
     + '🔍 تشخیص فرم و پایه کلمه\n'
-    + `   – پایه: ${wikiWord}\n`
-    + '   – نوع: [Verb / Substantiv / Adjektiv / Adverb]\n'
-    + '   – جنسیت: [der/die/das – nur bei Substantiven, sonst diese Zeile weglassen]\n'
-    + '   – فرم ورودی: [Partizip II / Plural / Genitiv / Nominativ Singular / ...]\n\n'
+    + `   -- پایه: ${wikiWord}\n`
+    + '   -- نوع: [Verb / Substantiv / Adjektiv / Adverb]\n'
+    + '   -- جنسیت: [der/die/das -- nur bei Substantiven, sonst diese Zeile weglassen]\n'
+    + '   -- فرم ورودی: [Partizip II / Plural / Genitiv / Nominativ Singular / ...]\n\n'
 
     + '📌 معانی\n'
-    + '   ۱. [معادل فارسی روان] – [روزمره / استاندارد / رسمی / تخصصی / محاوره / selten]\n'
+    + '   ۱. [معادل فارسی روان] -- [روزمره / استاندارد / رسمی / تخصصی / محاوره / selten]\n'
     + '      • [جمله آلمانی]\n'
     + '        [ترجمه فارسی] ([Präsens Aktiv / Perfekt mit haben / Perfekt mit sein / Vorgangspassiv])\n'
     + '      • [جمله آلمانی ۲]\n'
     + '        [ترجمه فارسی] ([فرم])\n'
-    + '   ۲. [معادل فارسی روان] – [روزمره / رسمی / تخصصی / ...]\n'
+    + '   ۲. [معادل فارسی روان] -- [روزمره / رسمی / تخصصی / ...]\n'
     + '      • [جمله]\n'
     + '        [ترجمه] ([فرم])\n'
     + '      • [جمله]\n'
     + '        [ترجمه] ([فرم])\n\n'
 
     + '📐 نکات دستوری\n'
-    + '   – فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Bewegung/Zustandswechsel)\n'
+    + '   -- فعل: [Infinitiv] / [er/sie Präsens] / [Präteritum] / [Perfekt: hat + PII] (nur sein wenn Bewegung/Zustandswechsel)\n'
     + '     trennbar: ja/nein | reflexiv: ja/nein | Rektion: + Akk./Dat.\n'
-    + '   – اسم:\n'
+    + '   -- اسم:\n'
     + '     Nominativ: [der/die/das Wort]\n'
     + '     Genitiv: [des/der Wortes]\n'
     + '     Plural: [die Wörter]\n'
-    + '   – [اشتباه رایج یا نکته کلیدی]\n\n'
+    + '   -- [اشتباه رایج یا نکته کلیدی]\n\n'
 
     + '🗣️ اصطلاحات و ترکیب‌های ثابت\n'
-    + '   – [اصطلاح]: [معادل فارسی]\n'
-    + '   – [کالوکیشن]: [معادل فارسی]\n\n'
+    + '   -- [اصطلاح]: [معادل فارسی]\n'
+    + '   -- [کالوکیشن]: [معادل فارسی]\n\n'
 
     + '⚡ نکات برای زبان‌آموز\n'
-    + '   – تفاوت با: [واژه مشابه و چرا باید بین آن‌ها تفاوت گذاشت]\n'
-    + '   – [نکته کاربردی دقیق]';
+    + '   -- تفاوت با: [واژه مشابه و چرا باید بین آن‌ها تفاوت گذاشت]\n'
+    + '   -- [نکته کاربردی دقیق]';
 
 
   try {
@@ -5712,7 +5702,7 @@ async function analyseSchilderung(prefix){
       previewEl.style.cssText = 'margin-top:10px;background:rgba(79,142,247,0.07);border:1px solid rgba(79,142,247,0.25);border-radius:12px;overflow:hidden;animation:scFadeIn .25s ease both;';
       const previewHeader = document.createElement('div');
       previewHeader.style.cssText = 'padding:9px 14px 6px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2);border-bottom:1px solid rgba(79,142,247,0.15);';
-      previewHeader.textContent = 'VORSCHAU – Schilderung' + (wikiData ? ' · Wiktionary ✓' : '');
+      previewHeader.textContent = 'VORSCHAU -- Schilderung' + (wikiData ? ' · Wiktionary ✓' : '');
       const previewBody = document.createElement('div');
       previewBody.style.cssText = 'padding:12px 14px;font-family:Noto Naskh Arabic,Tahoma,sans-serif;font-size:13px;line-height:1.85;color:var(--text);max-height:260px;overflow-y:auto;';
       _renderSchilderungLines(previewBody, resultText);
@@ -5732,7 +5722,7 @@ async function analyseSchilderung(prefix){
       previewEl.appendChild(previewBody);
       previewEl.appendChild(adoptBtn);
     }
-    showToast('✓ Schilderung bereit – bitte prüfen und übernehmen');
+    showToast('✓ Schilderung bereit -- bitte prüfen und übernehmen');
   } catch(e){
     showToast('Fehler: '+e.message,'error');
   } finally {
@@ -6278,7 +6268,7 @@ async function analyseTranslation(prefix){
 
 // ══════════════════════════════════════════════════════
 // ✦  EFFECTS: PARTICLES · TILT · COUNTER · FLIP
-//    (Single IIFE – no duplicates)
+//    (Single IIFE -- no duplicates)
 // ══════════════════════════════════════════════════════
 (function(){
   'use strict';
@@ -6405,7 +6395,7 @@ async function analyseTranslation(prefix){
 
 
 // ══════════════════════════════════════════════════
-// ✦  SPELL-CHECK  –  Neues Wort hinzufügen
+// ✦  SPELL-CHECK  --  Neues Wort hinzufügen
 //    Direkter OpenAI-Call, kein callAIAnalyze-Wrapper
 // ══════════════════════════════════════════════════
 let _scRunning = false;
@@ -6416,9 +6406,9 @@ async function _scFetch(word) {
   const keys = getApiKeys();
 
   // ── Erweiterter Qualitätsprüfungs-Prompt ──
-  const prompt = `Du bist ein erfahrener Linguistik-Experte. Analysiere das Wort: "${word}"\n\n═══ SCHRITT 1: EXISTIERT ES AUF DEUTSCH? ═══\nPrüfe ob "${word}" im Duden oder DWDS existiert.\nDiese integrierten Fremdwörter zählen als Deutsch: Computer, Baby, Hobby, Pizza, Hotel, Auto, Sport, Musik.\n\n→ DEUTSCHES WORT, korrekte Form → status="ok"\n→ DEUTSCHES WORT, Nomen kleingeschrieben → status="error", category="capitalization", corrected=Großschreibung\n→ DEUTSCHES WORT, Schreibfehler → status="error", category="spelling", corrected=korrekte Form\n   Ähnliche Wörter: suggestions=["Korrektur1","Korrektur2","Korrektur3"]\n→ DEUTSCHES WORT, Pluralform → status="warn", category="plural", baseForm=Singular, suggestions=[Singular]\n→ DEUTSCHES WORT, konjugiertes Verb → status="warn", category="form", baseForm=Infinitiv, suggestions=[Infinitiv]\n\n═══ SCHRITT 2: WENN NICHT DEUTSCH – FREMDWORT? ═══\nErkenne die Sprache wenn das Wort in einer anderen Sprache existiert.\nWICHTIG: Erkenne auch kurze/seltene Wörter korrekt!\nUnterstützte Sprachen (Beispiele):\n  Englisch:    go, pep, fun, cool, happy, sorry, nice, okay, weekend, sorry, love\n  Französisch: merci, bonjour, café, voilà, rouge, chic, amour\n  Spanisch:    hola, amigo, fiesta, bueno, hasta, vamos\n  Italienisch: ciao, bella, pizza, grazie, prego, amore\n  Arabisch:    Wörter in arabischer Schrift oder bekannte Lehnwörter\n  Persisch:    Wörter in persischer Schrift oder bekannte Lehnwörter\n  Türkisch:    merhaba, teşekkür, güzel\n  Lateinisch:  et, est, sum, ante, post\n  Andere:      Sprachname angeben\n→ FREMDWORT erkannt → status="warn", category="foreign", language="Sprachname"\n  Falls ein ähnliches deutsches Wort existiert → suggestions=["deutschesÄquivalent"]\n\n═══ SCHRITT 3: UNBEKANNTES WORT ═══\nWenn weder deutsch noch erkennbar fremd:\n→ status="error", category="nonexistent"\n  IMMER mindestens 2-3 ähnliche deutsche Wörter als suggestions angeben!\n  Phonetisch ähnlich: "bümsen"→["bumsen","brummen","summen"]\n  Tippfehler-ähnlich: "Huas"→["Haus","Hase","Hans"]\n\n═══ REGELN (immer beachten) ═══\n- Grossgeschriebene Nomen → NIEMALS capitalization-Fehler!\n- ss/ß NUR bei echten Fehlern (Strase→Straße, Flus→Fluss). Korrekte Wörter nie ankreiden!\n- Bei Schreibfehlern: suggestions immer mit 2-3 Alternativen füllen.\n- pos-Feld: "Nomen"|"Verb"|"Adjektiv"|"Adverb"|"Abkürzung"|"Phrase"|"Unbekannt"\n\nAUSGABE: Nur JSON, kein Markdown.\nSchema: {"status":"ok|warn|error","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n\nBEISPIELE:\n"Haus"    → {"status":"ok","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"haus"    → {"status":"error","category":"capitalization","pos":"Nomen","language":"Deutsch","note":"Nomen werden großgeschrieben.","corrected":"Haus","baseForm":null,"suggestions":["Haus"]}\n"Imbiss"  → {"status":"ok","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"Imbis"   → {"status":"error","category":"spelling","pos":"Nomen","language":"Deutsch","note":"Doppel-s fehlt (ss-Regel).","corrected":"Imbiss","baseForm":null,"suggestions":["Imbiss","Biss","Riss"]}\n"Häuser"  → {"status":"warn","category":"plural","pos":"Nomen","language":"Deutsch","note":"Singular verwenden.","corrected":"Haus","baseForm":"Haus","suggestions":["Haus"]}\n"laufen"  → {"status":"ok","category":null,"pos":"Verb","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"lief"    → {"status":"warn","category":"form","pos":"Verb","language":"Deutsch","note":"Infinitiv verwenden.","corrected":"laufen","baseForm":"laufen","suggestions":["laufen","liefern","legen"]}\n"pep"     → {"status":"warn","category":"foreign","pos":"Nomen","language":"Englisch","note":"Kein deutsches Wort.","corrected":null,"baseForm":null,"suggestions":["Schwung","Energie"]}\n"merci"   → {"status":"warn","category":"foreign","pos":"Phrase","language":"Französisch","note":"Kein deutsches Wort.","corrected":null,"baseForm":null,"suggestions":["Danke","Dankeschön"]}\n"bümsen"  → {"status":"error","category":"nonexistent","pos":"Unbekannt","language":"Unbekannt","note":"Unbekanntes Wort.","corrected":"bumsen","baseForm":null,"suggestions":["bumsen","brummen","summen"]}\n"Huas"    → {"status":"error","category":"nonexistent","pos":"Unbekannt","language":"Unbekannt","note":"Tippfehler?","corrected":"Haus","baseForm":null,"suggestions":["Haus","Hase","Hals"]}\n"schön"   → {"status":"ok","category":null,"pos":"Adjektiv","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}`;
+  const prompt = `Du bist ein erfahrener Linguistik-Experte. Analysiere das Wort: "${word}"\n\n═══ SCHRITT 1: EXISTIERT ES AUF DEUTSCH? ═══\nPrüfe ob "${word}" im Duden oder DWDS existiert.\nDiese integrierten Fremdwörter zählen als Deutsch: Computer, Baby, Hobby, Pizza, Hotel, Auto, Sport, Musik.\n\n→ DEUTSCHES WORT, korrekte Form → status="ok"\n→ DEUTSCHES WORT, Nomen kleingeschrieben → status="error", category="capitalization", corrected=Großschreibung\n→ DEUTSCHES WORT, Schreibfehler → status="error", category="spelling", corrected=korrekte Form\n   Ähnliche Wörter: suggestions=["Korrektur1","Korrektur2","Korrektur3"]\n→ DEUTSCHES WORT, Pluralform → status="warn", category="plural", baseForm=Singular, suggestions=[Singular]\n→ DEUTSCHES WORT, konjugiertes Verb → status="warn", category="form", baseForm=Infinitiv, suggestions=[Infinitiv]\n\n═══ SCHRITT 2: WENN NICHT DEUTSCH -- FREMDWORT? ═══\nErkenne die Sprache wenn das Wort in einer anderen Sprache existiert.\nWICHTIG: Erkenne auch kurze/seltene Wörter korrekt!\nUnterstützte Sprachen (Beispiele):\n  Englisch:    go, pep, fun, cool, happy, sorry, nice, okay, weekend, sorry, love\n  Französisch: merci, bonjour, café, voilà, rouge, chic, amour\n  Spanisch:    hola, amigo, fiesta, bueno, hasta, vamos\n  Italienisch: ciao, bella, pizza, grazie, prego, amore\n  Arabisch:    Wörter in arabischer Schrift oder bekannte Lehnwörter\n  Persisch:    Wörter in persischer Schrift oder bekannte Lehnwörter\n  Türkisch:    merhaba, teşekkür, güzel\n  Lateinisch:  et, est, sum, ante, post\n  Andere:      Sprachname angeben\n→ FREMDWORT erkannt → status="warn", category="foreign", language="Sprachname"\n  Falls ein ähnliches deutsches Wort existiert → suggestions=["deutschesÄquivalent"]\n\n═══ SCHRITT 3: UNBEKANNTES WORT ═══\nWenn weder deutsch noch erkennbar fremd:\n→ status="error", category="nonexistent"\n  IMMER mindestens 2-3 ähnliche deutsche Wörter als suggestions angeben!\n  Phonetisch ähnlich: "bümsen"→["bumsen","brummen","summen"]\n  Tippfehler-ähnlich: "Huas"→["Haus","Hase","Hans"]\n\n═══ REGELN (immer beachten) ═══\n- Grossgeschriebene Nomen → NIEMALS capitalization-Fehler!\n- ss/ß NUR bei echten Fehlern (Strase→Straße, Flus→Fluss). Korrekte Wörter nie ankreiden!\n- Bei Schreibfehlern: suggestions immer mit 2-3 Alternativen füllen.\n- pos-Feld: "Nomen"|"Verb"|"Adjektiv"|"Adverb"|"Abkürzung"|"Phrase"|"Unbekannt"\n\nAUSGABE: Nur JSON, kein Markdown.\nSchema: {"status":"ok|warn|error","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n\nBEISPIELE:\n"Haus"    → {"status":"ok","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"haus"    → {"status":"error","category":"capitalization","pos":"Nomen","language":"Deutsch","note":"Nomen werden großgeschrieben.","corrected":"Haus","baseForm":null,"suggestions":["Haus"]}\n"Imbiss"  → {"status":"ok","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"Imbis"   → {"status":"error","category":"spelling","pos":"Nomen","language":"Deutsch","note":"Doppel-s fehlt (ss-Regel).","corrected":"Imbiss","baseForm":null,"suggestions":["Imbiss","Biss","Riss"]}\n"Häuser"  → {"status":"warn","category":"plural","pos":"Nomen","language":"Deutsch","note":"Singular verwenden.","corrected":"Haus","baseForm":"Haus","suggestions":["Haus"]}\n"laufen"  → {"status":"ok","category":null,"pos":"Verb","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"lief"    → {"status":"warn","category":"form","pos":"Verb","language":"Deutsch","note":"Infinitiv verwenden.","corrected":"laufen","baseForm":"laufen","suggestions":["laufen","liefern","legen"]}\n"pep"     → {"status":"warn","category":"foreign","pos":"Nomen","language":"Englisch","note":"Kein deutsches Wort.","corrected":null,"baseForm":null,"suggestions":["Schwung","Energie"]}\n"merci"   → {"status":"warn","category":"foreign","pos":"Phrase","language":"Französisch","note":"Kein deutsches Wort.","corrected":null,"baseForm":null,"suggestions":["Danke","Dankeschön"]}\n"bümsen"  → {"status":"error","category":"nonexistent","pos":"Unbekannt","language":"Unbekannt","note":"Unbekanntes Wort.","corrected":"bumsen","baseForm":null,"suggestions":["bumsen","brummen","summen"]}\n"Huas"    → {"status":"error","category":"nonexistent","pos":"Unbekannt","language":"Unbekannt","note":"Tippfehler?","corrected":"Haus","baseForm":null,"suggestions":["Haus","Hase","Hals"]}\n"schön"   → {"status":"ok","category":null,"pos":"Adjektiv","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}`;
 
-  // 1. OpenAI – gpt-4o-mini (schnell + hohe Sprachkompetenz)
+  // 1. OpenAI -- gpt-4o-mini (schnell + hohe Sprachkompetenz)
   if (keys.openai) {
     try {
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -6444,7 +6434,7 @@ async function _scFetch(word) {
     } catch (e) { console.warn('SpellCheck OpenAI:', e.message); }
   }
 
-  // 2. Groq – llama-3.3-70b (Fallback)
+  // 2. Groq -- llama-3.3-70b (Fallback)
   if (keys.groq) {
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -6496,7 +6486,7 @@ async function _scFetch(word) {
   return null;
 }
 
-// ── Panel rendern – mit Kategorie-Labels ──
+// ── Panel rendern -- mit Kategorie-Labels ──
 function _scRender(data) {
   const panel = document.getElementById('addword-spell-panel');
   if (!panel) return;
@@ -6547,7 +6537,7 @@ function _scRender(data) {
         '<div class="sc-head-row">🌍 <span>' + escH(_fl) + '</span>' +
           (_fp ? '<span class="sc-badge sc-badge-warn" style="margin-left:auto;">' + escH(_fp) + '</span>' : '') +
         '</div>' +
-        '<div class="sc-note">Kein deutsches Wort – kann trotzdem gespeichert werden.</div>' +
+        '<div class="sc-note">Kein deutsches Wort -- kann trotzdem gespeichert werden.</div>' +
         (suggestions && suggestions.length ? '<div class="sc-chips" style="margin-top:6px;">' +
           suggestions.map(s => '<button class="sc-chip" onclick="_scApply(this.dataset.w)" data-w="' + escH(s) + '" type="button">🇩🇪 ' + escH(s) + '</button>').join('') +
           '</div>' : '') +
@@ -6694,7 +6684,7 @@ function _scReset() {
 }
 
 // ══════════════════════════════════════════════
-// ✦ EDIT-OVERLAY – Spell-Check (analog addword)
+// ✦ EDIT-OVERLAY -- Spell-Check (analog addword)
 // ══════════════════════════════════════════════
 
 let _editScRunning  = false;
@@ -6753,7 +6743,7 @@ function _editScRender(data, onForceSave) {
         '<div class="sc-head-row">🌍 <span>' + escH(_efl) + '</span>' +
           (_efp ? '<span class="sc-badge sc-badge-warn" style="margin-left:auto;">' + escH(_efp) + '</span>' : '') +
         '</div>' +
-        '<div class="sc-note">Kein deutsches Wort – kann trotzdem gespeichert werden.</div>' +
+        '<div class="sc-note">Kein deutsches Wort -- kann trotzdem gespeichert werden.</div>' +
         (suggestions && suggestions.length ? '<div class="sc-chips" style="margin-top:6px;">' +
           suggestions.map(s => '<button class="sc-chip" onclick="_editScApply(this.dataset.w)" data-w="' + escH(s) + '" type="button">🇩🇪 ' + escH(s) + '</button>').join('') +
           '</div>' : '') +
@@ -6852,7 +6842,7 @@ function _editSpellCheckOnBlur() {
 
 
 // ══════════════════════════════════════════════
-// ❖ MOVE-EXAMPLE – Beispiel zu anderem Wort verschieben
+// ❖ MOVE-EXAMPLE -- Beispiel zu anderem Wort verschieben
 // ══════════════════════════════════════════════
 let _moveExRow=null,_moveExDE='',_moveExFA='';
 
