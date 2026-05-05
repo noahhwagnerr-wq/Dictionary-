@@ -2497,7 +2497,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05h</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05i</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2632,9 +2632,9 @@ color:var(--accent3);
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
   <div class="settings-row" onclick="_openPersistSettings()">
-    <div class="settings-row-icon">🛡</div>
+    <div class="settings-row-icon">💾</div>
     <div class="settings-row-text">
-      <div class="settings-row-title">Dauerhafter Speicherschutz</div>
+      <div class="settings-row-title">Automatisches Speichern</div>
       <div class="settings-row-sub" id="persist-settings-status">Wird geprüft…</div>
     </div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -3099,7 +3099,7 @@ function switchTab(name, options={}){
   if(name==='favorites')renderFavorites();
   if(name==='home')renderRandomWords();
   if(name==='quiz'&&!quizEntry)nextQuiz();
-  if(name==='settings')_updatePersistSettingsStatus().catch(()=>{});
+  if(name==='settings')_updateAutoSyncSettingsStatus().catch(()=>{});
 }
 function goBack(){
   if(document.getElementById('edit-overlay').classList.contains('open')){closeEdit();return;}
@@ -3722,11 +3722,12 @@ async function saveNewWord(){
     if(!saved)throw new Error('Eintrag nach Speichern nicht in DB gefunden');
     await syncSnapshotFromDB();
     _incrementUnsavedChanges();
+    _autoSyncToFile().catch(()=>{});
     DICT.push(entry);
     closeAddWord();
     updateHomeStats();
     showToast(`✓ „${german}" hinzugefügt!`);
-    _askPersistIfNeeded();
+    _askAutoSyncIfNeeded();
     const sv=document.getElementById('search-input').value;
     if(sv)doSearch(sv.trim());
   }catch(err){
@@ -4690,6 +4691,7 @@ async function saveEdit(force){
     await dbPut(currentEntry);
     await syncSnapshotFromDB();
     _incrementUnsavedChanges();
+    _autoSyncToFile().catch(()=>{});
     const idx=DICT.findIndex(e=>e.id===currentEntry.id);
     if(idx>=0) DICT[idx]={...currentEntry};
     currentEntry=DICT.find(e=>e.id===currentEntry.id)||currentEntry;
@@ -4709,6 +4711,7 @@ async function deleteEntry(){
     await dbDel(deletedId);
     await syncSnapshotFromDB();
     _incrementUnsavedChanges();
+    _autoSyncToFile().catch(()=>{});
     FAVS.delete(deletedId);
     await saveFavs();
     DICT=DICT.filter(e=>e.id!==deletedId);
@@ -4757,101 +4760,149 @@ document.addEventListener('paste', function(e) {
 // ── Settings ──
 // ── Persistente Speicherung (navigator.storage.persist) ──
 let _autoSaveTimer = null;
+let _syncFileHandle = null;
 
 function _startAutoSaveInterval(){
   if(_autoSaveTimer) return;
   _autoSaveTimer = setInterval(async()=>{
     if(!db) return;
-    try{ await syncSnapshotFromDB(); }catch{}
+    try{ await syncSnapshotFromDB(); await _autoSyncToFile(); }catch{}
   }, 60000); // alle 60 Sekunden
 }
 
-async function _initPersistentStorage(){
-  if(!navigator.storage?.persisted) return;
-  try{
-    const ok = await navigator.storage.persisted();
-    if(ok) _startAutoSaveInterval();
-    // Dialog wird beim ersten Speichern gezeigt (falls noch nicht gefragt)
-  }catch{}
+async function _initAutoSync(){
+  // navigator.storage.persist prüfen
+  if(navigator.storage?.persisted){
+    try{ const ok=await navigator.storage.persisted(); if(ok)_startAutoSaveInterval(); }catch{}
+  }
+  // File-Handle aus DB laden (nur desktop)
+  if(localStorage.getItem('faez_autosync_mode')==='file'){
+    try{
+      const handle=await dbGetMeta('autosync_handle');
+      if(handle){
+        const perm=await handle.queryPermission({mode:'readwrite'});
+        if(perm==='granted'){_syncFileHandle=handle;_startAutoSaveInterval();}
+        else{showToast('🔗 Datei-Sync unterbrochen – Einstellungen → Automatisches Speichern');}
+      }
+    }catch{}
+  }
 }
 
-function _askPersistIfNeeded(){
-  if(localStorage.getItem('faez_persist_asked')) return;
-  if(!navigator.storage?.persist) return;
-  setTimeout(_showPersistDialog, 800); // kurze Verzögerung nach dem Speichern
+function _askAutoSyncIfNeeded(){
+  if(localStorage.getItem('faez_autosync_asked')) return;
+  setTimeout(_showAutoSyncDialog, 900);
 }
 
-function _showPersistDialog(){
+function _showAutoSyncDialog(){
   if(document.getElementById('persist-sheet')) return;
-  const sheet = document.createElement('div');
-  sheet.id = 'persist-sheet';
-  sheet.innerHTML = `
-    <div id="persist-sheet-box">
-      <div class="persist-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#c2aaff"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <div class="persist-title">Dauerhaftes Speichern</div>
-      <div class="persist-sub">Sollen Ihre Wörter dauerhaft geschützt bleiben – auch wenn iOS den Browser-Speicher aufräumt? Safari kann Daten nach längerer Inaktivität löschen.</div>
-      <div class="persist-status warn">⚠ Noch nicht aktiviert – Daten können verloren gehen</div>
-      <div class="persist-btn-row">
-        <button class="persist-btn-primary" onclick="_confirmPersist()">Aktivieren</button>
-        <button class="persist-btn-secondary" onclick="_dismissPersistLater()">Später erinnern</button>
-        <button class="persist-btn-secondary" onclick="_dismissPersistNever()">Nicht mehr fragen</button>
-      </div>
-    </div>`;
+  const hasFilePicker=!!window.showSaveFilePicker;
+  const sheet=document.createElement('div');
+  sheet.id='persist-sheet';
+  const fileOpt=hasFilePicker
+    ? `<button class="persist-btn-primary" onclick="_pickSyncFile()">📁 Datei verknüpfen – automatisch synchronisieren</button>`
+    : `<div class="persist-status warn" style="text-align:left;font-size:11.5px;line-height:1.55;padding:10px 12px">
+         📁 <strong>Datei-Verknüpfung:</strong> Auf iOS Safari nicht verfügbar.<br>
+         Auf Mac (Chrome / Safari 16.4+) oder PC wird die Datei automatisch aktualisiert.
+       </div>`;
+  sheet.innerHTML=`<div id="persist-sheet-box">
+    <div class="persist-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#c2aaff"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div class="persist-title">Automatisches Speichern</div>
+    <div class="persist-sub">Wie sollen Ihre Wörter dauerhaft gesichert werden?</div>
+    <div class="persist-btn-row">
+      ${fileOpt}
+      <button class="persist-btn-primary" style="background:rgba(124,95,230,.35);border:1px solid rgba(124,95,230,.5)" onclick="_confirmInternalPersist()">🛡 iOS-Schutz aktivieren (empfohlen)</button>
+      <button class="persist-btn-secondary" onclick="_dismissAutoSyncLater()">Später erinnern</button>
+      <button class="persist-btn-secondary" onclick="_dismissAutoSyncNever()">Nicht mehr fragen</button>
+    </div>
+  </div>`;
   document.body.appendChild(sheet);
 }
 
-async function _confirmPersist(){
+async function _pickSyncFile(){
   document.getElementById('persist-sheet')?.remove();
-  localStorage.setItem('faez_persist_asked','yes');
   try{
-    const granted = await navigator.storage.persist();
-    if(granted){
-      showToast('✓ Dauerhafter Schutz aktiviert');
-      _startAutoSaveInterval();
-    } else {
-      showToast('⚠ Berechtigung nicht erteilt – bitte in Safari-Einstellungen prüfen');
-    }
+    const handle=await window.showSaveFilePicker({
+      suggestedName:'woerterbuch.lvtdeck',
+      types:[{description:'Wörterbuch-Datei',accept:{'text/plain':['.lvtdeck']}}]
+    });
+    _syncFileHandle=handle;
+    await dbSetMeta('autosync_handle',handle);
+    localStorage.setItem('faez_autosync_mode','file');
+    localStorage.setItem('faez_autosync_asked','yes');
+    await _autoSyncToFile();
+    navigator.storage?.persist().catch(()=>{});
+    _startAutoSaveInterval();
+    showToast('✓ Datei verknüpft – wird bei jeder Änderung automatisch aktualisiert');
+    _updateAutoSyncSettingsStatus().catch(()=>{});
   }catch(e){
-    showToast('⚠ Nicht unterstützt auf diesem Gerät');
+    if(e.name!=='AbortError') showToast('⚠ '+String(e.message||e).slice(0,55));
   }
 }
-function _dismissPersistLater(){
+
+async function _confirmInternalPersist(){
   document.getElementById('persist-sheet')?.remove();
-  // kein Flag setzen → wird bei nächster Session wieder gefragt
-}
-function _dismissPersistNever(){
-  document.getElementById('persist-sheet')?.remove();
-  localStorage.setItem('faez_persist_asked','no');
+  localStorage.setItem('faez_autosync_asked','yes');
+  localStorage.setItem('faez_autosync_mode','persist');
+  try{
+    const granted=await navigator.storage.persist();
+    if(granted){showToast('✓ iOS-Schutz aktiviert – Daten bleiben dauerhaft erhalten');_startAutoSaveInterval();}
+    else showToast('⚠ Berechtigung nicht erteilt – Safari-Einstellungen prüfen');
+  }catch{showToast('⚠ Nicht unterstützt auf diesem Gerät');}
+  _updateAutoSyncSettingsStatus().catch(()=>{});
 }
 
-async function _updatePersistSettingsStatus(){
+function _dismissAutoSyncLater(){ document.getElementById('persist-sheet')?.remove(); }
+function _dismissAutoSyncNever(){ document.getElementById('persist-sheet')?.remove(); localStorage.setItem('faez_autosync_asked','no'); }
+
+async function _autoSyncToFile(){
+  if(!_syncFileHandle) return;
+  try{
+    const perm=await _syncFileHandle.queryPermission({mode:'readwrite'});
+    if(perm!=='granted') return;
+    const all=await dbGetAll();
+    const text=serializeLvtDeck(all);
+    const w=await _syncFileHandle.createWritable();
+    await w.write(text); await w.close();
+  }catch(e){ console.warn('Auto-Sync:',e); }
+}
+
+async function _updateAutoSyncSettingsStatus(){
   const el=document.getElementById('persist-settings-status');
   if(!el) return;
-  if(!navigator.storage?.persisted){el.textContent='Nicht unterstützt auf diesem Gerät';return;}
-  try{
-    const ok=await navigator.storage.persisted();
-    const asked=localStorage.getItem('faez_persist_asked');
-    if(ok){el.textContent='✓ Aktiviert – iOS schützt diese Daten vor automatischer Löschung';}
-    else if(asked==='no'){el.textContent='Deaktiviert – hier erneut aktivieren';}
-    else{el.textContent='Noch nicht aktiviert – antippen zum Einrichten';}
-  }catch{el.textContent='Status nicht verfügbar';}
+  const mode=localStorage.getItem('faez_autosync_mode');
+  if(mode==='file'){
+    const handle=_syncFileHandle||(await dbGetMeta('autosync_handle').catch(()=>null));
+    if(handle){
+      const perm=await handle.queryPermission({mode:'readwrite'}).catch(()=>'unknown');
+      el.textContent=perm==='granted'?`✓ Datei-Sync aktiv: „${handle.name}"`:`⚠ Datei-Sync unterbrochen – antippen zum Neu verbinden`;
+    }else{el.textContent='Datei-Sync konfiguriert – Datei nicht gefunden';}
+    return;
+  }
+  if(mode==='persist'&&navigator.storage?.persisted){
+    const ok=await navigator.storage.persisted().catch(()=>false);
+    el.textContent=ok?'✓ iOS-Schutz aktiv – Daten dauerhaft gesichert':'⚠ iOS-Schutz konfiguriert aber inaktiv'; return;
+  }
+  el.textContent=localStorage.getItem('faez_autosync_asked')==='no'?'Deaktiviert – antippen zum Einrichten':'Noch nicht konfiguriert – antippen';
 }
 
 async function _openPersistSettings(){
-  await _updatePersistSettingsStatus();
-  if(!navigator.storage?.persist){showToast('⚠ Nicht unterstützt auf diesem Gerät');return;}
-  try{
-    const ok=await navigator.storage.persisted();
-    if(ok){
-      showToast('✓ Dauerhafter Schutz ist bereits aktiv');
-      return;
-    }
-  }catch{}
-  // Noch nicht aktiv → Dialog erneut zeigen (Flag ignorieren)
-  localStorage.removeItem('faez_persist_asked');
-  _showPersistDialog();
+  await _updateAutoSyncSettingsStatus();
+  const mode=localStorage.getItem('faez_autosync_mode');
+  if(mode==='file'){
+    try{
+      const handle=_syncFileHandle||(await dbGetMeta('autosync_handle'));
+      if(handle){
+        if((await handle.queryPermission({mode:'readwrite'}))==='granted'){showToast('✓ Datei-Sync ist bereits aktiv');return;}
+        const req=await handle.requestPermission({mode:'readwrite'});
+        if(req==='granted'){_syncFileHandle=handle;_startAutoSaveInterval();showToast('✓ Sync neu verbunden');}
+        else showToast('⚠ Berechtigung verweigert');
+        _updateAutoSyncSettingsStatus().catch(()=>{});
+        return;
+      }
+    }catch{}
+  }
+  localStorage.removeItem('faez_autosync_asked');
+  _showAutoSyncDialog();
 }
 
 // ── Auto-Export / Backup-Tracking ──
@@ -5687,7 +5738,7 @@ async function init(){
   updateHomeStats();
   renderRandomWords();
   _updateApiKeyStatus();
-  _initPersistentStorage().catch(()=>{});
+  _initAutoSync().catch(()=>{});
   _updatePersistSettingsStatus().catch(()=>{});
   document.addEventListener('touchstart',()=>{},{passive:true});
   // Beim Hintergrundlegen: stiller Snapshot (kein Download – würde iOS-Seite öffnen)
