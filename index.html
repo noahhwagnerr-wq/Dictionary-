@@ -2497,7 +2497,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05i</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05j</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2507,7 +2507,7 @@ color:var(--accent3);
 <div id="backup-banner" style="display:none">
   <div class="backup-banner">
     <div class="backup-banner-text" id="backup-banner-text"></div>
-    <button class="backup-banner-btn" onclick="exportData()">↓ Exportieren</button>
+    <button class="backup-banner-btn" onclick="_backupBannerAction()">↓ Sichern</button>
   </div>
 </div>
 
@@ -4796,14 +4796,17 @@ function _askAutoSyncIfNeeded(){
 function _showAutoSyncDialog(){
   if(document.getElementById('persist-sheet')) return;
   const hasFilePicker=!!window.showSaveFilePicker;
+  const hasShare=!!(navigator.canShare||navigator.share);
   const sheet=document.createElement('div');
   sheet.id='persist-sheet';
-  const fileOpt=hasFilePicker
-    ? `<button class="persist-btn-primary" onclick="_pickSyncFile()">📁 Datei verknüpfen – automatisch synchronisieren</button>`
-    : `<div class="persist-status warn" style="text-align:left;font-size:11.5px;line-height:1.55;padding:10px 12px">
-         📁 <strong>Datei-Verknüpfung:</strong> Auf iOS Safari nicht verfügbar.<br>
-         Auf Mac (Chrome / Safari 16.4+) oder PC wird die Datei automatisch aktualisiert.
-       </div>`;
+  let fileOpt;
+  if(hasFilePicker){
+    fileOpt=`<button class="persist-btn-primary" onclick="_pickSyncFile()">📁 Datei verknüpfen – automatisch synchronisieren</button>`;
+  } else if(hasShare){
+    fileOpt=`<button class="persist-btn-primary" onclick="_shareToFiles()">📤 In Dateien / iCloud speichern</button>`;
+  } else {
+    fileOpt='';
+  }
   sheet.innerHTML=`<div id="persist-sheet-box">
     <div class="persist-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#c2aaff"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
     <div class="persist-title">Automatisches Speichern</div>
@@ -4854,6 +4857,30 @@ async function _confirmInternalPersist(){
 function _dismissAutoSyncLater(){ document.getElementById('persist-sheet')?.remove(); }
 function _dismissAutoSyncNever(){ document.getElementById('persist-sheet')?.remove(); localStorage.setItem('faez_autosync_asked','no'); }
 
+async function _shareToFiles(){
+  // Web Share API: iOS-Teilen-Menü öffnet sich, Nutzer wählt Dateien / iCloud / Dropbox
+  document.getElementById('persist-sheet')?.remove();
+  try{
+    const all=await dbGetAll();
+    if(!all.length){showToast('⚠ Keine Daten zum Teilen');return;}
+    const text=serializeLvtDeck(all);
+    const fname=`woerterbuch-${new Date().toISOString().slice(0,10)}.lvtdeck`;
+    const file=new File([text],fname,{type:'text/plain'});
+    if(navigator.canShare&&!navigator.canShare({files:[file]})){
+      // Fallback: normaler Download
+      exportData(); return;
+    }
+    await navigator.share({files:[file],title:'Wörterbuch-Backup',text:'Wörterbuch-Sicherungsdatei'});
+    _resetUnsavedChanges();
+    localStorage.setItem('faez_autosync_asked','yes');
+    localStorage.setItem('faez_autosync_mode','share');
+    showToast('✓ Gespeichert');
+    _updateAutoSyncSettingsStatus().catch(()=>{});
+  }catch(e){
+    if(e.name!=='AbortError') showToast('⚠ '+String(e.message||e).slice(0,55));
+  }
+}
+
 async function _autoSyncToFile(){
   if(!_syncFileHandle) return;
   try{
@@ -4878,6 +4905,11 @@ async function _updateAutoSyncSettingsStatus(){
     }else{el.textContent='Datei-Sync konfiguriert – Datei nicht gefunden';}
     return;
   }
+  if(mode==='share'){
+    const n=_getUnsavedChanges();
+    el.textContent=n>0?`📤 In Dateien speichern (${n} Änderung${n!==1?'en':''} ausstehend)`:'✓ In Dateien / iCloud gespeichert – antippen zum erneuten Speichern';
+    return;
+  }
   if(mode==='persist'&&navigator.storage?.persisted){
     const ok=await navigator.storage.persisted().catch(()=>false);
     el.textContent=ok?'✓ iOS-Schutz aktiv – Daten dauerhaft gesichert':'⚠ iOS-Schutz konfiguriert aber inaktiv'; return;
@@ -4888,6 +4920,7 @@ async function _updateAutoSyncSettingsStatus(){
 async function _openPersistSettings(){
   await _updateAutoSyncSettingsStatus();
   const mode=localStorage.getItem('faez_autosync_mode');
+  if(mode==='share'){ _shareToFiles(); return; }
   if(mode==='file'){
     try{
       const handle=_syncFileHandle||(await dbGetMeta('autosync_handle'));
@@ -4907,6 +4940,15 @@ async function _openPersistSettings(){
 
 // ── Auto-Export / Backup-Tracking ──
 function _getUnsavedChanges(){return parseInt(localStorage.getItem('faez_unsaved_changes')||'0',10);}
+function _backupBannerAction(){
+  // Auf iOS mit Share API → Teilen-Menü (In Dateien speichern)
+  // Auf Desktop → Datei-Download
+  if(navigator.share && /iPhone|iPad|iPod/.test(navigator.userAgent)){
+    _shareToFiles();
+  } else {
+    exportData();
+  }
+}
 function _incrementUnsavedChanges(){localStorage.setItem('faez_unsaved_changes',String(_getUnsavedChanges()+1));_updateExportBanner();}
 function _resetUnsavedChanges(){localStorage.setItem('faez_unsaved_changes','0');localStorage.setItem('faez_last_export_ts',String(Date.now()));_updateExportBanner();}
 function _updateExportBanner(){
