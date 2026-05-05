@@ -2481,7 +2481,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05d</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05e</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2956,11 +2956,13 @@ if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().the
 let db=null;
 function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('WoerterbuchDB',2);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('entries'))d.createObjectStore('entries',{keyPath:'id',autoIncrement:true}).createIndex('german','g',{unique:false});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'key'});};r.onsuccess=e=>{db=e.target.result;res(db);};r.onerror=rej;});}
 const S=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
-function dbGetAll(){return new Promise((res,rej)=>{const r=S('entries').getAll();r.onsuccess=()=>res(r.result);r.onerror=rej;});}
-function dbPut(e){return new Promise((res,rej)=>{const r=S('entries','readwrite').put(e);r.onsuccess=async()=>{try{await syncSnapshotFromDB();}catch{}res(r.result);};r.onerror=rej;});}
-function dbAdd(e){return new Promise((res,rej)=>{const r=S('entries','readwrite').add(e);r.onsuccess=async()=>{try{await syncSnapshotFromDB();}catch{}res(r.result);};r.onerror=rej;});}
-function dbDel(id){return new Promise((res,rej)=>{const r=S('entries','readwrite').delete(id);r.onsuccess=async()=>{try{await syncSnapshotFromDB();}catch{}res();};r.onerror=rej;});}
-function dbClear(){return new Promise((res,rej)=>{const r=S('entries','readwrite').clear();r.onsuccess=async()=>{try{localStorage.setItem('faez_dict_snapshot','[]');}catch{}res();};r.onerror=rej;});}
+// Entfernt berechnete Such-Felder vor dem DB-Schreiben (werden beim Laden neu berechnet)
+function _dbClean(e){const{_gNorm,_pNorm,_fNorm,_exDeNorm,_exFaNorm,...clean}=e;return clean;}
+function dbGetAll(){return new Promise((res,rej)=>{const r=S('entries').getAll();r.onsuccess=()=>res(r.result);r.onerror=ev=>rej(ev.target.error);});}
+function dbPut(e){return new Promise((res,rej)=>{const r=S('entries','readwrite').put(_dbClean(e));r.onsuccess=()=>res(r.result);r.onerror=ev=>rej(ev.target.error);});}
+function dbAdd(e){return new Promise((res,rej)=>{const r=S('entries','readwrite').add(_dbClean(e));r.onsuccess=()=>res(r.result);r.onerror=ev=>rej(ev.target.error);});}
+function dbDel(id){return new Promise((res,rej)=>{const r=S('entries','readwrite').delete(id);r.onsuccess=()=>res();r.onerror=ev=>rej(ev.target.error);});}
+function dbClear(){return new Promise((res,rej)=>{const r=S('entries','readwrite').clear();r.onsuccess=()=>{try{localStorage.setItem('faez_dict_snapshot','[]');}catch{}res();};r.onerror=ev=>rej(ev.target.error);});}
 function dbGetMeta(k){return new Promise(res=>{const r=S('meta').get(k);r.onsuccess=()=>res(r.result?r.result.val:null);r.onerror=()=>res(null);});}
 function dbSetMeta(k,v){return new Promise((res,rej)=>{const r=S('meta','readwrite').put({key:k,val:v});r.onsuccess=res;r.onerror=rej;});}
 
@@ -3679,14 +3681,23 @@ async function saveNewWord(){
   const _schTextNew=(document.getElementById('addword-forms').value||'').trim();
   const entry={g:german,p:persian,f:forms,wordType:_addWordType,ex:normalizeExamples(filledRows),...(_schTextNew?{sch:_schTextNew}:{})};
   enrichEntryForSearch(entry);
-  const newId=await dbAdd(entry);
-  entry.id=newId;
-  DICT.push(entry);
-  closeAddWord();
-  updateHomeStats();
-  showToast(`✓ „${german}" hinzugefügt!`);
-  const sv=document.getElementById('search-input').value;
-  if(sv)doSearch(sv.trim());
+  try{
+    const newId=await dbAdd(entry);
+    entry.id=newId;
+    // Read-after-write: Eintrag aus DB lesen um Schreiberfolg zu bestätigen
+    const saved=await new Promise(res=>{const r=S('entries').get(newId);r.onsuccess=()=>res(r.result);r.onerror=()=>res(null);});
+    if(!saved)throw new Error('Eintrag nach Speichern nicht in DB gefunden');
+    await syncSnapshotFromDB();
+    DICT.push(entry);
+    closeAddWord();
+    updateHomeStats();
+    showToast(`✓ „${german}" hinzugefügt!`);
+    const sv=document.getElementById('search-input').value;
+    if(sv)doSearch(sv.trim());
+  }catch(err){
+    console.error('saveNewWord DB-Fehler:',err);
+    showToast('⚠ Fehler beim Speichern: '+String(err.message||err).slice(0,60),'error');
+  }
 }
 
 // ── Article Suggestion (local) ──
@@ -4640,31 +4651,43 @@ async function saveEdit(force){
   if(_schText) currentEntry.sch=_schText; else delete currentEntry.sch;
   currentEntry.ex=normalizeExamples(filledExamples);
   enrichEntryForSearch(currentEntry);
-  await dbPut(currentEntry);
-  const idx=DICT.findIndex(e=>e.id===currentEntry.id);
-  if(idx>=0) DICT[idx]={...currentEntry};
-  currentEntry=DICT.find(e=>e.id===currentEntry.id)||currentEntry;
-  closeEdit();
-  renderDetail();
-  showToast('✓ Gespeichert -- ذخیره شد');
+  try{
+    await dbPut(currentEntry);
+    await syncSnapshotFromDB();
+    const idx=DICT.findIndex(e=>e.id===currentEntry.id);
+    if(idx>=0) DICT[idx]={...currentEntry};
+    currentEntry=DICT.find(e=>e.id===currentEntry.id)||currentEntry;
+    closeEdit();
+    renderDetail();
+    showToast('✓ Gespeichert -- ذخیره شد');
+  }catch(err){
+    console.error('saveEdit DB-Fehler:',err);
+    showToast('⚠ Fehler beim Speichern: '+String(err.message||err).slice(0,60),'error');
+  }
 }
 async function deleteEntry(){
   if(!currentEntry) return;
   if(!confirm(`"${currentEntry.g}" wirklich löschen?`)) return;
   const deletedId=currentEntry.id;
-  await dbDel(deletedId);
-  FAVS.delete(deletedId);
-  await saveFavs();
-  DICT=DICT.filter(e=>e.id!==deletedId);
-  currentEntry=null;
-  closeEdit();
-  closeDetail();
-  updateHomeStats();
-  renderRandomWords();
-  if(currentTab==='favorites') renderFavorites();
-  const sv=document.getElementById('search-input').value.trim();
-  if(sv) doSearch(sv);
-  showToast('🗑 Gelöscht -- حذف شد');
+  try{
+    await dbDel(deletedId);
+    await syncSnapshotFromDB();
+    FAVS.delete(deletedId);
+    await saveFavs();
+    DICT=DICT.filter(e=>e.id!==deletedId);
+    currentEntry=null;
+    closeEdit();
+    closeDetail();
+    updateHomeStats();
+    renderRandomWords();
+    if(currentTab==='favorites') renderFavorites();
+    const sv=document.getElementById('search-input').value.trim();
+    if(sv) doSearch(sv);
+    showToast('🗑 Gelöscht -- حذف شد');
+  }catch(err){
+    console.error('deleteEntry DB-Fehler:',err);
+    showToast('⚠ Fehler beim Löschen: '+String(err.message||err).slice(0,60),'error');
+  }
 }
 
 // ── Fix: Paste-Sanitierung (verhindert unerwünschte Symbole beim Einfügen) ──
@@ -5035,10 +5058,13 @@ function isValidGermanHeadword(value){
 
 function getSerializableEntries(list){
   return (Array.isArray(list)?list:[]).map(e=>({
+    ...(e.id!=null?{id:e.id}:{}),
     g:String(e?.g||'').trim(),
     p:String(e?.p||'').trim(),
     f:Array.isArray(e?.f)?e.f.map(x=>String(x||'').trim()).filter(Boolean):[],
-    ex:Array.isArray(e?.ex)?e.ex.map(x=>({de:String(x?.de||'').trim(),fa:String(x?.fa||'').trim()})).filter(x=>x.de&&x.fa):[]
+    ex:Array.isArray(e?.ex)?e.ex.map(x=>({de:String(x?.de||'').trim(),fa:String(x?.fa||'').trim()})).filter(x=>x.de&&x.fa):[],
+    ...(e.wordType?{wordType:String(e.wordType)}:{}),
+    ...(e.sch?{sch:String(e.sch)}:{})
   })).filter(e=>e.g&&e.p);
 }
 async function syncSnapshotFromDB(){
@@ -5311,6 +5337,7 @@ NUR JSON, kein Markdown:
 
     entry.ex.splice(fieldIdx+1,0,...newEx);
     await dbPut(entry);
+    await syncSnapshotFromDB();
     const dictIdx=DICT.findIndex(e=>e.id===entryId);
     if(dictIdx>=0)DICT[dictIdx]={...entry};
     if(currentEntry&&currentEntry.id===entryId)currentEntry={...entry};
@@ -5424,6 +5451,7 @@ NUR JSON, kein Markdown:
 
     entry.ex=[...(entry.ex||[]),...newEx];
     await dbPut(entry);
+    await syncSnapshotFromDB();
     const dictIdx=DICT.findIndex(e=>e.id===entryId);
     if(dictIdx>=0)DICT[dictIdx]={...entry};
     if(currentEntry&&currentEntry.id===entryId)currentEntry={...entry};
@@ -6973,6 +7001,7 @@ async function _moveExConfirm(targetId){
     target.ex.push({de,fa});
     enrichEntryForSearch(target);
     await dbPut(target);
+    await syncSnapshotFromDB();
     const ti=DICT.findIndex(e=>e.id===targetId);
     if(ti>=0)DICT[ti]={...target};
   }
