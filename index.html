@@ -217,6 +217,18 @@ margin-top:6px;font-weight:500;text-align:center;
 .backup-banner-text{font-size:12px;color:rgba(255,210,60,.92);flex:1;line-height:1.3;}
 .backup-banner-btn{padding:6px 13px;background:rgba(255,190,0,.18);border:1px solid rgba(255,190,0,.40);border-radius:9px;color:rgba(255,215,70,.95);font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;}
 .backup-banner-btn:active{opacity:.7;}
+#persist-sheet{position:fixed;inset:0;z-index:9100;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);}
+#persist-sheet-box{background:var(--bg2);border-radius:24px 24px 0 0;padding:28px 22px calc(env(safe-area-inset-bottom,0px) + 28px);box-shadow:0 -12px 48px rgba(0,0,0,.5);animation:slideUp .32s cubic-bezier(.22,1,.36,1);}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.persist-icon{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(124,95,230,.35),rgba(79,158,255,.28));border:1px solid rgba(124,95,230,.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.persist-title{font-size:18px;font-weight:800;color:var(--text);text-align:center;margin-bottom:10px;}
+.persist-sub{font-size:13px;color:var(--text2);text-align:center;line-height:1.55;margin-bottom:22px;}
+.persist-status{font-size:11px;text-align:center;padding:6px 12px;border-radius:8px;margin-bottom:18px;}
+.persist-status.ok{background:rgba(100,220,100,.12);color:rgba(120,230,120,.9);}
+.persist-status.warn{background:rgba(255,190,0,.10);color:rgba(255,200,60,.85);}
+.persist-btn-row{display:flex;flex-direction:column;gap:10px;}
+.persist-btn-primary{padding:15px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:inherit;letter-spacing:.3px;}
+.persist-btn-secondary{padding:12px;border-radius:14px;background:rgba(255,255,255,.07);color:var(--text2);font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit;}
 .quick-search-btn{
 margin:0 16px 14px;
 padding:14px 18px;
@@ -2485,7 +2497,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05f</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2025-05-05g</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2617,6 +2629,14 @@ color:var(--accent3);
   <div class="settings-row" onclick="exportData()">
     <div class="settings-row-icon">📤</div>
     <div class="settings-row-text"><div class="settings-row-title">Export Datei / خروجی فایل</div><div class="settings-row-sub">Alle Wörter und Beispiele exportieren / همه واژه‌ها و مثال‌ها را خروجی بگیرید</div></div>
+    <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+  <div class="settings-row" onclick="_openPersistSettings()">
+    <div class="settings-row-icon">🛡</div>
+    <div class="settings-row-text">
+      <div class="settings-row-title">Dauerhafter Speicherschutz</div>
+      <div class="settings-row-sub" id="persist-settings-status">Wird geprüft…</div>
+    </div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
   <div class="settings-row" onclick="openErrorFinder()">
@@ -3079,6 +3099,7 @@ function switchTab(name, options={}){
   if(name==='favorites')renderFavorites();
   if(name==='home')renderRandomWords();
   if(name==='quiz'&&!quizEntry)nextQuiz();
+  if(name==='settings')_updatePersistSettingsStatus().catch(()=>{});
 }
 function goBack(){
   if(document.getElementById('edit-overlay').classList.contains('open')){closeEdit();return;}
@@ -3705,6 +3726,7 @@ async function saveNewWord(){
     closeAddWord();
     updateHomeStats();
     showToast(`✓ „${german}" hinzugefügt!`);
+    _askPersistIfNeeded();
     const sv=document.getElementById('search-input').value;
     if(sv)doSearch(sv.trim());
   }catch(err){
@@ -4733,6 +4755,105 @@ document.addEventListener('paste', function(e) {
 }, true);
 
 // ── Settings ──
+// ── Persistente Speicherung (navigator.storage.persist) ──
+let _autoSaveTimer = null;
+
+function _startAutoSaveInterval(){
+  if(_autoSaveTimer) return;
+  _autoSaveTimer = setInterval(async()=>{
+    if(!db) return;
+    try{ await syncSnapshotFromDB(); }catch{}
+  }, 60000); // alle 60 Sekunden
+}
+
+async function _initPersistentStorage(){
+  if(!navigator.storage?.persisted) return;
+  try{
+    const ok = await navigator.storage.persisted();
+    if(ok) _startAutoSaveInterval();
+    // Dialog wird beim ersten Speichern gezeigt (falls noch nicht gefragt)
+  }catch{}
+}
+
+function _askPersistIfNeeded(){
+  if(localStorage.getItem('faez_persist_asked')) return;
+  if(!navigator.storage?.persist) return;
+  setTimeout(_showPersistDialog, 800); // kurze Verzögerung nach dem Speichern
+}
+
+function _showPersistDialog(){
+  if(document.getElementById('persist-sheet')) return;
+  const sheet = document.createElement('div');
+  sheet.id = 'persist-sheet';
+  sheet.innerHTML = `
+    <div id="persist-sheet-box">
+      <div class="persist-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#c2aaff"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="persist-title">Dauerhaftes Speichern</div>
+      <div class="persist-sub">Sollen Ihre Wörter dauerhaft geschützt bleiben – auch wenn iOS den Browser-Speicher aufräumt? Safari kann Daten nach längerer Inaktivität löschen.</div>
+      <div class="persist-status warn">⚠ Noch nicht aktiviert – Daten können verloren gehen</div>
+      <div class="persist-btn-row">
+        <button class="persist-btn-primary" onclick="_confirmPersist()">Aktivieren</button>
+        <button class="persist-btn-secondary" onclick="_dismissPersistLater()">Später erinnern</button>
+        <button class="persist-btn-secondary" onclick="_dismissPersistNever()">Nicht mehr fragen</button>
+      </div>
+    </div>`;
+  document.body.appendChild(sheet);
+}
+
+async function _confirmPersist(){
+  document.getElementById('persist-sheet')?.remove();
+  localStorage.setItem('faez_persist_asked','yes');
+  try{
+    const granted = await navigator.storage.persist();
+    if(granted){
+      showToast('✓ Dauerhafter Schutz aktiviert');
+      _startAutoSaveInterval();
+    } else {
+      showToast('⚠ Berechtigung nicht erteilt – bitte in Safari-Einstellungen prüfen');
+    }
+  }catch(e){
+    showToast('⚠ Nicht unterstützt auf diesem Gerät');
+  }
+}
+function _dismissPersistLater(){
+  document.getElementById('persist-sheet')?.remove();
+  // kein Flag setzen → wird bei nächster Session wieder gefragt
+}
+function _dismissPersistNever(){
+  document.getElementById('persist-sheet')?.remove();
+  localStorage.setItem('faez_persist_asked','no');
+}
+
+async function _updatePersistSettingsStatus(){
+  const el=document.getElementById('persist-settings-status');
+  if(!el) return;
+  if(!navigator.storage?.persisted){el.textContent='Nicht unterstützt auf diesem Gerät';return;}
+  try{
+    const ok=await navigator.storage.persisted();
+    const asked=localStorage.getItem('faez_persist_asked');
+    if(ok){el.textContent='✓ Aktiviert – iOS schützt diese Daten vor automatischer Löschung';}
+    else if(asked==='no'){el.textContent='Deaktiviert – hier erneut aktivieren';}
+    else{el.textContent='Noch nicht aktiviert – antippen zum Einrichten';}
+  }catch{el.textContent='Status nicht verfügbar';}
+}
+
+async function _openPersistSettings(){
+  await _updatePersistSettingsStatus();
+  if(!navigator.storage?.persist){showToast('⚠ Nicht unterstützt auf diesem Gerät');return;}
+  try{
+    const ok=await navigator.storage.persisted();
+    if(ok){
+      showToast('✓ Dauerhafter Schutz ist bereits aktiv');
+      return;
+    }
+  }catch{}
+  // Noch nicht aktiv → Dialog erneut zeigen (Flag ignorieren)
+  localStorage.removeItem('faez_persist_asked');
+  _showPersistDialog();
+}
+
 // ── Auto-Export / Backup-Tracking ──
 function _getUnsavedChanges(){return parseInt(localStorage.getItem('faez_unsaved_changes')||'0',10);}
 function _incrementUnsavedChanges(){localStorage.setItem('faez_unsaved_changes',String(_getUnsavedChanges()+1));_updateExportBanner();}
@@ -5566,6 +5687,8 @@ async function init(){
   updateHomeStats();
   renderRandomWords();
   _updateApiKeyStatus();
+  _initPersistentStorage().catch(()=>{});
+  _updatePersistSettingsStatus().catch(()=>{});
   document.addEventListener('touchstart',()=>{},{passive:true});
   // Auto-Export: beim Hintergrundlegen der App (visibilitychange) automatisch sichern
   document.addEventListener('visibilitychange',()=>{
