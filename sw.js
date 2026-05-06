@@ -1,4 +1,4 @@
-const CACHE = 'faez-v14';
+const CACHE = 'faez-v15';
 const KEY = () => self.registration.scope;
 
 self.addEventListener('install', e => {
