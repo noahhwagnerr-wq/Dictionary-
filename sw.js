@@ -1,4 +1,4 @@
-const CACHE = 'faez-v1';
+const CACHE = 'faez-v2';
 // Single canonical key for the app shell — avoids URL-mismatch issues
 // (iOS may request /Dictionary-/ or /Dictionary-/index.html interchangeably)
 const KEY = () => self.registration.scope;
