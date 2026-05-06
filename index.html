@@ -2555,14 +2555,7 @@ color:var(--accent3);
     </div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
-  <div class="settings-row" onclick="_openPersistSettings()">
-    <div class="settings-row-icon">💾</div>
-    <div class="settings-row-text">
-      <div class="settings-row-title">Automatisches Speichern</div>
-      <div class="settings-row-sub" id="persist-settings-status">Wird geprüft…</div>
-    </div>
-    <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-  </div>
+
   <div class="settings-row" onclick="openErrorFinder()">
     <div class="settings-row-icon">🔎</div>
     <div class="settings-row-text"><div class="settings-row-title">Fehlerfinder / بررسی خطاها</div><div class="settings-row-sub">Datensatz auf Fehler prüfen / خطاهای دیتاست را بررسی کنید</div></div>
@@ -2919,7 +2912,11 @@ window.addEventListener('unhandledrejection', function(ev){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
   navigator.serviceWorker.addEventListener('message', e => {
-    if(e.data === 'UPDATED'){ location.reload(); }
+    if(e.data === 'UPDATED'){
+      const sub=document.getElementById('update-row-sub');
+      if(sub) sub.textContent='App aktualisiert – tippe „Aktualisieren" zum Neuladen';
+      showToast('Update verfügbar – tippe „App aktualisieren"');
+    }
     if(e.data === 'UPDATE_FAILED'){
       const sub=document.getElementById('update-row-sub');
       if(sub) sub.textContent='Aktualisierung fehlgeschlagen — Netzwerk prüfen';
@@ -3017,25 +3014,21 @@ async function importFile(file){
     await dbSetMeta('imported_file',file.name);
     // Clear old favorite IDs — they refer to entries that no longer exist
     FAVS=new Set();await saveFavs();
-    await syncSnapshotFromDB();
-    await loadAllEntries();updateHomeStats();renderRandomWords();if(currentTab==='favorites')renderFavorites();const sv=document.getElementById('search-input').value.trim();if(sv)doSearch(sv);navHistory=['home'];
+    await loadAllEntries();_saveDictSnapshot();updateHomeStats();renderRandomWords();if(currentTab==='favorites')renderFavorites();const sv=document.getElementById('search-input').value.trim();if(sv)doSearch(sv);navHistory=['home'];
     setTimeout(()=>{pw.style.display='none';pf.style.width='0%';},2000);
     showToast(`✓ ${parsed.length.toLocaleString()} Wörter importiert!`);
   }catch(err){pt.textContent='Fehler: '+err.message;console.error(err);}
 }
 async function loadAllEntries(){
   DICT = await dbGetAll();
-  // localStorage is synchronous → more reliable than IDB on iOS PWA
-  // Use it as primary; fall back to IDB only when localStorage is empty (e.g. after reinstall)
+  // localStorage ist die einzige Quelle für Favoriten (synchron, zuverlässig)
+  // Kein IDB-Fallback – veraltete IDB-Daten könnten entfernte Favoriten zurückbringen
   try{
     const ls=localStorage.getItem('faez_favs');
     if(ls!==null){
       FAVS=new Set(JSON.parse(ls));
     } else {
-      // First run with new code: load from IDB and migrate immediately to localStorage
-      const dbFavs=await dbGetMeta('favorites')||[];
-      FAVS=new Set(dbFavs);
-      localStorage.setItem('faez_favs',JSON.stringify(dbFavs));
+      FAVS=new Set();
     }
   }catch{ FAVS=new Set(); }
   indexAllEntries();
@@ -3045,6 +3038,22 @@ async function saveFavs(){
   localStorage.setItem('faez_favs',JSON.stringify(arr));  // synchronous — survives iOS kill
   try{ await dbSetMeta('favorites',arr); }catch{}         // async backup
 }
+
+// ── Snapshot: DICT sofort in localStorage sichern ──
+function _saveDictSnapshot(){
+  try{
+    const clean = DICT.map(({gNorm,pNorm,fNorm,exDeNorm,exFaNorm,...e})=>e);
+    localStorage.setItem('faez_dict_snapshot', JSON.stringify(clean));
+  }catch(e){ /* localStorage voll – ignorieren */ }
+}
+function _loadDictSnapshot(){
+  try{
+    const s = localStorage.getItem('faez_dict_snapshot');
+    if(s) return JSON.parse(s);
+  }catch{}
+  return null;
+}
+
 
 // ── Navigation ──
 let navHistory=['home'];
@@ -3072,7 +3081,6 @@ function switchTab(name, options={}){
   if(name==='favorites')renderFavorites();
   if(name==='home')renderRandomWords();
   if(name==='quiz'&&!quizEntry)nextQuiz();
-  if(name==='settings')_updateAutoSyncSettingsStatus().catch(()=>{});
 }
 function goBack(){
   if(document.getElementById('edit-overlay').classList.contains('open')){closeEdit();return;}
@@ -3170,7 +3178,6 @@ function updateHomeStats(){
   const sfEl=document.getElementById('stat-favs'); if(sfEl) sfEl.textContent=FAVS.size;
   document.getElementById('home-entry-count').textContent=`${n.toLocaleString('de-DE')} واژه • Wörter`;
   const ac=document.getElementById('about-count');if(ac)ac.textContent=n.toLocaleString()+' واژه';
-  _updateExportBanner();
 }
 function renderRandomWords(){
   const el=document.getElementById('random-words');
@@ -3693,14 +3700,11 @@ async function saveNewWord(){
     // Read-after-write: Eintrag aus DB lesen um Schreiberfolg zu bestätigen
     const saved=await new Promise(res=>{const r=S('entries').get(newId);r.onsuccess=()=>res(r.result);r.onerror=()=>res(null);});
     if(!saved)throw new Error('Eintrag nach Speichern nicht in DB gefunden');
-    await syncSnapshotFromDB();
-    _incrementUnsavedChanges();
-    _autoSyncToFile().catch(()=>{});
     DICT.push(entry);
+    _saveDictSnapshot();
     closeAddWord();
     updateHomeStats();
     showToast(`✓ „${german}" hinzugefügt!`);
-    _askAutoSyncIfNeeded();
     const sv=document.getElementById('search-input').value;
     if(sv)doSearch(sv.trim());
   }catch(err){
@@ -3789,6 +3793,7 @@ function deleteCurrentEntry(){
     FAVS.delete(currentEntry.id);
     saveFavs();
     loadAllEntries().then(()=>{
+      _saveDictSnapshot();
       updateHomeStats();
       renderRandomWords();
       closeDetail();
@@ -4678,12 +4683,10 @@ async function saveEdit(force){
   enrichEntryForSearch(currentEntry);
   try{
     await dbPut(currentEntry);
-    await syncSnapshotFromDB();
-    _incrementUnsavedChanges();
-    _autoSyncToFile().catch(()=>{});
     const idx=DICT.findIndex(e=>e.id===currentEntry.id);
     if(idx>=0) DICT[idx]={...currentEntry};
     currentEntry=DICT.find(e=>e.id===currentEntry.id)||currentEntry;
+    _saveDictSnapshot();
     closeEdit();
     renderDetail();
     showToast('✓ Gespeichert -- ذخیره شد');
@@ -4698,9 +4701,6 @@ async function deleteEntry(){
   const deletedId=currentEntry.id;
   try{
     await dbDel(deletedId);
-    await syncSnapshotFromDB();
-    _incrementUnsavedChanges();
-    _autoSyncToFile().catch(()=>{});
     FAVS.delete(deletedId);
     await saveFavs();
     DICT=DICT.filter(e=>e.id!==deletedId);
@@ -4750,166 +4750,26 @@ document.addEventListener('paste', function(e) {
 // ── Persistente Speicherung (navigator.storage.persist) ──
 let _syncFileHandle = null;
 
-async function _initAutoSync(){
-  if(localStorage.getItem('faez_autosync_mode')==='file'){
-    try{
-      const handle=await dbGetMeta('autosync_handle');
-      if(handle){
-        const perm=await handle.queryPermission({mode:'readwrite'});
-        if(perm==='granted'){_syncFileHandle=handle;}
-        else{showToast('🔗 Datei-Sync unterbrochen – Einstellungen → Automatisches Speichern');}
-      }
-    }catch{}
-  }
-}
+async function _initAutoSync(){}
 
-function _askAutoSyncIfNeeded(){
-  if(localStorage.getItem('faez_autosync_asked')) return;
-  setTimeout(_showAutoSyncDialog, 900);
-}
+function _askAutoSyncIfNeeded(){}
 
-function _showAutoSyncDialog(){
-  if(document.getElementById('persist-sheet')) return;
-  const hasFilePicker=!!window.showSaveFilePicker;
-  const hasShare=!!(navigator.canShare||navigator.share);
-  const sheet=document.createElement('div');
-  sheet.id='persist-sheet';
-  let fileOpt;
-  if(hasFilePicker){
-    fileOpt=`<button class="persist-btn-primary" onclick="_pickSyncFile()">📁 Datei verknüpfen – automatisch synchronisieren</button>`;
-  } else if(hasShare){
-    fileOpt=`<button class="persist-btn-primary" onclick="_shareToFiles()">📤 In Dateien / iCloud speichern</button>`;
-  } else {
-    fileOpt='';
-  }
-  sheet.innerHTML=`<div id="persist-sheet-box">
-    <div class="persist-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#c2aaff"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-    <div class="persist-title">Automatisches Speichern</div>
-    <div class="persist-sub">Wie sollen Ihre Wörter dauerhaft gesichert werden?</div>
-    <div class="persist-btn-row">
-      ${fileOpt}
-      <button class="persist-btn-primary" style="background:rgba(124,95,230,.35);border:1px solid rgba(124,95,230,.5)" onclick="_confirmInternalPersist()">🛡 iOS-Schutz aktivieren (empfohlen)</button>
-      <button class="persist-btn-secondary" onclick="_dismissAutoSyncLater()">Später erinnern</button>
-      <button class="persist-btn-secondary" onclick="_dismissAutoSyncNever()">Nicht mehr fragen</button>
-    </div>
-  </div>`;
-  document.body.appendChild(sheet);
-}
+function _showAutoSyncDialog(){}
 
-async function _pickSyncFile(){
-  document.getElementById('persist-sheet')?.remove();
-  try{
-    const handle=await window.showSaveFilePicker({
-      suggestedName:'woerterbuch.lvtdeck',
-      types:[{description:'Wörterbuch-Datei',accept:{'text/plain':['.lvtdeck']}}]
-    });
-    _syncFileHandle=handle;
-    await dbSetMeta('autosync_handle',handle);
-    localStorage.setItem('faez_autosync_mode','file');
-    localStorage.setItem('faez_autosync_asked','yes');
-    await _autoSyncToFile();
-    navigator.storage?.persist().catch(()=>{});
-    showToast('✓ Datei verknüpft – wird bei jeder Änderung automatisch aktualisiert');
-    _updateAutoSyncSettingsStatus().catch(()=>{});
-  }catch(e){
-    if(e.name!=='AbortError') showToast('⚠ '+String(e.message||e).slice(0,55));
-  }
-}
+async function _pickSyncFile(){ exportData(); }
 
-async function _confirmInternalPersist(){
-  document.getElementById('persist-sheet')?.remove();
-  localStorage.setItem('faez_autosync_asked','yes');
-  localStorage.setItem('faez_autosync_mode','persist');
-  try{
-    const granted=await navigator.storage.persist();
-    if(granted){showToast('✓ iOS-Schutz aktiviert – Daten bleiben dauerhaft erhalten');}
-    else showToast('⚠ Berechtigung nicht erteilt – Safari-Einstellungen prüfen');
-  }catch{showToast('⚠ Nicht unterstützt auf diesem Gerät');}
-  _updateAutoSyncSettingsStatus().catch(()=>{});
-}
+async function _confirmInternalPersist(){}
 
 function _dismissAutoSyncLater(){ document.getElementById('persist-sheet')?.remove(); }
-function _dismissAutoSyncNever(){ document.getElementById('persist-sheet')?.remove(); localStorage.setItem('faez_autosync_asked','no'); }
+function _dismissAutoSyncNever(){ document.getElementById('persist-sheet')?.remove(); }
 
-async function _shareToFiles(){
-  // Web Share API: iOS-Teilen-Menü öffnet sich, Nutzer wählt Dateien / iCloud / Dropbox
-  document.getElementById('persist-sheet')?.remove();
-  try{
-    const all=await dbGetAll();
-    if(!all.length){showToast('⚠ Keine Daten zum Teilen');return;}
-    const text=serializeLvtDeck(all);
-    const fname='woerterbuch.lvtdeck';
-    const file=new File([text],fname,{type:'text/plain'});
-    if(navigator.canShare&&!navigator.canShare({files:[file]})){
-      // Fallback: normaler Download
-      exportData(); return;
-    }
-    await navigator.share({files:[file],title:'Wörterbuch-Backup'});
-    _resetUnsavedChanges();
-    localStorage.setItem('faez_autosync_asked','yes');
-    localStorage.setItem('faez_autosync_mode','share');
-    showToast('✓ Gespeichert');
-    _updateAutoSyncSettingsStatus().catch(()=>{});
-  }catch(e){
-    if(e.name!=='AbortError') showToast('⚠ '+String(e.message||e).slice(0,55));
-  }
-}
+async function _shareToFiles(){ exportData(); }
 
-async function _autoSyncToFile(){
-  if(!_syncFileHandle) return;
-  try{
-    const perm=await _syncFileHandle.queryPermission({mode:'readwrite'});
-    if(perm!=='granted') return;
-    const all=await dbGetAll();
-    const text=serializeLvtDeck(all);
-    const w=await _syncFileHandle.createWritable();
-    await w.write(text); await w.close();
-  }catch(e){ console.warn('Auto-Sync:',e); }
-}
+async function _autoSyncToFile(){}
 
-async function _updateAutoSyncSettingsStatus(){
-  const el=document.getElementById('persist-settings-status');
-  if(!el) return;
-  const mode=localStorage.getItem('faez_autosync_mode');
-  if(mode==='file'){
-    const handle=_syncFileHandle||(await dbGetMeta('autosync_handle').catch(()=>null));
-    if(handle){
-      const perm=await handle.queryPermission({mode:'readwrite'}).catch(()=>'unknown');
-      el.textContent=perm==='granted'?`✓ Datei-Sync aktiv: „${handle.name}"`:`⚠ Datei-Sync unterbrochen – antippen zum Neu verbinden`;
-    }else{el.textContent='Datei-Sync konfiguriert – Datei nicht gefunden';}
-    return;
-  }
-  if(mode==='share'){
-    el.textContent='✓ In Dateien / iCloud gespeichert – antippen zum erneuten Speichern';
-    return;
-  }
-  if(mode==='persist'&&navigator.storage?.persisted){
-    const ok=await navigator.storage.persisted().catch(()=>false);
-    el.textContent=ok?'✓ iOS-Schutz aktiv – Daten dauerhaft gesichert':'⚠ iOS-Schutz konfiguriert aber inaktiv'; return;
-  }
-  el.textContent=localStorage.getItem('faez_autosync_asked')==='no'?'Deaktiviert – antippen zum Einrichten':'Noch nicht konfiguriert – antippen';
-}
+async function _updateAutoSyncSettingsStatus(){}
 
-async function _openPersistSettings(){
-  await _updateAutoSyncSettingsStatus();
-  const mode=localStorage.getItem('faez_autosync_mode');
-  if(mode==='share'){ _shareToFiles(); return; }
-  if(mode==='file'){
-    try{
-      const handle=_syncFileHandle||(await dbGetMeta('autosync_handle'));
-      if(handle){
-        if((await handle.queryPermission({mode:'readwrite'}))==='granted'){showToast('✓ Datei-Sync ist bereits aktiv');return;}
-        const req=await handle.requestPermission({mode:'readwrite'});
-        if(req==='granted'){_syncFileHandle=handle;showToast('✓ Sync neu verbunden');}
-        else showToast('⚠ Berechtigung verweigert');
-        _updateAutoSyncSettingsStatus().catch(()=>{});
-        return;
-      }
-    }catch{}
-  }
-  localStorage.removeItem('faez_autosync_asked');
-  _showAutoSyncDialog();
-}
+async function _openPersistSettings(){ exportData(); }
 
 // ── Auto-Export / Backup-Tracking ──
 function _incrementUnsavedChanges(){}
@@ -4936,8 +4796,7 @@ async function exportData(){
   a.download='woerterbuch.lvtdeck';
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  _resetUnsavedChanges();
-  showToast(`✓ ${all.length} Wörter exportiert`);
+    showToast(`✓ ${all.length} Wörter exportiert`);
 }
 async function clearAllData(){
   if(!confirm('Alle Daten wirklich löschen?')) return;
@@ -5277,34 +5136,9 @@ function isValidGermanHeadword(value){
 }
 
 
-function getSerializableEntries(list){
-  return (Array.isArray(list)?list:[]).map(e=>({
-    ...(e.id!=null?{id:e.id}:{}),
-    g:String(e?.g||'').trim(),
-    p:String(e?.p||'').trim(),
-    f:Array.isArray(e?.f)?e.f.map(x=>String(x||'').trim()).filter(Boolean):[],
-    ex:Array.isArray(e?.ex)?e.ex.map(x=>({de:String(x?.de||'').trim(),fa:String(x?.fa||'').trim()})).filter(x=>x.de&&x.fa):[],
-    ...(e.wordType?{wordType:String(e.wordType)}:{}),
-    ...(e.sch?{sch:String(e.sch)}:{})
-  })).filter(e=>e.g&&e.p);
-}
-async function syncSnapshotFromDB(){
-  try{localStorage.setItem('faez_dict_snapshot',JSON.stringify(getSerializableEntries(await dbGetAll())));}catch{}
-}
-async function restoreSnapshotIfNeeded(){
-  try{
-    const current=await dbGetAll();
-    if(current.length)return false;
-    const raw=localStorage.getItem('faez_dict_snapshot');
-    if(!raw)return false;
-    const data=getSerializableEntries(JSON.parse(raw));
-    if(!data.length)return false;
-    const t=db.transaction('entries','readwrite'),s=t.objectStore('entries');
-    data.forEach(e=>s.add(e));
-    await new Promise((res,rej)=>{t.oncomplete=res;t.onerror=rej;});
-    return true;
-  }catch(err){console.error('restoreSnapshotIfNeeded',err);return false;}
-}
+function getSerializableEntries(list){ return Array.isArray(list)?list:[];  }
+async function syncSnapshotFromDB(){}
+async function restoreSnapshotIfNeeded(){ return false; }
 function serializeLvtDeck(entries){
   const lines=['Deutsch\tPERSIAN'];
   (Array.isArray(entries)?entries:[]).forEach(e=>{
@@ -5345,6 +5179,7 @@ function deleteCurrentEntry(){
     FAVS.delete(currentEntry.id);
     saveFavs();
     loadAllEntries().then(()=>{
+      _saveDictSnapshot();
       updateHomeStats();
       renderRandomWords();
       closeDetail();
@@ -5558,7 +5393,6 @@ NUR JSON, kein Markdown:
 
     entry.ex.splice(fieldIdx+1,0,...newEx);
     await dbPut(entry);
-    await syncSnapshotFromDB();
     const dictIdx=DICT.findIndex(e=>e.id===entryId);
     if(dictIdx>=0)DICT[dictIdx]={...entry};
     if(currentEntry&&currentEntry.id===entryId)currentEntry={...entry};
@@ -5672,7 +5506,6 @@ NUR JSON, kein Markdown:
 
     entry.ex=[...(entry.ex||[]),...newEx];
     await dbPut(entry);
-    await syncSnapshotFromDB();
     const dictIdx=DICT.findIndex(e=>e.id===entryId);
     if(dictIdx>=0)DICT[dictIdx]={...entry};
     if(currentEntry&&currentEntry.id===entryId)currentEntry={...entry};
@@ -5734,32 +5567,46 @@ document.getElementById('search-results').addEventListener('touchend', function(
 });
 
 // ── Init ──
+let _appInitialized = false;
 async function init(){
+  if(_appInitialized) return;   // Verhindert erneutes Laden beim Wiederöffnen
+  _appInitialized = true;
+
+  // ── Sofort-Wiederherstellung aus localStorage-Snapshot (synchron, 0ms) ──
+  const snap = _loadDictSnapshot();
+  if(snap && snap.length > 0){
+    DICT = snap;
+    indexAllEntries();
+    try{
+      const ls=localStorage.getItem('faez_favs');
+      FAVS = ls ? new Set(JSON.parse(ls)) : new Set();
+    }catch{ FAVS=new Set(); }
+    updateHomeStats();
+    renderRandomWords();   // sofortige Anzeige ohne Wartezeit
+  }
+
+  // ── IDB im Hintergrund laden (aktualisiert falls nötig) ──
   try {
     await openDB();
-    await restoreSnapshotIfNeeded();
     await loadAllEntries();
   } catch(err) {
     console.error('Init-Fehler (DB):', err);
   }
+  _saveDictSnapshot();   // Snapshot nach IDB-Last aktualisieren
   updateHomeStats();
   renderRandomWords();
   _updateApiKeyStatus();
-  _initAutoSync().catch(()=>{});
-  _updatePersistSettingsStatus().catch(()=>{});
   document.addEventListener('touchstart',()=>{},{passive:true});
-  // Beim Hintergrundlegen: Snapshot + Datei-Sync (kein setInterval – würde iOS-Freeze verhindern)
+  // Beim Hintergrundlegen: Favoriten in localStorage sichern
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){
       try{ localStorage.setItem('faez_favs',JSON.stringify([...FAVS])); }catch{}
-      syncSnapshotFromDB().catch(()=>{});
-      _autoSyncToFile().catch(()=>{});
+      _saveDictSnapshot();
     }
   });
   window.addEventListener('pagehide',()=>{
     try{ localStorage.setItem('faez_favs',JSON.stringify([...FAVS])); }catch{}
-    syncSnapshotFromDB().catch(()=>{});
-    _autoSyncToFile().catch(()=>{});
+    _saveDictSnapshot();
   });
 }
 
@@ -7237,7 +7084,6 @@ async function _moveExConfirm(targetId){
     target.ex.push({de,fa});
     enrichEntryForSearch(target);
     await dbPut(target);
-    await syncSnapshotFromDB();
     const ti=DICT.findIndex(e=>e.id===targetId);
     if(ti>=0)DICT[ti]={...target};
   }
