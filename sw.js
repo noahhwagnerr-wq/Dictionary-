@@ -1,4 +1,4 @@
-const CACHE = 'faez-v4';
+const CACHE = 'faez-v5';
 const KEY = () => self.registration.scope;
 
 self.addEventListener('install', e => {
@@ -18,9 +18,18 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Cache-first: app opens instantly from local cache, no network on every start
+// Cache-first for the app HTML.
+// Match by URL path instead of e.request.mode — more reliable on iOS PWA.
 self.addEventListener('fetch', e => {
-  if (e.request.mode !== 'navigate') return;
+  const url = new URL(e.request.url);
+  const scope = new URL(self.registration.scope);
+  const isAppShell =
+    url.origin === scope.origin &&
+    (url.pathname === scope.pathname ||
+     url.pathname === scope.pathname + 'index.html' ||
+     url.pathname === scope.pathname.replace(/\/$/, ''));
+  if (!isAppShell) return;
+
   e.respondWith(
     caches.open(CACHE).then(c =>
       c.match(KEY()).then(cached => {
