@@ -4333,11 +4333,16 @@ SCHRITT 1 -- WORTART BESTIMMEN (POS-TAGGING) ← IMMER ZUERST!
 Bestimme ZUERST die Wortart von "${word}", BEVOR du irgendwelche Fehler oder Formen prüfst!
 
 WORTART-REGELN:
-- GROSSSCHREIBUNGS-REGEL (ABSOLUTE PRIORITÄT): Beginnt das Wort mit einem GROSSBUCHSTABEN?
-  → Es ist ein deutsches Nomen (Substantiv) – auch englische/fremdsprachige Lehnwörter!
+- GROSSSCHREIBUNGS-REGEL (HOHE PRIORITÄT): Beginnt das Wort mit einem GROSSBUCHSTABEN?
+  → In der Regel ein deutsches Nomen (Substantiv) – auch englische/fremdsprachige Lehnwörter!
   → Beispiele: Card → Nomen (die Card), Party → Nomen (die Party), Team → Nomen (das Team),
      Computer → Nomen (der Computer), Baby → Nomen (das Baby), Manager → Nomen (der Manager)
   → TYPE = "nomen", Singular und Plural mit Artikel bestimmen
+  ⚠ AUSNAHMEN (KEIN Nomen, trotz Großschreibung):
+  → Reduplikationen / Lallwörter: Pillepalle, Wirrwarr, Mischmasch, Schnickschnack, Krimskrams,
+     Tingeltangel, Zickzack, Klimbim, Firlefanz, Tamtam, Tohuwabohu → TYPE = "other"
+  → Wenn kein sinnvoller Artikel (der/die/das) zugewiesen werden kann → KEIN Nomen!
+  → Typische Tests: Macht "der/die/das ${Wort}" grammatikalisch Sinn? Nein → kein Nomen
 - Endet auf -en/-eln/-ern UND ist ein bekanntes deutsches Verb? → TYPE = "verb", Infinitiv ist korrekt
 - Typische Verben im Infinitiv: laufen, spielen, grauen, lächeln, schreiben, lieben, grüßen
 - SONDER-REGEL: Wörter die als Verb UND Nomen existieren (grauen, laufen, schreiben):
