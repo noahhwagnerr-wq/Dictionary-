@@ -2436,7 +2436,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-06b</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-06c</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2951,6 +2951,8 @@ let DICT=[],FAVS=new Set(),currentEntry=null,quizEntry=null,quizFlipped=false,se
 
 // ── Parse ──
 function parseLvtDeck(text){
+  // Strip BOM if present (iOS sometimes adds \uFEFF)
+  if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
   const lines=text.split('\n'),entries=[],isFA=s=>/[\u0600-\u06FF]/.test(s);
   let start=0;
   for(let i=0;i<Math.min(5,lines.length);i++){const p=lines[i].split('\t');if(p[0]&&(p[0].trim()==='Deutsch'||p[0].trim()==='PERSIAN'))start=i+1;}
@@ -2989,12 +2991,20 @@ function handleFileSelect(e){const f=e.target.files[0];if(f)importFile(f);}
 function handleDrop(e){e.preventDefault();document.getElementById('import-zone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)importFile(f);}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function importFile(file){
+  // Reset file input so same file can be selected again later
+  const fi=document.getElementById('file-input');if(fi)fi.value='';
   const pw=document.getElementById('progress-wrap'),pf=document.getElementById('progress-fill'),pt=document.getElementById('progress-text');
   pw.style.display='block';pf.style.width='10%';pt.textContent='Datei wird gelesen...';
   try{
     const text=await file.text();
     pf.style.width='30%';pt.textContent='Datei wird analysiert...';await sleep(50);
     const parsed=parseLvtDeck(text);
+    if(!parsed.length){
+      pt.textContent='⚠ Keine Wörter gefunden – Dateiformat prüfen';
+      showToast('⚠ Import fehlgeschlagen: keine Wörter erkannt');
+      setTimeout(()=>{pw.style.display='none';pf.style.width='0%';},3000);
+      return;
+    }
     pf.style.width='60%';pt.textContent=`${parsed.length.toLocaleString()} Wörter gefunden...`;await sleep(50);
     await dbClear();pf.style.width='70%';pt.textContent='Speichern...';
     const CHUNK=500;
@@ -3009,6 +3019,8 @@ async function importFile(file){
     }
     pf.style.width='100%';pt.textContent='Fertig! ✓';
     await dbSetMeta('imported_file',file.name);
+    // Clear old favorite IDs — they refer to entries that no longer exist
+    FAVS=new Set();await saveFavs();
     await syncSnapshotFromDB();
     await loadAllEntries();updateHomeStats();renderRandomWords();if(currentTab==='favorites')renderFavorites();const sv=document.getElementById('search-input').value.trim();if(sv)doSearch(sv);navHistory=['home'];
     setTimeout(()=>{pw.style.display='none';pf.style.width='0%';},2000);
@@ -3885,23 +3897,29 @@ function toggleFavFromDetail(){if(!currentEntry)return;toggleFav(currentEntry.id
 
 // ── Favorites ──
 async function toggleFav(id){
+  if(id==null){showToast('⚠ Interner Fehler: Eintrag ohne ID');return;}
   if(FAVS.has(id)) FAVS.delete(id); else FAVS.add(id);
-  await saveFavs();
+  // Optimistic UI update — do this before save so star responds instantly
   updateHomeStats();
   document.querySelectorAll('.fav-btn').forEach(btn=>{
     const card=btn.closest('.word-card');
-    if(card&&card.getAttribute('onclick')&&card.getAttribute('onclick').includes(`${id}`)){
+    if(card&&card.getAttribute('onclick')&&card.getAttribute('onclick').includes(`toggleFav(${id})`)){
       btn.classList.toggle('active',FAVS.has(id));
       btn.innerHTML=starSVG(FAVS.has(id));
     }
   });
   if(document.getElementById('detail-overlay').classList.contains('open') && currentEntry && currentEntry.id===id){
     const fb=document.getElementById('detail-fav-btn');
-    fb.className='icon-btn'+(FAVS.has(id)?' gold':'');
-    fb.innerHTML=starSVG(FAVS.has(id));
+    if(fb){fb.className='icon-btn'+(FAVS.has(id)?' gold':'');fb.innerHTML=starSVG(FAVS.has(id));}
   }
   if(currentTab==='favorites') renderFavorites();
   if(currentTab==='quiz') updateQuizFavBtn();
+  try{
+    await saveFavs();
+  }catch(err){
+    showToast('⚠ Favorit konnte nicht gespeichert werden: '+err.message);
+    console.error('saveFavs error',err);
+  }
 }
 function renderFavorites(){
   const favs=DICT.filter(e=>FAVS.has(e.id)).sort((a,b)=>String(a.g||'').localeCompare(String(b.g||''),'de'));
