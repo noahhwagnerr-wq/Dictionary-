@@ -2436,7 +2436,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-07b</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-07c</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2555,7 +2555,14 @@ color:var(--accent3);
     </div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
-
+  <div class="settings-row" onclick="_openPersistSettings()">
+    <div class="settings-row-icon">💾</div>
+    <div class="settings-row-text">
+      <div class="settings-row-title">Automatisches Speichern</div>
+      <div class="settings-row-sub" id="persist-settings-status">Wird geprüft…</div>
+    </div>
+    <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
   <div class="settings-row" onclick="openErrorFinder()">
     <div class="settings-row-icon">🔎</div>
     <div class="settings-row-text"><div class="settings-row-title">Fehlerfinder / بررسی خطاها</div><div class="settings-row-sub">Datensatz auf Fehler prüfen / خطاهای دیتاست را بررسی کنید</div></div>
@@ -2912,16 +2919,66 @@ window.addEventListener('unhandledrejection', function(ev){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
   navigator.serviceWorker.addEventListener('message', e => {
-    if(e.data === 'UPDATED'){
-      const sub=document.getElementById('update-row-sub');
-      if(sub) sub.textContent='App aktualisiert – neu laden';
-      showToast('✓ Update geladen – tippe „App aktualisieren"');
-    }
+    if(e.data === 'UPDATED'){ location.reload(); }
     if(e.data === 'UPDATE_FAILED'){
-      showToast('⚠ Aktualisierung fehlgeschlagen', 'error');
+      const sub=document.getElementById('update-row-sub');
+      if(sub) sub.textContent='Aktualisierung fehlgeschlagen — Netzwerk prüfen';
+      showToast('⚠ Aktualisierung fehlgeschlagen — Netzwerk prüfen');
     }
   });
 }
+
+// ── IndexedDB ──
+let db=null;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('WoerterbuchDB',2);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('entries'))d.createObjectStore('entries',{keyPath:'id',autoIncrement:true}).createIndex('german','g',{unique:false});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'key'});};r.onsuccess=e=>{db=e.target.result;res(db);};r.onerror=rej;});}
+const S=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
+// Entfernt berechnete Such-Felder vor dem DB-Schreiben (werden beim Laden neu berechnet)
+function _dbClean(e){const{_gNorm,_pNorm,_fNorm,_exDeNorm,_exFaNorm,...clean}=e;return clean;}
+function dbGetAll(){return new Promise((res,rej)=>{const r=S('entries').getAll();r.onsuccess=()=>res(r.result);r.onerror=ev=>rej(ev.target.error);});}
+function dbPut(e){return new Promise((res,rej)=>{const r=S('entries','readwrite').put(_dbClean(e));r.onsuccess=()=>res(r.result);r.onerror=ev=>rej(ev.target.error);});}
+function dbAdd(e){return new Promise((res,rej)=>{const r=S('entries','readwrite').add(_dbClean(e));r.onsuccess=()=>res(r.result);r.onerror=ev=>rej(ev.target.error);});}
+function dbDel(id){return new Promise((res,rej)=>{const r=S('entries','readwrite').delete(id);r.onsuccess=()=>res();r.onerror=ev=>rej(ev.target.error);});}
+function dbClear(){return new Promise((res,rej)=>{const r=S('entries','readwrite').clear();r.onsuccess=()=>{try{localStorage.setItem('faez_dict_snapshot','[]');}catch{}res();};r.onerror=ev=>rej(ev.target.error);});}
+function dbGetMeta(k){return new Promise(res=>{const r=S('meta').get(k);r.onsuccess=()=>res(r.result?r.result.val:null);r.onerror=()=>res(null);});}
+function dbSetMeta(k,v){return new Promise((res,rej)=>{const r=S('meta','readwrite').put({key:k,val:v});r.onsuccess=res;r.onerror=rej;});}
+
+// ── State ──
+let DICT=[],FAVS=new Set(),currentEntry=null,quizEntry=null,quizFlipped=false,searchDir='de-fa',currentTab='home',pendingAddWord='';
+
+// ── Parse ──
+function parseLvtDeck(text){
+  // Strip BOM if present (iOS sometimes adds \uFEFF)
+  if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+  const lines=text.split('\n'),entries=[],isFA=s=>/[\u0600-\u06FF]/.test(s);
+  let start=0;
+  for(let i=0;i<Math.min(5,lines.length);i++){const p=lines[i].split('\t');if(p[0]&&(p[0].trim()==='Deutsch'||p[0].trim()==='PERSIAN'))start=i+1;}
+  for(let li=start;li<lines.length;li++){
+    const line=lines[li];if(!line.trim())continue;
+    const parts=line.split('\t');if(parts.length<2)continue;
+    const g=parts[0].trim(),raw=parts[1].trim();if(!g||!raw)continue;
+    const wordType=parts[2]?parts[2].trim():'';
+    const sch=parts[3]?parts[3].replace(/&NL182/g,'\n').trim():'';
+    const subs=raw.split('&B6182').map(s=>s.trim()).filter(Boolean);
+    let mainFA='';const forms=[],ex=[];
+    for(let i=0;i<subs.length;i++){
+      const s=subs[i];
+      if(isFA(s)){
+        if(!mainFA){mainFA=s;}else if(i>0&&!isFA(subs[i-1])){ex.push({de:subs[i-1],fa:s});}
+      }else{
+        if(i>=1&&i<=3&&s.length<50&&!/[.!?,;()]/.test(s)&&s!==g){
+          const sl=s.toLowerCase();
+          const isInflection=(sl.startsWith('hat ')||sl.startsWith('ist ')||sl.startsWith('haben ')||sl.startsWith('sein ')||sl.startsWith('sind ')||sl.startsWith('wurde')||(sl.startsWith('die ')||sl.startsWith('der ')||sl.startsWith('das '))&&s.toLowerCase().includes(g.toLowerCase().slice(0,4)));
+          if(isInflection)forms.push(s);
+        }
+      }
+    }
+    if(mainFA){
+      const entry={g,p:mainFA,f:forms.slice(0,3),ex:ex.slice(0,5)};
+      if(wordType)entry.wordType=wordType;
+      if(sch)entry.sch=sch;
+      entries.push(entry);
+    }
+  }
   return entries;
 }
 
@@ -4266,14 +4323,12 @@ Bestimme ZUERST die Wortart von "${word}", BEVOR du irgendwelche Fehler oder For
 WORTART-REGELN:
 - GROSSSCHREIBUNGS-REGEL (ABSOLUTE PRIORITÄT): Beginnt das Wort mit einem GROSSBUCHSTABEN?
   → Es ist ein deutsches Nomen (Substantiv) – KEINE AUSNAHMEN!
-  → Gilt auch für: Lehnwörter, Anglizismen, Umgangssprache, Slang, Lautmalerei, Klangnachahmungen
-  → Gilt auch für: Reduplikationen, zusammengesetzte Ausdrücke, Phantasiewörter
-  → Beispiele bekannter Nomen: Card (die Card), Party (die Party), Computer (der Computer)
-  → Beispiele umgangssprachlicher Nomen: Pillepalle (das Pillepalle), Wirrwarr (das Wirrwarr),
-     Mischmasch (der Mischmasch), Schnickschnack (der Schnickschnack), Kuddelmuddel (das Kuddelmuddel),
-     Tamtam (das Tamtam), Tohuwabohu (das Tohuwabohu), Firlefanz (der Firlefanz)
-  → MERKSATZ: Jedes großgeschriebene deutsche Wort ist ein Nomen – ausnahmslos!
-  → TYPE = "nomen", Artikel (der/die/das) und Pluralform bestimmen
+  → Gilt auch für: Umgangssprache, Slang, Reduplikationen, Phantasiewörter
+  → Beispiele: Card (die Card), Party (die Party), Computer (der Computer)
+  → Umgangssprachliche Nomen: Pillepalle (das Pillepalle), Wirrwarr (das Wirrwarr),
+     Mischmasch (der Mischmasch), Schnickschnack (der Schnickschnack)
+  → MERKSATZ: Jedes großgeschriebene Wort ist ein Nomen – ausnahmslos!
+  → TYPE = "nomen", Artikel und Pluralform bestimmen
 - Endet auf -en/-eln/-ern UND ist ein bekanntes deutsches Verb? → TYPE = "verb", Infinitiv ist korrekt
 - Typische Verben im Infinitiv: laufen, spielen, grauen, lächeln, schreiben, lieben, grüßen
 - SONDER-REGEL: Wörter die als Verb UND Nomen existieren (grauen, laufen, schreiben):
@@ -4307,7 +4362,7 @@ SCHRITT 2 -- WORTART BESTIMMEN
 - "adverb"      : Umstandswörter ohne Steigerung (oft, sehr, gern, hier, dort…)
 - "pronomen"    : Fürwörter (ich, mein, wer, jemand…)
 - "abkuerzung"  : Abkürzungen und Akronyme (ICE, BMW, BRD, WHO, z.B., etc., usw., GmbH…)
-- "other"       : Alles Sonstige – NUR für kleingeschriebene Wörter die in keine andere Kategorie passen! Großgeschriebene Wörter sind IMMER Nomen!
+- "other"       : Alles Sonstige
 
 GRAMMATIKREGELN Partizip II:
 1. Verben auf -IEREN: KEIN ge-Präfix
@@ -4561,7 +4616,7 @@ function _initExDrag(listId) {
 function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutscher Satz..." value="${esc(de)}"><input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-promote-btn" onclick="promoteExToEntry(this)" title="Als neuen Eintrag übernehmen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button><button class="ex-move-btn" onclick="_openMoveEx(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg></button><button class="ex-del-btn" onclick="removeExRow(this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`;}
 function addExRow(){const list=document.getElementById('edit-examples-list');const i=list.children.length;list.insertAdjacentHTML('beforeend',exRowHTML(i,'',''));const r=list.lastElementChild;r.scrollIntoView({behavior:'smooth',block:'nearest'});r.querySelector('.ex-row-de').focus();}
 function removeExRow(btn){btn.closest('.ex-row').remove();}
-function promoteExToEntry(btn) {
+async function promoteExToEntry(btn) {
   const row = btn.closest('.ex-row');
   if (!row) return;
   const de = (row.querySelector('.ex-row-de')?.value || '').trim();
