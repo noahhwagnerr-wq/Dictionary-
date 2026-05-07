@@ -2,12 +2,7 @@ const CACHE = 'faez-v18';
 const KEY = () => self.registration.scope;
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    fetch(KEY(), { cache: 'no-cache' })
-      .then(r => { if (r.ok) return caches.open(CACHE).then(c => c.put(KEY(), r)); })
-      .catch(() => {})
-      .then(() => self.skipWaiting())
-  );
+  e.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', e => {
@@ -18,8 +13,7 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Cache-first for the app HTML.
-// Match by URL path instead of e.request.mode — more reliable on iOS PWA.
+// Network-first: immer frisch laden, Cache nur als Offline-Fallback
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   const scope = new URL(self.registration.scope);
@@ -31,32 +25,23 @@ self.addEventListener('fetch', e => {
   if (!isAppShell) return;
 
   e.respondWith(
-    caches.open(CACHE).then(c =>
-      c.match(KEY()).then(cached => {
-        if (cached) return cached;
-        return fetch(e.request).then(r => {
-          if (r.ok) c.put(KEY(), r.clone());
-          return r;
-        });
+    fetch(e.request, { cache: 'no-cache' })
+      .then(r => {
+        if (r.ok) {
+          const clone = r.clone();
+          caches.open(CACHE).then(c => c.put(KEY(), clone));
+        }
+        return r;
       })
-    )
+      .catch(() => caches.open(CACHE).then(c => c.match(KEY())))
   );
 });
 
-// FORCE_UPDATE: fetch latest HTML → update cache → tell page to reload
+// FORCE_UPDATE: Seite neu laden
 self.addEventListener('message', e => {
   if (e.data !== 'FORCE_UPDATE') return;
   e.waitUntil(
-    fetch(KEY(), { cache: 'reload' })
-      .then(r => {
-        if (!r.ok) throw new Error('network error');
-        return caches.open(CACHE).then(c => c.put(KEY(), r));
-      })
-      .then(() => self.clients.matchAll({ type: 'window' }))
+    self.clients.matchAll({ type: 'window' })
       .then(clients => clients.forEach(c => c.postMessage('UPDATED')))
-      .catch(() =>
-        self.clients.matchAll({ type: 'window' })
-          .then(clients => clients.forEach(c => c.postMessage('UPDATE_FAILED')))
-      )
   );
 });
