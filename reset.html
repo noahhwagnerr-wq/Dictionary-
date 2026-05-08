@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App Reset</title>
+<style>
+  body { background:#080618; color:#fff; font-family:sans-serif; 
+         display:flex; flex-direction:column; align-items:center; 
+         justify-content:center; min-height:100vh; gap:20px; padding:20px; text-align:center; }
+  h2 { color:#7c5fe6; }
+  p  { color:#aaa; font-size:14px; line-height:1.6; }
+  button { background:linear-gradient(135deg,#7c5fe6,#4f9eff); color:#fff;
+           border:none; border-radius:14px; padding:16px 32px;
+           font-size:16px; font-weight:700; cursor:pointer; width:100%; max-width:300px; }
+  #status { color:#2dd4a0; font-size:13px; min-height:20px; }
+</style>
+</head>
+<body>
+<h2>🔄 App Reset</h2>
+<p>Diese Seite löscht den defekten Cache und startet die App neu.</p>
+<button onclick="doReset()">Cache löschen & App neu starten</button>
+<div id="status"></div>
+<script>
+async function doReset() {
+  const st = document.getElementById('status');
+  st.textContent = 'Service Worker wird deregistriert…';
+  try {
+    // Alle Service Worker deregistrieren
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of regs) { await reg.unregister(); }
+      st.textContent = regs.length + ' Service Worker entfernt…';
+    }
+    // Alle Caches löschen
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+    st.textContent = '✅ Cache geleert! Weiterleitung…';
+    setTimeout(() => { window.location.href = './'; }, 1200);
+  } catch(e) {
+    st.textContent = 'Fehler: ' + e.message + ' — manuell neu laden';
+  }
+}
+</script>
+</body>
+</html>
