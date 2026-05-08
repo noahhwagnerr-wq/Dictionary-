@@ -2442,7 +2442,7 @@ color:var(--accent3);
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
   <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-07k</div>
 </div>
-<button class="quick-search-btn" onclick="switchTab('search')">
+<button class="quick-search-btn" onclick="switchTab('search')" ontouchend="event.preventDefault();switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   جستجو / Suchen
 </button>
@@ -2471,7 +2471,7 @@ color:var(--accent3);
 <div class="search-input-wrap">
   <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
   <input class="search-input" id="search-input" type="text" placeholder="Ein Wort eingeben..." autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" oninput="onSearch(this.value)">
-  <button class="search-clear" id="search-clear" onclick="clearSearch()">
+  <button class="search-clear" id="search-clear" onclick="clearSearch()" ontouchend="event.preventDefault();clearSearch()">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
 </div>
@@ -2500,14 +2500,14 @@ color:var(--accent3);
     <div class="sub-header-title">مرور واژه</div>
   </div>
   <div class="quiz-page">
-    <div class="quiz-card" id="quiz-card" onclick="flipQuiz()">
+    <div class="quiz-card" id="quiz-card" onclick="flipQuiz()" ontouchend="event.preventDefault();flipQuiz()">
       <div class="quiz-lang-label" id="quiz-lang">Deutsch</div>
       <div class="quiz-word" id="quiz-word">--</div>
       <div class="quiz-hint" id="quiz-hint">برای دیدن ترجمه ضربه بزن</div>
     </div>
     <div class="quiz-actions">
-      <button class="btn btn-cancel" id="quiz-fav-btn" onclick="quizToggleFav()" style="flex:0.6">☆</button>
-      <button class="btn btn-primary" onclick="nextQuiz()">واژه بعدی ⟶</button>
+      <button class="btn btn-cancel" id="quiz-fav-btn" onclick="quizToggleFav()" ontouchend="event.preventDefault();quizToggleFav()" style="flex:0.6">☆</button>
+      <button class="btn btn-primary" onclick="nextQuiz()" ontouchend="event.preventDefault();nextQuiz()">واژه بعدی ⟶</button>
     </div>
   </div>
 </div>
@@ -2537,7 +2537,7 @@ color:var(--accent3);
 
 <div class="settings-section">
   <div class="settings-label">KI-Einstellungen</div>
-  <div class="settings-row" onclick="promptForApiKey()">
+  <div class="settings-row" onclick="promptForApiKey()" ontouchend="event.preventDefault();promptForApiKey()">
     <div class="settings-row-icon">✨</div>
     <div class="settings-row-text">
       <div class="settings-row-title">KI API-Keys</div>
@@ -2551,7 +2551,7 @@ color:var(--accent3);
 
 <div class="settings-section">
   <div class="settings-label">Daten</div>
-  <div class="settings-row" onclick="document.getElementById('file-input').click()">
+  <div class="settings-row" onclick="document.getElementById('file-input').click()" ontouchend="event.preventDefault();document.getElementById('file-input').click()">
     <div class="settings-row-icon">📂</div>
     <div class="settings-row-text">
       <div class="settings-row-title">Daten importieren</div>
@@ -2559,7 +2559,7 @@ color:var(--accent3);
     </div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
-  <div class="settings-row" onclick="_openPersistSettings()">
+  <div class="settings-row" onclick="_openPersistSettings()" ontouchend="event.preventDefault();_openPersistSettings()">
     <div class="settings-row-icon">💾</div>
     <div class="settings-row-text">
       <div class="settings-row-title">Automatisches Speichern</div>
@@ -2567,19 +2567,19 @@ color:var(--accent3);
     </div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
-  <div class="settings-row" onclick="openErrorFinder()">
+  <div class="settings-row" onclick="openErrorFinder()" ontouchend="event.preventDefault();openErrorFinder()">
     <div class="settings-row-icon">🔎</div>
     <div class="settings-row-text"><div class="settings-row-title">Fehlerfinder / بررسی خطاها</div><div class="settings-row-sub">Datensatz auf Fehler prüfen / خطاهای دیتاست را بررسی کنید</div></div>
     <svg class="settings-row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
-  <div class="settings-row" onclick="clearAllData()">
+  <div class="settings-row" onclick="clearAllData()" ontouchend="event.preventDefault();clearAllData()">
     <div class="settings-row-icon">🗑</div>
     <div class="settings-row-text"><div class="settings-row-title" style="color:var(--red)">Alle Daten löschen</div><div class="settings-row-sub">همه چیز پاک می‌شود</div></div>
   </div>
 </div>
 <div class="settings-section">
   <div class="settings-label">App</div>
-  <div class="settings-row" onclick="_forceUpdate()">
+  <div class="settings-row" onclick="_forceUpdate()" ontouchend="event.preventDefault();_forceUpdate()">
     <div class="settings-row-icon">🔄</div>
     <div class="settings-row-text">
       <div class="settings-row-title">App aktualisieren</div>
@@ -2596,23 +2596,23 @@ color:var(--accent3);
 <!-- ██ TAB BAR ██ -->
 
 <div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('home')" id="tab-home">
+  <button class="tab-btn active" onclick="switchTab('home')" ontouchend="event.preventDefault();switchTab('home')" id="tab-home">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>خانه</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('search')" id="tab-search">
+  <button class="tab-btn" onclick="switchTab('search')" ontouchend="event.preventDefault();switchTab('search')" id="tab-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <span>جستجو</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('favorites')" id="tab-favorites">
+  <button class="tab-btn" onclick="switchTab('favorites')" ontouchend="event.preventDefault();switchTab('favorites')" id="tab-favorites">
     <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     <span>علاقه‌مندی</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('quiz')" id="tab-quiz">
+  <button class="tab-btn" onclick="switchTab('quiz')" ontouchend="event.preventDefault();switchTab('quiz')" id="tab-quiz">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     <span>مرور</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">
+  <button class="tab-btn" onclick="switchTab('settings')" ontouchend="event.preventDefault();switchTab('settings')" id="tab-settings">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     <span>تنظیمات</span>
   </button>
@@ -2623,7 +2623,7 @@ color:var(--accent3);
 
 <div class="overlay" id="detail-overlay">
   <div class="overlay-header">
-    <button class="back-link" onclick="closeDetail()">
+    <button class="back-link" onclick="closeDetail()" ontouchend="event.preventDefault();closeDetail()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <div class="overlay-title" id="detail-overlay-title"></div>
@@ -2638,7 +2638,7 @@ color:var(--accent3);
   <div class="edit-header">
 
 <div class="edit-header-title">ویرایش واژه</div>
-<button class="icon-btn" style="background:rgba(248,113,113,0.12);color:var(--red)" onclick="deleteEntry()">
+<button class="icon-btn" style="background:rgba(248,113,113,0.12);color:var(--red)" onclick="deleteEntry()" ontouchend="event.preventDefault();deleteEntry()">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
 </button>
 
@@ -2670,7 +2670,7 @@ color:var(--accent3);
   </div>
   <div id="edit-wf-suggestions" style="margin-bottom:4px;"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <button id="analyze-word-btn" class="wortform-ai-btn" onclick="analyzeWordForms('edit')" type="button">
+    <button id="analyze-word-btn" class="wortform-ai-btn" onclick="analyzeWordForms('edit')" ontouchend="event.preventDefault();analyzeWordForms('edit')" type="button">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.5-1.5 4.5-3 6H9c-1.5-1.5-3-3.5-3-6a6 6 0 0 1 6-6z"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
       KI Analyse
     </button>
@@ -2718,7 +2718,7 @@ color:var(--accent3);
     </div>
     <textarea class="edit-input schilderung-textarea" id="edit-forms" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
   </div>
-  <button class="schilderung-analyse-btn" id="schilderung-btn-edit" onclick="analyseSchilderung('edit')" type="button">
+  <button class="schilderung-analyse-btn" id="schilderung-btn-edit" onclick="analyseSchilderung('edit')" ontouchend="event.preventDefault();analyseSchilderung('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
     Schilderung erzeugen
   </button>
@@ -2728,7 +2728,7 @@ color:var(--accent3);
 <div class="edit-field">
   <label class="edit-label">ترجمه فارسی</label>
   <textarea class="edit-input persian" id="edit-persian" rows="3" placeholder="ترجمه فارسی را بنویسید..."></textarea>
-  <button class="trans-analyse-btn" id="trans-analyse-btn" onclick="analyseTranslation('edit')" type="button">
+  <button class="trans-analyse-btn" id="trans-analyse-btn" onclick="analyseTranslation('edit')" ontouchend="event.preventDefault();analyseTranslation('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
     Beispiel analysieren
   </button>
@@ -2737,10 +2737,10 @@ color:var(--accent3);
 <div class="edit-field">
   <label class="edit-label">مثال‌ها -- Beispiele</label>
   <div class="examples-list" id="edit-examples-list"></div>
-  <button class="add-ex-btn" onclick="addExRow()">+ مثال جدید / Beispiel hinzufügen</button>
+  <button class="add-ex-btn" onclick="addExRow()" ontouchend="event.preventDefault();addExRow()">+ مثال جدید / Beispiel hinzufügen</button>
   <div class="gen-ex-section" style="margin-top:10px">
-    <button class="gen-ex-btn" type="button" onclick="generateDraftExamples('edit', this)">✨ KI-Beispiele für dieses Wort</button>
-    <button class="grammar-check-btn" type="button" id="grammar-check-btn-edit" onclick="checkExamplesGrammar('edit')">
+    <button class="gen-ex-btn" type="button" onclick="generateDraftExamples('edit', this)" ontouchend="event.preventDefault();generateDraftExamples('edit', this)">✨ KI-Beispiele für dieses Wort</button>
+    <button class="grammar-check-btn" type="button" id="grammar-check-btn-edit" onclick="checkExamplesGrammar('edit')" ontouchend="event.preventDefault();checkExamplesGrammar('edit')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       KI-Analyse: Grammatik &amp; Inhalt
     </button>
@@ -2750,8 +2750,8 @@ color:var(--accent3);
 
   </div>
   <div class="edit-save-bar">
-    <button class="btn btn-cancel" style="flex:0.7" onclick="closeEdit()">لغو</button>
-    <button class="btn btn-primary" onclick="saveEdit()">✓ ذخیره</button>
+    <button class="btn btn-cancel" style="flex:0.7" onclick="closeEdit()" ontouchend="event.preventDefault();closeEdit()">لغو</button>
+    <button class="btn btn-primary" onclick="saveEdit()" ontouchend="event.preventDefault();saveEdit()">✓ ذخیره</button>
   </div>
 </div>
 
@@ -2771,7 +2771,7 @@ color:var(--accent3);
       autocomplete="off" autocorrect="off" spellcheck="false"
       oninput="_scAutoCheck()"
       onblur="spellCheckOnBlur()">
-    <button id="spell-check-btn" onclick="runSpellCheck()" type="button"
+    <button id="spell-check-btn" onclick="runSpellCheck()" ontouchend="event.preventDefault();runSpellCheck()" type="button"
       title="Wort auf Korrektheit prüfen"
       style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
              width:30px;height:30px;border-radius:50%;border:none;
@@ -2806,7 +2806,7 @@ color:var(--accent3);
     <button class="wtype-btn"        data-type="abkuerzung"  onclick="_setWordTypeUI('add','abkuerzung')"  type="button">Abkürzung</button>
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <button class="wortform-ai-btn" onclick="analyzeWordForms('add')" type="button">
+    <button class="wortform-ai-btn" onclick="analyzeWordForms('add')" ontouchend="event.preventDefault();analyzeWordForms('add')" type="button">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.5-1.5 4.5-3 6H9c-1.5-1.5-3-3.5-3-6a6 6 0 0 1 6-6z"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
       KI Analyse
     </button>
@@ -2852,7 +2852,7 @@ color:var(--accent3);
     </div>
     <textarea class="edit-input schilderung-textarea" id="addword-forms" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
   </div>
-  <button class="schilderung-analyse-btn" id="schilderung-btn-addword" onclick="analyseSchilderung('addword')" type="button">
+  <button class="schilderung-analyse-btn" id="schilderung-btn-addword" onclick="analyseSchilderung('addword')" ontouchend="event.preventDefault();analyseSchilderung('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
     Schilderung erzeugen
   </button>
@@ -2861,7 +2861,7 @@ color:var(--accent3);
 <div class="edit-field">
   <label class="edit-label">ترجمه فارسی</label>
   <textarea class="edit-input persian" id="addword-persian" rows="3" placeholder="ترجمه فارسی را بنویسید..."></textarea>
-  <button class="trans-analyse-btn" id="trans-analyse-btn-add" onclick="analyseTranslation('addword')" type="button">
+  <button class="trans-analyse-btn" id="trans-analyse-btn-add" onclick="analyseTranslation('addword')" ontouchend="event.preventDefault();analyseTranslation('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
     Beispiel analysieren
   </button>
@@ -2870,16 +2870,16 @@ color:var(--accent3);
 <div class="edit-field">
   <label class="edit-label">مثال‌ها (اختیاری)</label>
   <div class="examples-list" id="addword-examples-list"></div>
-  <button class="add-ex-btn" onclick="addAddWordExRow()">+ مثال جدید</button>
+  <button class="add-ex-btn" onclick="addAddWordExRow()" ontouchend="event.preventDefault();addAddWordExRow()">+ مثال جدید</button>
   <div class="gen-ex-section" style="margin-top:10px">
-    <button class="gen-ex-btn" type="button" onclick="generateDraftExamples('add', this)">✨ KI-Beispiele für dieses Wort</button>
+    <button class="gen-ex-btn" type="button" onclick="generateDraftExamples('add', this)" ontouchend="event.preventDefault();generateDraftExamples('add', this)">✨ KI-Beispiele für dieses Wort</button>
   </div>
 </div>
 
   </div>
   <div class="edit-save-bar">
-    <button class="btn btn-cancel" style="flex:0.7" onclick="closeAddWord()">لغو</button>
-    <button class="btn btn-primary" onclick="saveNewWord()">✓ ذخیره</button>
+    <button class="btn btn-cancel" style="flex:0.7" onclick="closeAddWord()" ontouchend="event.preventDefault();closeAddWord()">لغو</button>
+    <button class="btn btn-primary" onclick="saveNewWord()" ontouchend="event.preventDefault();saveNewWord()">✓ ذخیره</button>
   </div>
 </div>
 
@@ -2887,9 +2887,9 @@ color:var(--accent3);
 
 <div class="error-overlay" id="error-overlay">
   <div class="error-header">
-<button onclick="closeErrorFinder()" style="border:none;background:rgba(255,255,255,0.07);color:var(--text2);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">‹ Zurück</button>
+<button onclick="closeErrorFinder()" ontouchend="event.preventDefault();closeErrorFinder()" style="border:none;background:rgba(255,255,255,0.07);color:var(--text2);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">‹ Zurück</button>
 <div style="flex:1;font-size:17px;font-weight:700;color:var(--text);text-align:center;">Fehlerfinder 🔎</div>
-<button onclick="runErrorFinder()" style="border:none;background:rgba(79,142,247,0.15);color:var(--accent2);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Scan</button>
+<button onclick="runErrorFinder()" ontouchend="event.preventDefault();runErrorFinder()" style="border:none;background:rgba(79,142,247,0.15);color:var(--accent2);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Scan</button>
   </div>
   <div class="error-scroll" id="error-content">
     <div class="empty-state"><div class="empty-icon">🔎</div><div class="empty-title">Scan starten</div><div class="empty-sub">Auf „Scan" tippen um Fehler zu finden</div></div>
@@ -3176,7 +3176,7 @@ function updateHomeStats(){
 function renderRandomWords(){
   const el=document.getElementById('random-words');
   if(!DICT.length){
-    el.innerHTML=`<div class="empty-state" style="padding:30px 20px"><div class="empty-icon">📂</div><div class="empty-title">هنوز فایلی وارد نشده</div><div class="empty-sub">فایل .lvtdeck را در تنظیمات وارد کنید</div><button onclick="document.getElementById('file-input').click()" style="margin-top:14px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">📂 Datei importieren</button></div>`;
+    el.innerHTML=`<div class="empty-state" style="padding:30px 20px"><div class="empty-icon">📂</div><div class="empty-title">هنوز فایلی وارد نشده</div><div class="empty-sub">فایل .lvtdeck را در تنظیمات وارد کنید</div><button onclick="document.getElementById('file-input').click()" ontouchend="event.preventDefault();document.getElementById('file-input').click()" style="margin-top:14px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit">📂 Datei importieren</button></div>`;
     return;
   }
   const s=[...DICT].sort(()=>Math.random()-.5).slice(0,10);
@@ -3573,7 +3573,7 @@ function closeAddWord(){document.getElementById('addword-overlay').classList.rem
 function addAddWordExRow(){
   const list=document.getElementById('addword-examples-list');
   const div=document.createElement('div');div.className='ex-row';
-  div.innerHTML=`<input class="ex-row-de" placeholder="Deutscher Satz..."><input class="ex-row-fa" placeholder="ترجمه فارسی..." style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-move-btn" onclick="_openMoveEx(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg></button><button class="ex-del-btn" onclick="this.closest('.ex-row').remove()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>`;
+  div.innerHTML=`<input class="ex-row-de" placeholder="Deutscher Satz..."><input class="ex-row-fa" placeholder="ترجمه فارسی..." style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-move-btn" onclick="_openMoveEx(this)" ontouchend="event.preventDefault();event.stopPropagation();_openMoveEx(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg></button><button class="ex-del-btn" onclick="this.closest('.ex-row').remove()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>`;
   list.appendChild(div);div.querySelector('.ex-row-de').focus();
 }
 // ── Auto-Übersetzung ──
@@ -4622,7 +4622,7 @@ function _initExDrag(listId) {
   list.addEventListener('touchend', _endDrag);
   list.addEventListener('touchcancel', _endDrag);
 }
-function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutscher Satz..." value="${esc(de)}"><input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><a class="ex-promote-btn" href="javascript:void(0)" onclick="window.promoteExToEntry(this.parentNode.parentNode)" title="Als neuen Eintrag übernehmen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a><button class="ex-move-btn" onclick="_openMoveEx(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg></button><button class="ex-del-btn" onclick="removeExRow(this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`;}
+function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutscher Satz..." value="${esc(de)}"><input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-promote-btn" onclick="window.promoteExToEntry(this.closest('.ex-row'))" ontouchend="event.preventDefault();event.stopPropagation();window.promoteExToEntry(this.closest('.ex-row'))" title="Als neuen Eintrag übernehmen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button><button class="ex-move-btn" onclick="_openMoveEx(this)" ontouchend="event.preventDefault();event.stopPropagation();_openMoveEx(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg></button><button class="ex-del-btn" onclick="removeExRow(this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`;}
 function addExRow(){const list=document.getElementById('edit-examples-list');const i=list.children.length;list.insertAdjacentHTML('beforeend',exRowHTML(i,'',''));const r=list.lastElementChild;r.scrollIntoView({behavior:'smooth',block:'nearest'});r.querySelector('.ex-row-de').focus();
   const pb=r.querySelector('.ex-promote-btn');
   if(pb){
@@ -7093,7 +7093,7 @@ window.promoteExToEntry = promoteExToEntry;
     <div id="move-ex-preview"></div>
     <input id="move-ex-search" type="search" placeholder="Wort suchen …" oninput="_moveExSearch(this.value)" autocorrect="off" autocapitalize="off" spellcheck="false">
     <div id="move-ex-results"></div>
-    <button id="move-ex-cancel" onclick="_closeMoveEx()">Abbrechen</button>
+    <button id="move-ex-cancel" onclick="_closeMoveEx()" ontouchend="event.preventDefault();_closeMoveEx()">Abbrechen</button>
   </div>
 </div>
 
