@@ -1,5 +1,5 @@
 // SW v2026-05-08 — Cache-Reset
-const CACHE = 'faez-2026-05-08-c';
+const CACHE = 'faez-2026-05-08-final';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
