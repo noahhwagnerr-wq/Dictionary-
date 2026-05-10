@@ -2440,7 +2440,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-10-fix18</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-10-fix19</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')" ontouchend="event.preventDefault();switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3573,7 +3573,7 @@ function closeAddWord(){document.getElementById('addword-overlay').classList.rem
 function addAddWordExRow(){
   const list=document.getElementById('addword-examples-list');
   const div=document.createElement('div');div.className='ex-row';
-  div.innerHTML=`<input class="ex-row-de" placeholder="Deutscher Satz..."><input class="ex-row-fa" placeholder="ترجمه فارسی..." style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-move-btn" style="width:44px;min-width:44px" onclick="openMoveExBtn2(this)" ontouchstart="openMoveExBtn2(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg>⇄</button><button class="ex-del-btn" onclick="this.closest('.ex-row').remove()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>`;
+  div.innerHTML=`<input class="ex-row-de" placeholder="Deutscher Satz..."><input class="ex-row-fa" placeholder="ترجمه فارسی..." style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-move-btn" style="width:44px;min-width:44px" onclick="openMoveExBtn(this)" ontouchstart="openMoveExBtn(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg>⇄</button><button class="ex-del-btn" onclick="this.closest('.ex-row').remove()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>`;
   list.appendChild(div);div.querySelector('.ex-row-de').focus();
 }
 // ── Auto-Übersetzung ──
@@ -4583,8 +4583,8 @@ function renderExRows(examples){
   list.innerHTML=examples.map((ex,i)=>exRowHTML(i,ex.de,ex.fa)).join('');
   _initExDrag('edit-examples-list');
   list.querySelectorAll('.ex-move-btn').forEach(mb=>{
-    mb.addEventListener('click',function(e){e.stopPropagation();openMoveExBtn2(this);},{passive:false});
-    mb.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();openMoveExBtn2(this);},{passive:false});
+    mb.addEventListener('click',function(e){e.stopPropagation();openMoveExBtn(this);},{passive:false});
+    mb.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();openMoveExBtn(this);},{passive:false});
   });
   list.querySelectorAll('.ex-promote-btn').forEach(pb=>{
     pb.addEventListener('click',function(e){e.stopPropagation();promoteExToEntry(this);},{passive:false});
@@ -4646,7 +4646,7 @@ function _initExDrag(listId) {
   list.addEventListener('touchend', _endDrag);
   list.addEventListener('touchcancel', _endDrag);
 }
-function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutscher Satz..." value="${esc(de)}"><input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-promote-btn" onclick="promoteExRowBtn(this)" title="Als neuen Eintrag übernehmen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button><button class="ex-del-btn" onclick="removeExRow(this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div><button class="ex-move-btn" onclick="openMoveExBtn2(this)" style="width:100%;border-radius:0;margin:0;height:36px;font-size:13px;color:#4fc896;background:rgba(79,200,150,0.07);border-top:1px solid rgba(79,200,150,0.15)" title="Beispiel verschieben">⇒ Beispiel verschieben</button></div>`;}
+function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutscher Satz..." value="${esc(de)}"><input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-promote-btn" onclick="promoteExRowBtn(this)" title="Als neuen Eintrag übernehmen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button><button class="ex-del-btn" onclick="removeExRow(this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div><button class="ex-move-btn" onclick="openMoveExBtn(this)" style="width:100%;border-radius:0;margin:0;height:36px;font-size:13px;color:#4fc896;background:rgba(79,200,150,0.07);border-top:1px solid rgba(79,200,150,0.15)" title="Beispiel verschieben">⇒ Beispiel verschieben</button></div>`;}
 function addExRow(){const list=document.getElementById('edit-examples-list');const i=list.children.length;list.insertAdjacentHTML('beforeend',exRowHTML(i,'',''));const r=list.lastElementChild;r.scrollIntoView({behavior:'smooth',block:'nearest'});r.querySelector('.ex-row-de').focus();
   const pb=r.querySelector('.ex-promote-btn');
   if(pb){
@@ -4655,8 +4655,8 @@ function addExRow(){const list=document.getElementById('edit-examples-list');con
   }
   const mb=r.querySelector('.ex-move-btn');
   if(mb){
-    mb.addEventListener('click',function(e){e.stopPropagation();openMoveExBtn2(this);},{passive:false});
-    mb.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();openMoveExBtn2(this);},{passive:false});
+    mb.addEventListener('click',function(e){e.stopPropagation();openMoveExBtn(this);},{passive:false});
+    mb.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();openMoveExBtn(this);},{passive:false});
   }
 }
 function removeExRow(btn){btn.closest('.ex-row').remove();}
@@ -7163,12 +7163,12 @@ function openMoveExBtn(btn){
   document.addEventListener('click', function(e){
     const btn = e.target.closest && e.target.closest('.ex-move-btn');
     if(!btn) return;
-    e.preventDefault(); e.stopPropagation(); openMoveExBtn2(btn);
+    e.preventDefault(); e.stopPropagation(); openMoveExBtn(btn);
   }, true);
   document.addEventListener('touchend', function(e){
     const btn = e.target.closest && e.target.closest('.ex-move-btn');
     if(!btn) return;
-    e.preventDefault(); e.stopPropagation(); openMoveExBtn2(btn);
+    e.preventDefault(); e.stopPropagation(); openMoveExBtn(btn);
   }, {passive:false, capture:true});
 })();
 >
