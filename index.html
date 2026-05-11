@@ -5618,10 +5618,14 @@ async function generateExamplesForField(btnEl){
   btnEl.innerHTML=`<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
 
   try{
-    const wr=_exWordRule(entry.g||seed, entry.wordType||'other');
+    // Use the sub-entry word, not the main headword
+    const paren=(seed.match(/\(([^)]+)\)$/)||[])[1]||'';
+    const cleanSeed=seed.replace(/\s*\([^)]*\)\s*$/,'').trim()||seed;
+    const fieldWordType=/adj/i.test(paren)?'adjektiv':/verb/i.test(paren)?'verb':/nom|subst/i.test(paren)?'nomen':entry.wordType||'other';
+    const wr=_exWordRule(cleanSeed, fieldWordType);
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${entry.g||seed}"
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${cleanSeed}"
 
 ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
