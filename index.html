@@ -2234,6 +2234,15 @@ color:var(--accent3);
 #promote-ex-de-input,#promote-ex-fa-input{width:100%;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:var(--text1);font-size:15px;outline:none;box-sizing:border-box;}
 #promote-ex-cancel{flex:1;padding:12px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 #promote-ex-confirm{flex:2;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#7c5fe6,#4f9eff);color:#fff;font-size:14px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#demote-entry-overlay{display:none;position:absolute;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;}
+#demote-entry-overlay.open{display:flex;}
+#demote-entry-box{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:20px 16px 32px;max-height:80vh;display:flex;flex-direction:column;gap:12px;animation:slideUp .22s ease both;}
+#demote-entry-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;}
+#demote-entry-preview{background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text1);line-height:1.5;}
+#demote-entry-search{width:100%;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:var(--text1);font-size:14px;outline:none;}
+#demote-entry-search::placeholder{color:var(--text3);}
+#demote-entry-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+#demote-entry-cancel{padding:12px;border-radius:12px;border:none;width:100%;background:rgba(255,255,255,0.07);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 /* .ex-move-btn -- via globale Icon-Button-Regel definiert */
 
 /* ══════════════════════════════════════════════════════
@@ -2630,6 +2639,9 @@ color:var(--accent3);
   <div class="edit-header">
 
 <div class="edit-header-title">ویرایش واژه</div>
+<button class="icon-btn" style="background:rgba(124,95,230,0.12);color:var(--accent)" onclick="_openDemoteEntry()" ontouchend="event.preventDefault();_openDemoteEntry()" title="Als Beispiel zu anderem Eintrag verschieben">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/></svg>
+</button>
 <button class="icon-btn" style="background:rgba(248,113,113,0.12);color:var(--red)" onclick="deleteEntry()">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
 </button>
@@ -2768,6 +2780,16 @@ color:var(--accent3);
         <button id="promote-ex-cancel" onclick="_cancelPromoteEx()" ontouchend="event.preventDefault();_cancelPromoteEx()">Abbrechen</button>
         <button id="promote-ex-confirm" onclick="_confirmPromoteEx()" ontouchend="event.preventDefault();_confirmPromoteEx()">✓ Erstellen</button>
       </div>
+    </div>
+  </div>
+  <!-- demote-entry-overlay: move this entry as example to another entry -->
+  <div id="demote-entry-overlay" onclick="if(event.target===this)_closeDemoteEntry()">
+    <div id="demote-entry-box">
+      <div id="demote-entry-title">⇒ Als Beispiel verschieben zu …</div>
+      <div id="demote-entry-preview"></div>
+      <input id="demote-entry-search" type="search" placeholder="Zielwort suchen …" oninput="_demoteEntrySearch(this.value)" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div id="demote-entry-results"></div>
+      <button id="demote-entry-cancel" onclick="_closeDemoteEntry()" ontouchend="event.preventDefault();_closeDemoteEntry()">Abbrechen</button>
     </div>
   </div>
 </div>
@@ -7243,6 +7265,86 @@ function _editSpellCheckOnBlur() {
 // ══════════════════════════════════════════════
 // ❖ MOVE-EXAMPLE -- Beispiel zu anderem Wort verschieben
 // ══════════════════════════════════════════════
+function _openDemoteEntry(){
+  if(!currentEntry)return;
+  const de=(currentEntry.g||'').trim();
+  const fa=(currentEntry.p||'').trim();
+  const escH=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const prev=document.getElementById('demote-entry-preview');
+  if(prev)prev.innerHTML=
+    (de?'<div style="font-weight:600">'+escH(de)+'</div>':'')+
+    (fa?'<div style="direction:rtl;font-size:12px;color:var(--text3)">'+escH(fa)+'</div>':'');
+  const sf=document.getElementById('demote-entry-search');
+  if(sf)sf.value='';
+  _demoteEntrySearch('');
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  setTimeout(()=>{
+    document.getElementById('demote-entry-overlay').classList.add('open');
+    setTimeout(()=>{if(sf)sf.focus();},200);
+  },80);
+}
+function _closeDemoteEntry(){
+  document.getElementById('demote-entry-overlay').classList.remove('open');
+}
+function _demoteEntrySearch(q){
+  const res=document.getElementById('demote-entry-results');
+  if(!res)return;
+  const query=(q||'').trim().toLowerCase();
+  const exclude=currentEntry?currentEntry.id:null;
+  let hits=DICT.filter(e=>e.id!==exclude);
+  if(query.length>0)hits=hits.filter(e=>
+    (e.g||'').toLowerCase().includes(query)||(e.p||'').toLowerCase().includes(query));
+  hits=hits.slice(0,30);
+  if(hits.length===0){
+    res.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px">'
+      +(query?'Kein Eintrag gefunden':'Wort eingeben …')+'</div>';
+    return;
+  }
+  const escH=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  res.innerHTML='';
+  hits.forEach(e=>{
+    const div=document.createElement('div');
+    div.className='move-ex-result-item';
+    div.innerHTML='<div class="move-ex-result-de">'+escH(e.g||'')+'</div>'
+      +(e.p?'<div class="move-ex-result-fa">'+escH(e.p)+'</div>':'');
+    div.addEventListener('click',()=>_demoteEntryConfirm(e.id));
+    res.appendChild(div);
+  });
+}
+async function _demoteEntryConfirm(targetId){
+  const target=DICT.find(e=>e.id===targetId);
+  if(!target||!currentEntry)return;
+  const de=(currentEntry.g||'').trim();
+  const fa=(currentEntry.p||'').trim();
+  const srcId=currentEntry.id;
+  const tg=target.g||String(targetId);
+  _closeDemoteEntry();
+  if(!Array.isArray(target.ex))target.ex=[];
+  if(!target.ex.some(x=>(x.de||'').trim()===de&&(x.fa||'').trim()===fa)){
+    target.ex.push({de,fa});
+    enrichEntryForSearch(target);
+    await dbPut(target);
+    const ti=DICT.findIndex(e=>e.id===targetId);
+    if(ti>=0)DICT[ti]={...target};
+  }
+  await dbDel(srcId);
+  FAVS.delete(srcId);
+  await saveFavs();
+  DICT=DICT.filter(e=>e.id!==srcId);
+  currentEntry=null;
+  _incrementUnsavedChanges();
+  _autoSyncToFile().catch(()=>{});
+  await syncSnapshotFromDB();
+  updateHomeStats();
+  closeEdit();
+  closeDetail();
+  renderRandomWords();
+  const sv=document.getElementById('search-input').value.trim();
+  if(sv)doSearch(sv);
+  if(currentTab==='favorites')renderFavorites();
+  showToast('✓ „'+de+'" → '+tg+' als Beispiel');
+}
+
 let _moveExRow=null,_moveExDE='',_moveExFA='';
 
 function _openMoveEx(btn){
