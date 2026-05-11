@@ -3191,7 +3191,6 @@ function updateHomeStats(){
   const sfEl=document.getElementById('stat-favs'); if(sfEl) sfEl.textContent=FAVS.size;
   document.getElementById('home-entry-count').textContent=`${n.toLocaleString('de-DE')} واژه • Wörter`;
   const ac=document.getElementById('about-count');if(ac)ac.textContent=n.toLocaleString()+' واژه';
-  _updateExportBanner();
 }
 function renderRandomWords(){
   const el=document.getElementById('random-words');
