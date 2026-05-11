@@ -2734,7 +2734,7 @@ color:var(--accent3);
   <textarea class="edit-input persian" id="edit-persian" rows="3" placeholder="ترجمه فارسی را بنویسید..."></textarea>
   <button class="trans-analyse-btn" id="trans-analyse-btn" onclick="analyseTranslation('edit')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-    Beispiel analysieren
+    Persische Übersetzungen analysieren
   </button>
   <div class="trans-suggestions" id="trans-suggestions-edit"></div>
 </div>
@@ -2902,7 +2902,7 @@ color:var(--accent3);
   <textarea class="edit-input persian" id="addword-persian" rows="3" placeholder="ترجمه فارسی را بنویسید..."></textarea>
   <button class="trans-analyse-btn" id="trans-analyse-btn-add" onclick="analyseTranslation('addword')" type="button">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-    Beispiel analysieren
+    Persische Übersetzungen analysieren
   </button>
   <div class="trans-suggestions" id="trans-suggestions-addword"></div>
 </div>
@@ -6629,7 +6629,7 @@ async function analyseTranslation(prefix){
     showToast('Fehler: '+e.message,'error');
   } finally {
     btn.classList.remove('loading');
-    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Beispiel analysieren';
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Persische Übersetzungen analysieren';
   }
 }
 
