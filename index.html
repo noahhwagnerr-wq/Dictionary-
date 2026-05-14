@@ -6189,7 +6189,7 @@ async function checkExamplesGrammar(prefix){
   const germanWord = (document.getElementById(prefix+'-german')||{}).value||'';
 
   const sysPr = 'You are a Persian-German bilingual linguist and language quality auditor. '
-    + 'Your task: deeply check German example sentences AND their Persian translations. '
+    + 'Your task: deeply check German example sentences AND their Persian translations for BOTH formal correctness AND semantic/content quality. '
     + '\n\nABSOLUTE RULE — ZWNJ FORBIDDEN: NEVER use the zero-width non-joiner character (U+200C, نیم‌فاصله) '
     + 'in ANY output field — not in fa_correction, not in fa_note, not anywhere. '
     + 'Use a plain space ( ) everywhere instead. This rule overrides all Persian orthography conventions. '
@@ -6200,16 +6200,24 @@ async function checkExamplesGrammar(prefix){
     + 'A colloquial, crude, or vulgar German sentence paired with a semantically correct Persian equivalent of the SAME register is CORRECT — do NOT mark it as an error! '
     + 'Example: "Der Popel klebt an der Wand" (derb/umgangssprachlich) + Persian derb equivalent → fa_ok=true, de_ok=true. '
     + 'Only mark ok=false if the MEANING is wrong — not if the style is informal or crude. '
-    + '\n\nGERMAN checks: grammar, spelling, case (Kasus), tense, syntax, naturalness per register. '
-    + 'PERSIAN checks: '
+    + '\n\nGERMAN FORMAL checks (de_ok): grammar, spelling, case (Kasus), tense, syntax, naturalness per register. '
+    + '\n\nPERSIAN FORMAL checks (fa_ok): '
     + '(A) Lexical validity: flag Persian words that do not exist in standard OR colloquial Farsi. '
     + '    Example: محجوبیت is NOT valid — correct form is حجب و حیا. '
     + '    Example: بیادعا is NOT correct — correct form is بی ادعا. '
     + '(B) Morphological correctness: wrong suffixes/prefixes, invalid formations. '
     + '(C) Word spacing: prefixes بی/نا/با/هم/غیر must be space-separated. '
     + '(D) ZWNJ (U+200C) is BANNED — use plain space only. '
-    + '(E) Semantic match per register: colloquial DE → colloquial FA, vulgar DE → vulgar FA. '
-    + 'Provide the "register" field for every result: "standard", "umgangssprachlich", "derb", or "vulgär".';
+    + '(E) Formal semantic match per register: colloquial DE → colloquial FA, vulgar DE → vulgar FA. '
+    + 'Provide the "register" field for every result: "standard", "umgangssprachlich", "derb", or "vulgär".'
+    + '\n\nSEMANTIC / CONTENT checks (content_ok): '
+    + '(I)  Translation accuracy: Does the Persian translation convey the COMPLETE, EXACT meaning of the German sentence? '
+    + '     Flag: omitted nuances, added content not in the original, wrong connotations, paraphrases that change the meaning. '
+    + '(II) Logical/factual sense: Does the German sentence make real-world sense? Is it coherent and non-contradictory? '
+    + '(III) Headword usage: Does the sentence correctly and naturally illustrate the meaning of the given headword? '
+    + '      A sentence where the headword appears but is used in a completely unrelated or forced context → content_ok=false. '
+    + 'Set content_ok=false if ANY of (I), (II), or (III) fails. '
+    + 'Write content_note in Persian, briefly explaining the specific semantic problem. Leave content_note empty if content_ok=true.';
 
   const sentenceList = examples.map((ex,idx)=>
     (idx+1)+'. DE: '+ex.de+'\n   FA: '+ex.fa
@@ -6224,14 +6232,17 @@ async function checkExamplesGrammar(prefix){
     + '  "register": "standard" or "umgangssprachlich" or "derb" or "vulgär",\n'
     + '  "de_ok": true/false,\n'
     + '  "de_correction": "corrected German or empty if ok",\n'
-    + '  "de_note": "short Persian explanation of DE error (or empty)",\n'
+    + '  "de_note": "short Persian explanation of DE grammar error (or empty)",\n'
     + '  "fa_ok": true/false,\n'
     + '  "fa_correction": "corrected Persian or empty if ok",\n'
-    + '  "fa_note": "short Persian explanation of FA error (or empty)"\n'
+    + '  "fa_note": "short Persian explanation of FA grammar/form error (or empty)",\n'
+    + '  "content_ok": true/false,\n'
+    + '  "content_note": "short Persian explanation of semantic/translation/content error (or empty if ok)"\n'
     + '}]\n'
     + 'CRITICAL: colloquial/derb/vulgär sentences with semantically correct Persian → de_ok=true AND fa_ok=true.\n'
     + 'Only mark ok=false for actual linguistic errors: wrong meaning, wrong grammar, non-existent words.\n'
     + 'Flag malformed Persian words (e.g. محجوبیت → حجب و حیا).\n'
+    + 'content_ok=false only for real semantic problems: inaccurate translation, logically nonsensical sentence, headword used in wrong context.\n'
     + 'Return ONLY the JSON array — no Markdown, no extra text.';
 
 
@@ -6265,6 +6276,8 @@ async function checkExamplesGrammar(prefix){
       fa_note:       _noZWNJ(r.fa_note||''),
       de_correction: _noZWNJ(r.de_correction||''),
       de_note:       _noZWNJ(r.de_note||''),
+      content_note:  _noZWNJ(r.content_note||''),
+      content_ok:    r.content_ok !== false,
     }));
 
     panel.innerHTML='';
@@ -6273,7 +6286,7 @@ async function checkExamplesGrammar(prefix){
     results.forEach(res=>{
       const ex = examples.find(e=>e.i===(res.index-1)) || examples[res.index-1];
       if(!ex) return;
-      const allOk = res.de_ok && res.fa_ok;
+      const allOk = res.de_ok && res.fa_ok && res.content_ok;
       if(!allOk) hasErrors=true;
       const reg = res.register || 'standard';
       const isInformal = ['umgangssprachlich','derb','vulgär'].includes(reg);
@@ -6350,11 +6363,26 @@ async function checkExamplesGrammar(prefix){
         card.appendChild(applyFA);
       }
 
+      // Inhaltlich / Semantik
+      if(!res.content_ok && res.content_note){
+        const sep=document.createElement('div'); sep.style.cssText='height:1px;background:rgba(255,255,255,0.06);margin:7px 0;';
+        card.appendChild(sep);
+        const lblContent=document.createElement('div');
+        lblContent.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(251,191,36,0.85);margin-bottom:4px;';
+        lblContent.textContent='⚠ Semantik / Inhalt';
+        const noteContent=document.createElement('div');
+        noteContent.className='grammar-note';
+        noteContent.style.cssText='direction:rtl;text-align:right;color:rgba(251,191,36,0.9);background:rgba(251,191,36,0.07);border-radius:8px;padding:7px 10px;font-size:13px;line-height:1.6;';
+        noteContent.textContent=res.content_note;
+        card.appendChild(lblContent);
+        card.appendChild(noteContent);
+      }
+
       panel.appendChild(card);
     });
 
     if(!hasErrors){
-      panel.innerHTML='<div style="font-size:12px;color:#34d399;padding:10px 4px;text-align:center;">✓ Alle Beispielsätze grammatikalisch korrekt</div>';
+      panel.innerHTML='<div style="font-size:12px;color:#34d399;padding:10px 4px;text-align:center;">✓ Alle Beispielsätze grammatikalisch und inhaltlich korrekt</div>';
     }
     showToast(hasErrors ? '⚠ Fehler gefunden' : '✓ Alles korrekt');
 
