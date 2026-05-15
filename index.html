@@ -2237,13 +2237,13 @@ color:var(--accent3);
 #promote-ex-overlay{display:none;position:absolute;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;}
 #promote-ex-overlay.open{display:flex;}
 #promote-ex-box{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:20px 16px 32px;display:flex;flex-direction:column;gap:8px;animation:slideUp .22s ease both;}
-#promote-ex-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;}
+
 #promote-ex-de-input,#promote-ex-fa-input{width:100%;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:var(--text1);font-size:15px;outline:none;box-sizing:border-box;}
-#promote-ex-cancel,#promote-ex-keep,#promote-ex-confirm{flex:1;padding:9px 8px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;background:none;transition:opacity .15s;}
-#promote-ex-cancel{border:1px solid rgba(255,255,255,0.12);color:var(--text2);}
-#promote-ex-keep{border:1px solid rgba(52,211,153,0.25);color:rgba(52,211,153,0.75);}
-#promote-ex-confirm{border:1px solid rgba(124,95,230,0.35);color:rgba(170,148,255,0.9);}
-#promote-ex-cancel:active,#promote-ex-keep:active,#promote-ex-confirm:active{opacity:.6;}
+#promote-ex-cancel,#promote-ex-keep,#promote-ex-confirm{width:100%;padding:11px 16px;border-radius:14px;font-size:13px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;background:none;display:flex;align-items:center;gap:9px;transition:opacity .15s;}
+#promote-ex-keep{border:1px solid rgba(52,211,153,0.22);color:rgba(52,211,153,0.8);background:rgba(52,211,153,0.05);}
+#promote-ex-confirm{border:1px solid rgba(124,95,230,0.28);color:rgba(170,148,255,0.85);background:rgba(124,95,230,0.06);}
+#promote-ex-cancel{border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:12px;padding:9px 16px;}
+#promote-ex-cancel:active,#promote-ex-keep:active,#promote-ex-confirm:active{opacity:.55;}
 #demote-entry-overlay{display:none;position:absolute;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;}
 #demote-entry-overlay.open{display:flex;}
 #demote-entry-box{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:20px 16px 32px;max-height:80vh;display:flex;flex-direction:column;gap:12px;animation:slideUp .22s ease both;}
@@ -2451,7 +2451,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15h</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15i</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2780,7 +2780,6 @@ color:var(--accent3);
   <!-- promote-ex-overlay: confirm before creating new entry -->
   <div id="promote-ex-overlay" onclick="if(event.target===this)_cancelPromoteEx()">
     <div id="promote-ex-box">
-      <div id="promote-ex-title">↗ Als neuen Eintrag speichern</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">Deutsches Wort / Phrase</div>
       <input id="promote-ex-de-input" type="text" placeholder="z.B. spielen, Haus …" autocorrect="off" autocapitalize="off" spellcheck="false">
       <div style="font-size:12px;color:var(--text2);margin-bottom:4px;margin-top:8px;">Persische Übersetzung</div>
@@ -2789,10 +2788,19 @@ color:var(--accent3);
       <div id="promote-ex-noun-hint" style="display:none;font-size:12px;color:rgba(52,211,153,0.9);padding:7px 12px;background:rgba(52,211,153,0.09);border-radius:8px;margin-top:4px;"></div>
       <input type="hidden" id="promote-ex-noun-singular">
       <input type="hidden" id="promote-ex-noun-plural">
-      <div style="display:flex;gap:6px;margin-top:10px;">
-        <button id="promote-ex-cancel" onclick="_cancelPromoteEx()" ontouchend="event.preventDefault();_cancelPromoteEx()">Abbrechen</button>
-        <button id="promote-ex-keep" onclick="_keepNounAsSubentries()" ontouchend="event.preventDefault();_keepNounAsSubentries()" style="display:none;">⇩ Als Unterwörter</button>
-        <button id="promote-ex-confirm" onclick="_confirmPromoteEx()" ontouchend="event.preventDefault();_confirmPromoteEx()">✓ Erstellen</button>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:14px;">
+        <button id="promote-ex-keep" onclick="_keepNounAsSubentries()" ontouchend="event.preventDefault();_keepNounAsSubentries()" style="display:none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 4 6"/><polyline points="3 12 4 12"/><polyline points="3 18 4 18"/></svg>
+          Als Unterwörter speichern
+        </button>
+        <button id="promote-ex-confirm" onclick="_confirmPromoteEx()" ontouchend="event.preventDefault();_confirmPromoteEx()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><polyline points="7 7 17 7 17 17"/></svg>
+          Als neuen Eintrag speichern
+        </button>
+        <button id="promote-ex-cancel" onclick="_cancelPromoteEx()" ontouchend="event.preventDefault();_cancelPromoteEx()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Abbrechen
+        </button>
       </div>
     </div>
   </div>
