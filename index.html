@@ -2451,7 +2451,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15j</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15k</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -4702,12 +4702,16 @@ var _promoteExRow = null;
 var _promoteExNounForms = null; // {singular, plural} if sub-entry text matches a noun pattern
 
 function _parseSubentryNoun(text) {
-  // Matches: "der/die/das WORD[, ]die/der/das WORDS" — separator is optional
-  const m = text.match(/^(der|die|das)\s+(.+?)\s*(?:[,;]\s*)?(die|der|das)\s+(.+)$/i);
+  // Singular must be at most 2 words (no prepositions/long phrases)
+  // Pattern: "der/die/das WORD[S] [,] die/der/das WORD[S]"
+  const m = text.match(/^(der|die|das)\s+(\S+(?:\s+\S+)?)\s*(?:[,;]\s*)?(die|der|das)\s+(.+)$/i);
   if (!m) return null;
+  // Reject if plural part looks like a sentence fragment (contains verb-typical patterns)
+  const plural = (m[3] + ' ' + m[4]).trim();
+  if (plural.length > 60 || /\s(in|mit|von|bei|nach|über|unter|vor|an|auf|für|um|durch|gegen|ohne)\s/i.test(plural)) return null;
   return {
     singular: (m[1] + ' ' + m[2]).trim(),
-    plural:   (m[3] + ' ' + m[4]).trim()
+    plural
   };
 }
 
