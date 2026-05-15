@@ -712,6 +712,13 @@ background:transparent;color:#c0b8e8;font-size:14px;font-style:italic;
 outline:none;font-family:inherit;
 }
 .ex-row-de::placeholder{color:var(--text3);font-style:italic;}
+.ex-row-de-plural{
+width:100%;padding:7px 12px 10px;border:none;
+border-top:1px solid rgba(255,255,255,.04);
+background:rgba(255,255,255,.015);color:#a99dd4;font-size:13px;font-style:italic;
+outline:none;font-family:inherit;
+}
+.ex-row-de-plural::placeholder{color:var(--text3);font-style:italic;opacity:.6;}
 .ex-row-fa{
 width:100%;padding:10px 12px;border:none;background:transparent;
 color:#9b87d0;font-size:15px;direction:rtl;text-align:right;
@@ -2441,7 +2448,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15e</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15f</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -4606,7 +4613,7 @@ function closeEdit() {
 }
 function renderExRows(examples){
   const list=document.getElementById('edit-examples-list');
-  list.innerHTML=examples.map((ex,i)=>exRowHTML(i,ex.de,ex.fa)).join('');
+  list.innerHTML=examples.map((ex,i)=>exRowHTML(i,ex.de,ex.fa,ex.dePlural!=null?ex.dePlural:undefined)).join('');
   _initExDrag('edit-examples-list');
   list.querySelectorAll('.ex-move-btn').forEach(mb=>{
     mb.addEventListener('touchstart',function(e){e.stopPropagation();},{passive:true});
@@ -4669,7 +4676,13 @@ function _initExDrag(listId) {
   list.addEventListener('touchend', _endDrag);
   list.addEventListener('touchcancel', _endDrag);
 }
-function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutscher Satz..." value="${esc(de)}"><input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-promote-btn" onclick="promoteExToEntry(this)" ontouchend="event.preventDefault();promoteExToEntry(this)" title="Als neuen Eintrag übernehmen"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button><button class="ex-move-btn" onclick="_openMoveEx(this)" ontouchend="event.preventDefault();_openMoveEx(this)" title="Beispiel verschieben"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg></button><button class="ex-del-btn" onclick="removeExRow(this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`;}
+function exRowHTML(i,de,fa,dePlural){
+  const btns=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`;
+  const mvIco=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8l4 4-4 4"/><path d="M2 12h20"/><path d="M2 6h10"/><path d="M2 18h10"/></svg>`;
+  const dlIco=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+  const plField=dePlural!=null?`<input class="ex-row-de-plural" placeholder="Pluralform …" value="${esc(dePlural)}">`:'';
+  return `<div class="ex-row" id="exrow-${i}"><input class="ex-row-de" placeholder="Deutsches Wort / Satz..." value="${esc(de)}">${plField}<input class="ex-row-fa" placeholder="ترجمه فارسی..." value="${esc(fa)}" style="direction:rtl;text-align:right;"><div class="ex-row-del"><span class="ex-drag-handle" title="Reihenfolge ändern">⠿</span><button class="ex-promote-btn" onclick="promoteExToEntry(this)" ontouchend="event.preventDefault();promoteExToEntry(this)" title="Als neuen Eintrag übernehmen">${btns}</button><button class="ex-move-btn" onclick="_openMoveEx(this)" ontouchend="event.preventDefault();_openMoveEx(this)" title="Beispiel verschieben">${mvIco}</button><button class="ex-del-btn" onclick="removeExRow(this)">${dlIco}</button></div></div>`;
+}
 function addExRow(){const list=document.getElementById('edit-examples-list');const i=list.children.length;list.insertAdjacentHTML('beforeend',exRowHTML(i,'',''));const r=list.lastElementChild;r.scrollIntoView({behavior:'smooth',block:'nearest'});r.querySelector('.ex-row-de').focus();}
 function removeExRow(btn){btn.closest('.ex-row').remove();}
 var _promoteExRow = null;
@@ -4732,17 +4745,12 @@ async function _keepNounAsSubentries() {
   if (!noun) noun = _promoteExNounForms;
   if (!noun) { _cancelPromoteEx(); return; }
   const fa = (_promoteExRow.querySelector('.ex-row-fa')?.value || '').trim();
-  // Replace current row's DE with clean singular
-  _promoteExRow.querySelector('.ex-row-de').value = noun.singular;
-  // Insert a new row for the plural right after the singular row
-  const list = document.getElementById('edit-examples-list');
-  const rows = list.querySelectorAll('.ex-row');
-  const idx = Array.from(rows).indexOf(_promoteExRow);
-  const newIdx = rows.length; // used only as a unique id
+  const rowIdx = _promoteExRow.id.replace('exrow-','') || '0';
+  // Replace this row with a new one that has singular in DE + plural in the subtle second field
   const tmpDiv = document.createElement('div');
-  tmpDiv.innerHTML = exRowHTML(newIdx, noun.plural, fa);
+  tmpDiv.innerHTML = exRowHTML(rowIdx, noun.singular, fa, noun.plural);
   const newRow = tmpDiv.firstElementChild;
-  _promoteExRow.insertAdjacentElement('afterend', newRow);
+  _promoteExRow.replaceWith(newRow);
   // Persist parent entry
   if (currentEntry) {
     currentEntry.ex = getExamplesFromDOM();
@@ -4752,7 +4760,7 @@ async function _keepNounAsSubentries() {
     if (ci >= 0) DICT[ci] = { ...currentEntry };
   }
   _cancelPromoteEx();
-  showToast('✓ Sg: ' + noun.singular + ' · Pl: ' + noun.plural + ' als Unterwörter gespeichert');
+  showToast('✓ ' + noun.singular + ' · ' + noun.plural + ' als Unterwort gespeichert');
 }
 function _promoteExErr(msg) {
   const el = document.getElementById('promote-ex-error');
@@ -4832,7 +4840,7 @@ async function _confirmPromoteEx() {
     _promoteExErr('Fehler: ' + (err.message||String(err)));
   }
 }
-function getExamplesFromDOM(){const rows=document.getElementById('edit-examples-list').querySelectorAll('.ex-row'),result=[];rows.forEach(row=>{const de=row.querySelector('.ex-row-de').value.trim();const fa=row.querySelector('.ex-row-fa').value.trim();if(de||fa)result.push({de,fa});});return result;}
+function getExamplesFromDOM(){const rows=document.getElementById('edit-examples-list').querySelectorAll('.ex-row'),result=[];rows.forEach(row=>{const de=row.querySelector('.ex-row-de').value.trim();const fa=row.querySelector('.ex-row-fa').value.trim();const plEl=row.querySelector('.ex-row-de-plural');if(de||fa){const item={de,fa};if(plEl){item.dePlural=plEl.value.trim();}result.push(item);}});return result;}
 async function saveEdit(force){
   if(!currentEntry) return;
   const german=stripZWNJ(document.getElementById('edit-german').value.trim());
@@ -5472,7 +5480,7 @@ function getSerializableEntries(list){
     g:String(e?.g||'').trim(),
     p:String(e?.p||'').trim(),
     f:Array.isArray(e?.f)?e.f.map(x=>String(x||'').trim()).filter(Boolean):[],
-    ex:Array.isArray(e?.ex)?e.ex.map(x=>({de:String(x?.de||'').trim(),fa:String(x?.fa||'').trim()})).filter(x=>x.de&&x.fa):[],
+    ex:Array.isArray(e?.ex)?e.ex.map(x=>{const r={de:String(x?.de||'').trim(),fa:String(x?.fa||'').trim()};if(x?.dePlural!=null)r.dePlural=String(x.dePlural).trim();return r;}).filter(x=>x.de&&x.fa):[],
     ...(e.wordType?{wordType:String(e.wordType)}:{}),
     ...(e.sch?{sch:String(e.sch)}:{})
   })).filter(e=>e.g&&e.p);
