@@ -2776,6 +2776,7 @@ color:var(--accent3);
       <div style="font-size:12px;color:var(--text2);margin-bottom:4px;margin-top:8px;">Persische Übersetzung</div>
       <input id="promote-ex-fa-input" type="text" placeholder="ترجمه فارسی …" style="direction:rtl;text-align:right;">
       <div id="promote-ex-error" style="display:none;color:rgba(248,113,113,0.9);font-size:12px;padding:8px 12px;background:rgba(248,113,113,0.12);border-radius:8px;margin-top:4px;"></div>
+      <div id="promote-ex-noun-hint" style="display:none;font-size:12px;color:rgba(52,211,153,0.9);padding:7px 12px;background:rgba(52,211,153,0.09);border-radius:8px;margin-top:4px;"></div>
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button id="promote-ex-cancel" onclick="_cancelPromoteEx()" ontouchend="event.preventDefault();_cancelPromoteEx()">Abbrechen</button>
         <button id="promote-ex-confirm" onclick="_confirmPromoteEx()" ontouchend="event.preventDefault();_confirmPromoteEx()">✓ Erstellen</button>
@@ -4669,15 +4670,39 @@ function exRowHTML(i,de,fa){return `<div class="ex-row" id="exrow-${i}"><input c
 function addExRow(){const list=document.getElementById('edit-examples-list');const i=list.children.length;list.insertAdjacentHTML('beforeend',exRowHTML(i,'',''));const r=list.lastElementChild;r.scrollIntoView({behavior:'smooth',block:'nearest'});r.querySelector('.ex-row-de').focus();}
 function removeExRow(btn){btn.closest('.ex-row').remove();}
 var _promoteExRow = null;
+var _promoteExNounForms = null; // {singular, plural} if sub-entry text matches a noun pattern
+
+function _parseSubentryNoun(text) {
+  // Matches: "der/die/das WORD, die/der/das WORDS" or with semicolon separator
+  const m = text.match(/^(der|die|das)\s+(.+?)\s*[,;]\s*(die|der|das)\s+(.+)$/i);
+  if (!m) return null;
+  return {
+    singular: (m[1] + ' ' + m[2]).trim(),
+    plural:   (m[3] + ' ' + m[4]).trim()
+  };
+}
+
 function promoteExToEntry(btn) {
   try {
     _promoteExRow = btn ? btn.closest('.ex-row') : null;
+    _promoteExNounForms = null;
     const de = (_promoteExRow?.querySelector('.ex-row-de')?.value || '').trim();
     const fa = (_promoteExRow?.querySelector('.ex-row-fa')?.value || '').trim();
-    document.getElementById('promote-ex-de-input').value = de;
+    const noun = _parseSubentryNoun(de);
+    _promoteExNounForms = noun;
+    document.getElementById('promote-ex-de-input').value = noun ? noun.singular : de;
     document.getElementById('promote-ex-fa-input').value = fa;
     document.getElementById('promote-ex-confirm').disabled = false;
     document.getElementById('promote-ex-confirm').textContent = '✓ Erstellen';
+    const hint = document.getElementById('promote-ex-noun-hint');
+    if (hint) {
+      if (noun) {
+        hint.textContent = '📊 Nomen erkannt · Singular: ' + noun.singular + ' · Plural: ' + noun.plural;
+        hint.style.display = 'block';
+      } else {
+        hint.style.display = 'none';
+      }
+    }
     document.getElementById('promote-ex-overlay').classList.add('open');
     setTimeout(() => document.getElementById('promote-ex-de-input').focus(), 150);
   } catch(e) { showToast('⚠ Fehler: '+e.message,'error'); }
@@ -4685,6 +4710,7 @@ function promoteExToEntry(btn) {
 function _cancelPromoteEx() {
   document.getElementById('promote-ex-overlay').classList.remove('open');
   _promoteExRow = null;
+  _promoteExNounForms = null;
 }
 function _promoteExErr(msg) {
   const el = document.getElementById('promote-ex-error');
@@ -4709,7 +4735,11 @@ async function _confirmPromoteEx() {
   const btn = document.getElementById('promote-ex-confirm');
   btn.disabled = true; btn.textContent = '…';
   try {
-    const entry = { g: de, p: fa, f: [], wordType: 'other', ex: [] };
+    // If a noun pattern was detected, use wordType 'nomen' and store singular/plural in forms
+    const noun = _promoteExNounForms;
+    const wordType = noun ? 'nomen' : 'other';
+    const forms = noun ? [de, noun.plural] : []; // de may have been edited by user; keep detected plural
+    const entry = { g: de, p: fa, f: forms, wordType, ex: [] };
     enrichEntryForSearch(entry);
     const newId = await dbAdd(entry);
     entry.id = newId;
@@ -4726,7 +4756,10 @@ async function _confirmPromoteEx() {
     await syncSnapshotFromDB();
     updateHomeStats();
     _cancelPromoteEx();
-    showToast('✓ „' + de + '” als neuer Eintrag gespeichert');
+    const toastLabel = noun
+      ? '✓ „' + de + '” als Nomen gespeichert (Pl.: ' + noun.plural + ')'
+      : '✓ „' + de + '” als neuer Eintrag gespeichert';
+    showToast(toastLabel);
   } catch(err) {
     btn.disabled = false; btn.textContent = '✓ Erstellen';
     _promoteExErr('Fehler: ' + (err.message||String(err)));
