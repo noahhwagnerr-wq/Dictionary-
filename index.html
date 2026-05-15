@@ -2441,7 +2441,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15d</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15e</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2779,8 +2779,9 @@ color:var(--accent3);
       <div id="promote-ex-noun-hint" style="display:none;font-size:12px;color:rgba(52,211,153,0.9);padding:7px 12px;background:rgba(52,211,153,0.09);border-radius:8px;margin-top:4px;"></div>
       <input type="hidden" id="promote-ex-noun-singular">
       <input type="hidden" id="promote-ex-noun-plural">
-      <div style="display:flex;gap:8px;margin-top:8px;">
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
         <button id="promote-ex-cancel" onclick="_cancelPromoteEx()" ontouchend="event.preventDefault();_cancelPromoteEx()">Abbrechen</button>
+        <button id="promote-ex-keep" onclick="_keepNounAsSubentries()" ontouchend="event.preventDefault();_keepNounAsSubentries()" style="display:none;background:rgba(52,211,153,0.15);color:rgba(52,211,153,0.9);border:1px solid rgba(52,211,153,0.3);">⇩ Als Unterwörter</button>
         <button id="promote-ex-confirm" onclick="_confirmPromoteEx()" ontouchend="event.preventDefault();_confirmPromoteEx()">✓ Erstellen</button>
       </div>
     </div>
@@ -4711,6 +4712,9 @@ function promoteExToEntry(btn) {
         hint.style.display = 'none';
       }
     }
+    // Show "Als Unterwörter" button only when noun is detected
+    const keepBtn = document.getElementById('promote-ex-keep');
+    if (keepBtn) keepBtn.style.display = noun ? '' : 'none';
     overlay.classList.add('open');
     setTimeout(() => document.getElementById('promote-ex-de-input').focus(), 150);
   } catch(e) { showToast('⚠ Fehler: '+e.message,'error'); }
@@ -4719,6 +4723,36 @@ function _cancelPromoteEx() {
   document.getElementById('promote-ex-overlay').classList.remove('open');
   _promoteExRow = null;
   _promoteExNounForms = null;
+}
+async function _keepNounAsSubentries() {
+  if (!_promoteExRow) { _cancelPromoteEx(); return; }
+  const overlay = document.getElementById('promote-ex-overlay');
+  let noun = _parseSubentryNoun(overlay.dataset.originalDe || '');
+  if (!noun && overlay.dataset.nounPlural) noun = { singular: overlay.dataset.nounSingular, plural: overlay.dataset.nounPlural };
+  if (!noun) noun = _promoteExNounForms;
+  if (!noun) { _cancelPromoteEx(); return; }
+  const fa = (_promoteExRow.querySelector('.ex-row-fa')?.value || '').trim();
+  // Replace current row's DE with clean singular
+  _promoteExRow.querySelector('.ex-row-de').value = noun.singular;
+  // Insert a new row for the plural right after the singular row
+  const list = document.getElementById('edit-examples-list');
+  const rows = list.querySelectorAll('.ex-row');
+  const idx = Array.from(rows).indexOf(_promoteExRow);
+  const newIdx = rows.length; // used only as a unique id
+  const tmpDiv = document.createElement('div');
+  tmpDiv.innerHTML = exRowHTML(newIdx, noun.plural, fa);
+  const newRow = tmpDiv.firstElementChild;
+  _promoteExRow.insertAdjacentElement('afterend', newRow);
+  // Persist parent entry
+  if (currentEntry) {
+    currentEntry.ex = getExamplesFromDOM();
+    enrichEntryForSearch(currentEntry);
+    await dbPut(currentEntry);
+    const ci = DICT.findIndex(e => e.id === currentEntry.id);
+    if (ci >= 0) DICT[ci] = { ...currentEntry };
+  }
+  _cancelPromoteEx();
+  showToast('✓ Sg: ' + noun.singular + ' · Pl: ' + noun.plural + ' als Unterwörter gespeichert');
 }
 function _promoteExErr(msg) {
   const el = document.getElementById('promote-ex-error');
