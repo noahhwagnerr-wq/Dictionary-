@@ -2451,7 +2451,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15m</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15n</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -5677,8 +5677,9 @@ function _exWordRule(word, wordType){
   if(wordType==='nomen'){
     check=s=>s.toLowerCase().includes(stem);
     rule=`⚠️ PFLICHT – ZIELWORT-REGEL: Jeder Satz MUSS das Nomen "${base}" explizit enthalten `
-        +`(Singular oder Plural). Ableitungen wie "${bl}isch", "${bl}ologie" ersetzen das Nomen NICHT. `
-        +`Satz verwerfen und neu generieren, falls "${base}" in keiner Form vorkommt.`;
+        +`(Singular oder Plural, mit oder ohne Artikel). Ableitungen wie "${bl}isch", "${bl}ologie" ersetzen das Nomen NICHT. `
+        +`Ersetze "${base}" NIEMALS durch seine Übersetzung, ein Synonym oder ein deutsches Äquivalent. `
+        +`Satz verwerfen und neu generieren, falls "${base}" in keiner Form wortwörtlich vorkommt.`;
   }else if(wordType==='verb'){
     const vstam=bl.replace(/ieren$|en$|n$/,'');
     // Trennbare Verben: Präfix erkennen und getrennten Form prüfen
@@ -5760,7 +5761,9 @@ async function generateExamplesForField(btnEl){
     const wr=_exWordRule(cleanSeed, fieldWordType);
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${cleanSeed}"
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für das Wort: "${cleanSeed}"
+
+⛔ KRITISCH: Verwende in jedem Satz das Wort "${cleanSeed}" EXAKT SO -- niemals seine Übersetzung, kein Synonym, kein deutsches Äquivalent. Das Zielwort MUSS wortwörtlich im deutschen Satz erscheinen.
 
 ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
@@ -5782,7 +5785,8 @@ NUR JSON, kein Markdown:
     let newEx = await callAIMultiProvider(prompt, null);
     if(!newEx||!newEx.length)throw new Error('Keine verwertbaren Beispiele');
     const filtered=newEx.filter(ex=>wr.check(ex.de||''));
-    if(filtered.length)newEx=filtered;else showToast('⚠ Zielwort-Filter: keine Übereinstimmung — ungefiltert');
+    if(filtered.length)newEx=filtered;
+    else throw new Error(`Zielwort „${wr.base}" in keinem generierten Satz gefunden — bitte erneut versuchen`);
 
     entry.ex.splice(fieldIdx+1,0,...newEx);
     await dbPut(entry);
@@ -5820,7 +5824,9 @@ async function generateDraftExamples(mode,btnEl){
       : '';
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${ctx.german}"${ctx.persian?` (Bedeutung: ${ctx.persian})`:''}${lengthHint}
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für das Wort: "${ctx.german}"${ctx.persian?`\n(Persische Bedeutung nur zur Orientierung: ${ctx.persian})`:''}${lengthHint}
+
+⛔ KRITISCH: Verwende in jedem Satz das Wort "${ctx.german}" EXAKT SO -- niemals seine Übersetzung, kein Synonym, kein deutsches Äquivalent. Das Zielwort MUSS wortwörtlich im deutschen Satz erscheinen.
 
 ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
@@ -5842,7 +5848,8 @@ NUR JSON, kein Markdown:
     let newEx = await callAIMultiProvider(prompt, ctx.german);
     if(!newEx||!newEx.length)throw new Error('Keine verwertbaren Beispiele');
     const filtered=newEx.filter(ex=>wr.check(ex.de||''));
-    if(filtered.length)newEx=filtered;else showToast('⚠ Zielwort-Filter: keine Übereinstimmung — ungefiltert');
+    if(filtered.length)newEx=filtered;
+    else throw new Error(`Zielwort „${wr.base}" in keinem generierten Satz gefunden — bitte erneut versuchen`);
     appendGeneratedExamples(mode,newEx);
     showToast(`✓ ${newEx.length} KI-Beispiele hinzugefügt!`);
   }catch(err){
@@ -5874,7 +5881,10 @@ async function generateExamples(btnEl){
       : '';
     const prompt=`Du bist ein erfahrener Germanistik-Dozent und Deutsch-Persisch-Übersetzer auf Muttersprachler-Niveau.
 
-Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für: "${entry.g}" (Bedeutung: ${entry.p})${lengthHint2}
+Erstelle GENAU 3 anspruchsvolle Beispielsätze auf Deutsch (Niveau C1--C2) für das Wort: "${entry.g}"
+(Persische Bedeutung nur zur Orientierung: ${entry.p})${lengthHint2}
+
+⛔ KRITISCH: Verwende in jedem Satz das Wort "${entry.g}" EXAKT SO -- niemals seine Übersetzung, kein Synonym, kein deutsches Äquivalent. Das Zielwort MUSS wortwörtlich im deutschen Satz erscheinen.
 
 ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Komplexe Satzstrukturen: Nebensätze, Relativsätze, Konjunktiv II, Passiv, erweiterte Partizipialkonstruktionen
@@ -5896,7 +5906,8 @@ NUR JSON, kein Markdown:
     let newEx = await callAIMultiProvider(prompt, entry.g);
     if(!newEx||!newEx.length)throw new Error('Keine verwertbaren Beispiele');
     const filtered=newEx.filter(ex=>wr.check(ex.de||''));
-    if(filtered.length)newEx=filtered;else showToast('⚠ Zielwort-Filter: keine Übereinstimmung — ungefiltert');
+    if(filtered.length)newEx=filtered;
+    else throw new Error(`Zielwort „${wr.base}" in keinem generierten Satz gefunden — bitte erneut versuchen`);
 
     entry.ex=[...(entry.ex||[]),...newEx];
     await dbPut(entry);
