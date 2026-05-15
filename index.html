@@ -4673,8 +4673,8 @@ var _promoteExRow = null;
 var _promoteExNounForms = null; // {singular, plural} if sub-entry text matches a noun pattern
 
 function _parseSubentryNoun(text) {
-  // Matches: "der/die/das WORD, die/der/das WORDS" or with semicolon separator
-  const m = text.match(/^(der|die|das)\s+(.+?)\s*[,;]\s*(die|der|das)\s+(.+)$/i);
+  // Matches: "der/die/das WORD[, ]die/der/das WORDS" — separator is optional
+  const m = text.match(/^(der|die|das)\s+(.+?)\s*(?:[,;]\s*)?(die|der|das)\s+(.+)$/i);
   if (!m) return null;
   return {
     singular: (m[1] + ' ' + m[2]).trim(),
