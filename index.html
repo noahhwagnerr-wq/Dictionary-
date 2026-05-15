@@ -2448,7 +2448,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15f</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15g</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3337,7 +3337,9 @@ function normalizeExamples(examples){
     const key=normalizeSearchText(de,'de') + '|' + normalizeSearchText(fa,'fa');
     if(seen.has(key)) continue;
     seen.add(key);
-    out.push({de,fa});
+    const item={de,fa};
+    if(ex?.dePlural!=null){const dp=String(ex.dePlural).trim();if(dp)item.dePlural=dp;}
+    out.push(item);
   }
   return out;
 }
@@ -3916,7 +3918,7 @@ function renderDetail(){
   let exRows='';
   if(e.ex&&e.ex.length){
     exRows=e.ex.map((ex,xi)=>`<div class="example-item">
-      <div class="example-de-wrap"><div class="example-head-row"><div class="example-de">${esc(ex.de)}</div><button class="example-ai-btn" data-action="gen-ex-field" data-entry-id="${e.id}" data-field-idx="${xi}" aria-label="KI-Beispiele für dieses Feld" title="KI-Beispiele für dieses Feld" onclick="event.stopPropagation();generateExamplesForField(this)" ontouchend="event.preventDefault();event.stopPropagation();generateExamplesForField(this)"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></button></div><button class="speak-btn speak-sm" data-action="speak-ex" data-lang="de" data-idx="${xi}" data-part="de">${spkSVG(13)}</button></div>
+      <div class="example-de-wrap"><div class="example-head-row"><div class="example-de">${esc(ex.de)}${ex.dePlural?`<span style="display:block;font-size:12px;opacity:0.6;margin-top:2px;">${esc(ex.dePlural)}</span>`:''}</div><button class="example-ai-btn" data-action="gen-ex-field" data-entry-id="${e.id}" data-field-idx="${xi}" aria-label="KI-Beispiele für dieses Feld" title="KI-Beispiele für dieses Feld" onclick="event.stopPropagation();generateExamplesForField(this)" ontouchend="event.preventDefault();event.stopPropagation();generateExamplesForField(this)"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></button></div><button class="speak-btn speak-sm" data-action="speak-ex" data-lang="de" data-idx="${xi}" data-part="de">${spkSVG(13)}</button></div>
       <div class="example-fa-wrap"><div class="example-fa">${esc(ex.fa)}</div></div>
     </div>`).join('');
   }
