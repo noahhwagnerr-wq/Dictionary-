@@ -2777,6 +2777,8 @@ color:var(--accent3);
       <input id="promote-ex-fa-input" type="text" placeholder="ترجمه فارسی …" style="direction:rtl;text-align:right;">
       <div id="promote-ex-error" style="display:none;color:rgba(248,113,113,0.9);font-size:12px;padding:8px 12px;background:rgba(248,113,113,0.12);border-radius:8px;margin-top:4px;"></div>
       <div id="promote-ex-noun-hint" style="display:none;font-size:12px;color:rgba(52,211,153,0.9);padding:7px 12px;background:rgba(52,211,153,0.09);border-radius:8px;margin-top:4px;"></div>
+      <input type="hidden" id="promote-ex-noun-singular">
+      <input type="hidden" id="promote-ex-noun-plural">
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button id="promote-ex-cancel" onclick="_cancelPromoteEx()" ontouchend="event.preventDefault();_cancelPromoteEx()">Abbrechen</button>
         <button id="promote-ex-confirm" onclick="_confirmPromoteEx()" ontouchend="event.preventDefault();_confirmPromoteEx()">✓ Erstellen</button>
@@ -4694,6 +4696,8 @@ function promoteExToEntry(btn) {
     document.getElementById('promote-ex-fa-input').value = fa;
     document.getElementById('promote-ex-confirm').disabled = false;
     document.getElementById('promote-ex-confirm').textContent = '✓ Erstellen';
+    document.getElementById('promote-ex-noun-singular').value = noun ? noun.singular : '';
+    document.getElementById('promote-ex-noun-plural').value = noun ? noun.plural : '';
     const hint = document.getElementById('promote-ex-noun-hint');
     if (hint) {
       if (noun) {
@@ -4735,10 +4739,12 @@ async function _confirmPromoteEx() {
   const btn = document.getElementById('promote-ex-confirm');
   btn.disabled = true; btn.textContent = '…';
   try {
-    // If a noun pattern was detected, use wordType 'nomen' and store singular/plural in forms
-    const noun = _promoteExNounForms;
-    const wordType = noun ? 'nomen' : 'other';
-    const forms = noun ? [de, noun.plural] : []; // de may have been edited by user; keep detected plural
+    // Read noun forms from hidden inputs (more reliable than module-level variable)
+    const storedSingular = (document.getElementById('promote-ex-noun-singular').value || '').trim();
+    const storedPlural   = (document.getElementById('promote-ex-noun-plural').value   || '').trim();
+    const isNoun = !!storedPlural;
+    const wordType = isNoun ? 'nomen' : 'other';
+    const forms = isNoun ? [de, storedPlural] : [];
     const entry = { g: de, p: fa, f: forms, wordType, ex: [] };
     enrichEntryForSearch(entry);
     const newId = await dbAdd(entry);
@@ -4756,8 +4762,8 @@ async function _confirmPromoteEx() {
     await syncSnapshotFromDB();
     updateHomeStats();
     _cancelPromoteEx();
-    const toastLabel = noun
-      ? '✓ „' + de + '” als Nomen gespeichert (Pl.: ' + noun.plural + ')'
+    const toastLabel = isNoun
+      ? '✓ „' + de + '” als Nomen gespeichert (Pl.: ' + storedPlural + ')'
       : '✓ „' + de + '” als neuer Eintrag gespeichert';
     showToast(toastLabel);
   } catch(err) {
