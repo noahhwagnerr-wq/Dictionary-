@@ -191,15 +191,6 @@ pointer-events:none;
 50%{transform:translateX(-50%) scale(1.12);opacity:1;}
 }
 
-.hero-badge{
-display:inline-flex;align-items:center;gap:5px;
-background:rgba(124,95,230,0.15);
-border:1px solid rgba(124,95,230,0.35);
-border-radius:20px;padding:4px 12px;
-font-size:10px;font-weight:700;letter-spacing:1.5px;
-text-transform:uppercase;color:var(--accent3);
-margin-bottom:12px;
-}
 .hero-title{
 font-size:clamp(22px,6.5vw,32px);
 font-weight:900;color:var(--text);
@@ -244,10 +235,6 @@ position:relative;overflow:hidden;
 .quick-search-btn svg{color:var(--accent2);flex-shrink:0;}
 
 /* ── STAT GRID ── */
-.stat-grid{
-display:grid;grid-template-columns:1fr 1fr;
-gap:10px;padding:0 16px 16px;
-}
 .stat-card{
 border-radius:var(--radius);padding:20px 16px;
 border:1px solid rgba(124,95,230,0.20);
@@ -270,12 +257,6 @@ background:linear-gradient(135deg,var(--accent3),var(--accent2));
 -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 background-clip:text;
 }
-.stat-label{
-font-size:11px;color:var(--text2);margin-top:4px;
-font-family:‘Vazirmatn’,Tahoma,sans-serif;font-weight:600;
-}
-.stat-sub{font-size:10px;color:var(--text3);margin-top:2px;font-weight:500;}
-
 /* ── SECTION HEADER ── */
 .section-header{
 display:flex;justify-content:space-between;align-items:center;
@@ -296,7 +277,6 @@ background:rgba(6,4,18,0.85);
 backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 border-bottom:1px solid rgba(255,255,255,0.07);
 }
-.dir-toggle{display:flex;gap:8px;margin-bottom:10px;}
 .dir-btn{
 padding:7px 16px;border-radius:20px;border:none;cursor:pointer;
 font-size:12px;font-weight:700;
@@ -490,7 +470,6 @@ transition:transform .38s cubic-bezier(0.32,1.08,0.60,1);
 max-width:430px;margin:0 auto;left:0;right:0;
 }
 .overlay.open{transform:translateY(0);}
-.overlay-actions{display:flex;gap:8px;}
 .overlay-scroll{
 flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
 padding:0 16px calc(var(--safe-bottom) + var(--tabbar-height) + 8px);
@@ -527,9 +506,6 @@ background:linear-gradient(135deg,rgba(124,95,230,.08),rgba(79,158,255,.05));
 border:1px solid rgba(124,95,230,.22);
 border-radius:var(--radius);
 padding:16px 14px;margin-bottom:6px;
-}
-.detail-wortformen-label{
-display:none;
 }
 /* ── Goldener Ring für Wortform-Tags ── */
 .detail-form-tag{
@@ -895,10 +871,6 @@ transition:all .3s cubic-bezier(.22,1,.36,1);display:block;
 border-color:var(--accent2);background:rgba(79,158,255,.08);
 transform:scale(1.02);box-shadow:0 0 30px rgba(79,158,255,.15);
 }
-.import-zone-icon{font-size:36px;margin-bottom:10px;}
-.import-zone-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.import-zone-sub{font-size:12px;color:var(--text2);}
-
 /* ── PROGRESS ── */
 .progress-wrap{margin-bottom:12px;}
 .progress-bar-bg{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
@@ -929,10 +901,6 @@ transition:border-color .2s;
 .about-card-title{
 display:flex;align-items:center;gap:8px;flex-direction:column;
 font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;text-align:center;
-}
-.about-card-count{
-font-size:11px;font-weight:600;background:rgba(124,95,230,.2);
-border-radius:10px;padding:2px 8px;color:var(--accent3);
 }
 .about-card-de{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;}
 .about-card-fa{
@@ -1136,9 +1104,6 @@ border-radius:var(--radius);padding:13px 16px;margin-bottom:8px;cursor:pointer;
 transition:transform .15s,background .15s;
 }
 .error-item:active{transform:scale(0.99);background:rgba(255,107,107,.09);}
-.error-item-word{font-size:15px;font-weight:700;color:var(--text);font-family:Georgia,serif;}
-.error-item-type{font-size:10px;color:var(--red);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
-.error-item-detail{font-size:12px;color:var(--text2);margin-top:4px;font-family:‘Vazirmatn’,Tahoma,sans-serif;}
 
 /* ── DEFINITION BOX ── */
 .detail-defbox{
@@ -2077,7 +2042,6 @@ font-size:12.5px;color:var(--text2);font-weight:500;
 /* ── Spell-Check Meta-Tags ── */
 .sc-meta-row{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 2px;}
 .sc-meta-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
-.sc-meta-lang{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);}
 .sc-meta-pos {background:rgba(124,95,230,.12);color:#9b7cec;border:1px solid rgba(124,95,230,.25);}
 .sc-meta-base{background:rgba(45,212,160,.10);color:#2dd4a0;border:1px solid rgba(45,212,160,.25);}
 .sc-ok {
@@ -2451,7 +2415,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15u</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-15v</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3011,7 +2975,7 @@ function dbGetMeta(k){return new Promise(res=>{const r=S('meta').get(k);r.onsucc
 function dbSetMeta(k,v){return new Promise((res,rej)=>{const r=S('meta','readwrite').put({key:k,val:v});r.onsuccess=res;r.onerror=rej;});}
 
 // ── State ──
-let DICT=[],FAVS=new Set(),currentEntry=null,quizEntry=null,quizFlipped=false,searchDir='de-fa',currentTab='home',pendingAddWord='';
+let DICT=[],FAVS=new Set(),currentEntry=null,quizEntry=null,quizFlipped=false,searchDir='de-fa',currentTab='home';
 
 // ── Parse ──
 function parseLvtDeck(text){
@@ -3539,7 +3503,6 @@ function doSearch(q){
   const res=scored.slice(0,50);
   let html='';
   if(res.length===0){
-    pendingAddWord=trimmed;
     // ── Kein-Treffer-Header (elegant, kein Emoji) ──
     html=`<div class="no-result-wrap">
       <div class="no-result-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="8.5" y1="8.5" x2="13.5" y2="13.5"/><line x1="13.5" y1="8.5" x2="8.5" y2="13.5"/></svg></div>
@@ -3839,32 +3802,6 @@ function openDetail(id){
   activeSearchCardId = id;
   // Treffer auf Detailseite hervorheben und dorthin scrollen
   setTimeout(function(){ applyDetailHighlight(lastSearchQuery); }, 380);
-}
-
-function deleteCurrentEntry(){
-  if(!currentEntry) return;
-  const word = currentEntry.g || '?';
-  const btn = document.querySelector('.hero-delete-btn');
-  // Zweistufige Bestätigung -- kein confirm() (funktioniert nicht in iOS Web-App)
-  if(btn && btn.dataset.confirm !== '1'){
-    btn.dataset.confirm = '1';
-    btn.textContent = '⚠️ Wirklich löschen?';
-    btn.style.background = 'rgba(248,113,113,0.30)';
-    setTimeout(()=>{
-      if(btn){ btn.dataset.confirm=''; btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> Löschen'; btn.style.background=''; }
-    }, 3000);
-    return;
-  }
-  dbDel(currentEntry.id).then(()=>{
-    FAVS.delete(currentEntry.id);
-    saveFavs();
-    loadAllEntries().then(()=>{
-      updateHomeStats();
-      renderRandomWords();
-      closeDetail();
-      showToast('„' + word + '" wurde gelöscht');
-    });
-  });
 }
 
 function closeDetail(){
@@ -5197,7 +5134,6 @@ document.addEventListener('click',function(ev){
 });
 
 // ── Web Speech -- Voice-Hilfe (getVoices VOR cancel -- iOS-Fix) ──
-let _deVoiceName = null;
 function _sortDeVoices(vlist) {
   const de = (vlist || []).filter(v => v.lang.startsWith('de'));
   de.sort((a, b) => {
@@ -5209,8 +5145,7 @@ function _sortDeVoices(vlist) {
 }
 if (typeof speechSynthesis !== 'undefined') {
   speechSynthesis.addEventListener('voiceschanged', () => {
-    const v = _sortDeVoices(speechSynthesis.getVoices())[0];
-    if (v) _deVoiceName = v.name;
+    _sortDeVoices(speechSynthesis.getVoices());
   });
 }
 
