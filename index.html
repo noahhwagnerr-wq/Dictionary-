@@ -2416,7 +2416,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-22v</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-22w</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -5759,7 +5759,7 @@ async function generateExamplesForField(btnEl){
   if(!seed){showToast('⚠ Für dieses Feld fehlt das deutsche Wort');return;}
 
   const keys=getApiKeys();
-  if(!keys.openai&&!keys.groq&&!keys.gemini){promptForApiKey(()=>generateExamplesForField(btnEl));return;}
+  if(!keys.claude&&!keys.openai&&!keys.groq&&!keys.gemini){promptForApiKey(()=>generateExamplesForField(btnEl));return;}
 
   const origHTML=btnEl.innerHTML;
   btnEl.classList.add('loading');
@@ -5823,7 +5823,7 @@ async function generateDraftExamples(mode,btnEl){
   if(typeof isValidGermanHeadword==='function'&&!isValidGermanHeadword(ctx.german)){showToast('⚠ Bitte mindestens einen deutschen Buchstaben eingeben');return;}
 
   const keys=getApiKeys();
-  if(!keys.openai&&!keys.groq&&!keys.gemini){promptForApiKey(()=>generateDraftExamples(mode,btnEl));return;}
+  if(!keys.claude&&!keys.openai&&!keys.groq&&!keys.gemini){promptForApiKey(()=>generateDraftExamples(mode,btnEl));return;}
 
   const origHTML=btnEl.innerHTML;
   btnEl.classList.add('loading');
@@ -5882,7 +5882,7 @@ async function generateExamples(btnEl){
   if(!entry)return;
 
   const keys=getApiKeys();
-  if(!keys.openai&&!keys.groq&&!keys.gemini){promptForApiKey(()=>generateExamples(btnEl));return;}
+  if(!keys.claude&&!keys.openai&&!keys.groq&&!keys.gemini){promptForApiKey(()=>generateExamples(btnEl));return;}
 
   const origHTML=btnEl.innerHTML;
   btnEl.classList.add('loading');
@@ -6148,7 +6148,7 @@ async function analyseSchilderung(prefix){
   const existing = formsField.value.trim();
 
   const keys = getApiKeys();
-  if(!keys.openai && !keys.gemini && !keys.groq){
+  if(!keys.claude && !keys.openai && !keys.gemini && !keys.groq){
     showToast('Kein API-Key konfiguriert','error'); return;
   }
   btn.classList.add('loading');
@@ -6250,7 +6250,12 @@ async function analyseSchilderung(prefix){
 
   try {
     let result = null, _schErr = [];
-    if(keys.openai){
+    if(keys.claude){
+      try{
+        result = await callClaude(keys.claude,[{role:'user',content:userPrompt}],sysPrompt,3000);
+      }catch(e){ _schErr.push('Claude: '+e.message); }
+    }
+    if(!result && keys.openai){
       try{
         result = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
           [{role:'system',content:sysPrompt},{role:'user',content:userPrompt}], 3000, 0.3);
@@ -6640,7 +6645,7 @@ async function analyseTranslation(prefix){
   btn.classList.add('loading');
   suggestionsEl.innerHTML = '';
   const keys = getApiKeys();
-  if(!keys.openai && !keys.gemini && !keys.groq){
+  if(!keys.claude && !keys.openai && !keys.gemini && !keys.groq){
     showToast('Kein API-Key konfiguriert','error');
     btn.classList.remove('loading'); return;
   }
@@ -6687,7 +6692,12 @@ async function analyseTranslation(prefix){
 
   try {
     let step1Raw = null, _s1Err = [];
-    if(keys.openai){
+    if(keys.claude){
+      try{
+        step1Raw = await callClaude(keys.claude,[{role:'user',content:step1User}],step1Sys,1800);
+      }catch(e){ _s1Err.push('Claude: '+e.message); }
+    }
+    if(!step1Raw && keys.openai){
       try{
         step1Raw = await _callOpenAICompat('https://api.openai.com/v1', keys.openai, 'gpt-4o',
           [{role:'system',content:step1Sys},{role:'user',content:step1User}], 1800, 0.15, true);
@@ -7092,7 +7102,17 @@ async function _scFetch(word) {
   // ── Erweiterter Qualitätsprüfungs-Prompt ──
   const prompt = `Du bist ein erfahrener Linguistik-Experte. Analysiere das Wort: "${word}"\n\n═══ SCHRITT 1: EXISTIERT ES AUF DEUTSCH? ═══\nPrüfe ob "${word}" im Duden oder DWDS existiert.\nDiese integrierten Fremdwörter zählen als Deutsch: Computer, Baby, Hobby, Pizza, Hotel, Auto, Sport, Musik.\n\n→ DEUTSCHES WORT, korrekte Form → status="ok"\n→ DEUTSCHES WORT, Nomen kleingeschrieben → status="error", category="capitalization", corrected=Großschreibung\n→ DEUTSCHES WORT, Schreibfehler → status="error", category="spelling", corrected=korrekte Form\n   Ähnliche Wörter: suggestions=["Korrektur1","Korrektur2","Korrektur3"]\n→ DEUTSCHES WORT, Pluralform → status="warn", category="plural", baseForm=Singular, suggestions=[Singular]\n→ DEUTSCHES WORT, konjugiertes Verb → status="warn", category="form", baseForm=Infinitiv, suggestions=[Infinitiv]\n\n═══ SCHRITT 2: WENN NICHT DEUTSCH -- FREMDWORT? ═══\nErkenne die Sprache wenn das Wort in einer anderen Sprache existiert.\nWICHTIG: Erkenne auch kurze/seltene Wörter korrekt!\nUnterstützte Sprachen (Beispiele):\n  Englisch:    go, pep, fun, cool, happy, sorry, nice, okay, weekend, sorry, love\n  Französisch: merci, bonjour, café, voilà, rouge, chic, amour\n  Spanisch:    hola, amigo, fiesta, bueno, hasta, vamos\n  Italienisch: ciao, bella, pizza, grazie, prego, amore\n  Arabisch:    Wörter in arabischer Schrift oder bekannte Lehnwörter\n  Persisch:    Wörter in persischer Schrift oder bekannte Lehnwörter\n  Türkisch:    merhaba, teşekkür, güzel\n  Lateinisch:  et, est, sum, ante, post\n  Andere:      Sprachname angeben\n→ FREMDWORT erkannt → status="warn", category="foreign", language="Sprachname"\n  Falls ein ähnliches deutsches Wort existiert → suggestions=["deutschesÄquivalent"]\n\n═══ SCHRITT 3: UNBEKANNTES WORT ═══\nWenn weder deutsch noch erkennbar fremd:\n→ status="error", category="nonexistent"\n  IMMER mindestens 2-3 ähnliche deutsche Wörter als suggestions angeben!\n  Phonetisch ähnlich: "bümsen"→["bumsen","brummen","summen"]\n  Tippfehler-ähnlich: "Huas"→["Haus","Hase","Hans"]\n\n═══ REGELN (immer beachten) ═══\n- Grossgeschriebene Nomen → NIEMALS capitalization-Fehler!\n- Verb-Infinitiv auf -en/-eln/-ern → NIEMALS category="form"-Fehler! → immer status="ok" (Beispiele: schonen, laufen, grauen, spielen, lieben)\n- Wenn corrected === Eingabe: NIEMALS einen Fehler melden! → status="ok"\n- ss/ß NUR bei echten Fehlern (Strase→Straße, Flus→Fluss). Korrekte Wörter nie ankreiden!\n- Bei Schreibfehlern: suggestions immer mit 2-3 Alternativen füllen.\n- pos-Feld: "Nomen"|"Verb"|"Adjektiv"|"Adverb"|"Abkürzung"|"Phrase"|"Unbekannt"\n\nAUSGABE: Nur JSON, kein Markdown.\nSchema: {"status":"ok|warn|error","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n\nBEISPIELE:\n"Haus"    → {"status":"ok","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"haus"    → {"status":"error","category":"capitalization","pos":"Nomen","language":"Deutsch","note":"Nomen werden großgeschrieben.","corrected":"Haus","baseForm":null,"suggestions":["Haus"]}\n"Imbiss"  → {"status":"ok","category":null,"pos":"Nomen","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"Imbis"   → {"status":"error","category":"spelling","pos":"Nomen","language":"Deutsch","note":"Doppel-s fehlt (ss-Regel).","corrected":"Imbiss","baseForm":null,"suggestions":["Imbiss","Biss","Riss"]}\n"Häuser"  → {"status":"warn","category":"plural","pos":"Nomen","language":"Deutsch","note":"Singular verwenden.","corrected":"Haus","baseForm":"Haus","suggestions":["Haus"]}\n"laufen"  → {"status":"ok","category":null,"pos":"Verb","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"schonen" → {"status":"ok","category":null,"pos":"Verb","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}\n"lief"    → {"status":"warn","category":"form","pos":"Verb","language":"Deutsch","note":"Infinitiv verwenden.","corrected":"laufen","baseForm":"laufen","suggestions":["laufen","liefern","legen"]}\n"pep"     → {"status":"warn","category":"foreign","pos":"Nomen","language":"Englisch","note":"Kein deutsches Wort.","corrected":null,"baseForm":null,"suggestions":["Schwung","Energie"]}\n"merci"   → {"status":"warn","category":"foreign","pos":"Phrase","language":"Französisch","note":"Kein deutsches Wort.","corrected":null,"baseForm":null,"suggestions":["Danke","Dankeschön"]}\n"bümsen"  → {"status":"error","category":"nonexistent","pos":"Unbekannt","language":"Unbekannt","note":"Unbekanntes Wort.","corrected":"bumsen","baseForm":null,"suggestions":["bumsen","brummen","summen"]}\n"Huas"    → {"status":"error","category":"nonexistent","pos":"Unbekannt","language":"Unbekannt","note":"Tippfehler?","corrected":"Haus","baseForm":null,"suggestions":["Haus","Hase","Hals"]}\n"schön"   → {"status":"ok","category":null,"pos":"Adjektiv","language":"Deutsch","note":"","corrected":null,"baseForm":null,"suggestions":[]}`;
 
-  // 1. OpenAI -- gpt-4o-mini (schnell + hohe Sprachkompetenz)
+  // 1. Claude (primär)
+  if (keys.claude) {
+    try {
+      const txt = await callClaude(keys.claude, [{role:'user', content: prompt}],
+        'Du bist ein Linguistik-Experte für Deutsch. Antworte AUSSCHLIESSLICH als reines JSON. Kein Markdown. Niemals ss/ß-Fehler für korrekte Wörter erfinden.', 500);
+      const si = txt.indexOf('{'), ei = txt.lastIndexOf('}');
+      if (si >= 0 && ei > si) return JSON.parse(txt.slice(si, ei + 1));
+    } catch (e) { console.warn('SpellCheck Claude:', e.message); }
+  }
+
+  // 2. OpenAI -- gpt-4o (Fallback)
   if (keys.openai) {
     try {
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -7118,7 +7138,7 @@ async function _scFetch(word) {
     } catch (e) { console.warn('SpellCheck OpenAI:', e.message); }
   }
 
-  // 2. Groq -- llama-3.3-70b (Fallback)
+  // 3. Groq -- llama-3.3-70b (Fallback)
   if (keys.groq) {
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -7144,7 +7164,7 @@ async function _scFetch(word) {
     } catch (e) { console.warn('SpellCheck Groq:', e.message); }
   }
 
-  // 3. Gemini (letzter Fallback)
+  // 4. Gemini (letzter Fallback)
   if (keys.gemini) {
     try {
       const r = await fetch(
@@ -7320,7 +7340,7 @@ async function runSpellCheck() {
   if (_scRunning) return;
 
   const keys = getApiKeys();
-  if (!keys.openai && !keys.groq && !keys.gemini) return; // kein Key → still
+  if (!keys.claude && !keys.openai && !keys.groq && !keys.gemini) return; // kein Key → still
 
   _scRunning  = true;
   _scLastWord = word;
