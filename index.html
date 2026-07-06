@@ -2416,7 +2416,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-22x</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-22y</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -5261,6 +5261,17 @@ async function speakText(text, lang, btnEl) {
   player.src = _SILENT;
   player.play().catch(() => {});
 
+  // iOS Web-Speech-Unlock: speechSynthesis muss ebenfalls SYNCHRON in der
+  // Geste angestoßen werden, sonst bleibt der spätere Fallback stumm.
+  if (typeof speechSynthesis !== 'undefined' && !window._speechUnlocked) {
+    try {
+      const u0 = new SpeechSynthesisUtterance(' ');
+      u0.volume = 0;
+      speechSynthesis.speak(u0);
+      window._speechUnlocked = true;
+    } catch {}
+  }
+
   // Blob-URL direkt abspielen -- KEIN player.load() (spart ~300ms)
   function _playBlob(blobUrl) {
     return new Promise((res, rej) => {
@@ -5279,43 +5290,44 @@ async function speakText(text, lang, btnEl) {
 
   const _errs = [];
 
-  // ── 1. OpenAI TTS -- tts-1 (schnell: ~0.5--1.5 s) ──
+  // ── 1. OpenAI TTS -- gpt-4o-mini-tts, Fallback tts-1 ──
   const openaiKey = localStorage.getItem('faez_openai_key') || '';
   if (openaiKey) {
-    try {
-      const resp = await fetch('https://api.openai.com/v1/audio/speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': 'Bearer ' + openaiKey
-        },
-        body: JSON.stringify({
-          model:           'tts-1',   // schnell (nicht tts-1-hd)
-          input:           text.trim(),
-          voice:           'onyx',    // natürlich, professionell
-          response_format: 'mp3',
-          speed:           1.0
-        }),
-        signal: AbortSignal.timeout(8000)
-      });
-      if (!resp.ok) {
-        const j = await resp.json().catch(() => ({}));
-        const m = j?.error?.message || '';
-        throw new Error(resp.status === 429
-          ? 'Quota überschritten -- OpenAI Plan prüfen'
-          : 'HTTP ' + resp.status + (m ? ' -- ' + m.slice(0, 40) : ''));
+    for (const ttsModel of ['gpt-4o-mini-tts', 'tts-1']) {
+      try {
+        const resp = await fetch('https://api.openai.com/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': 'Bearer ' + openaiKey
+          },
+          body: JSON.stringify({
+            model: ttsModel,
+            input: text.trim(),
+            voice: 'onyx',    // natürlich, professionell
+            speed: 1.0
+          }),
+          signal: AbortSignal.timeout(8000)
+        });
+        if (!resp.ok) {
+          const j = await resp.json().catch(() => ({}));
+          const m = j?.error?.message || '';
+          throw new Error(resp.status === 429
+            ? 'Quota überschritten -- OpenAI Plan prüfen'
+            : 'HTTP ' + resp.status + (m ? ' -- ' + m.slice(0, 40) : ''));
+        }
+        const ab  = await resp.arrayBuffer();
+        const url = URL.createObjectURL(new Blob([ab], { type: 'audio/mpeg' }));
+        await _playBlob(url);
+        return;
+      } catch (e) {
+        const m = e.message || '';
+        _errs.push('OpenAI ' + ttsModel + ': ' + (
+          m.includes('429') || m.toLowerCase().includes('quota')
+            ? 'Quota überschritten -- Plan prüfen'
+            : m.slice(0, 55)
+        ));
       }
-      const ab  = await resp.arrayBuffer();
-      const url = URL.createObjectURL(new Blob([ab], { type: 'audio/mpeg' }));
-      await _playBlob(url);
-      return;
-    } catch (e) {
-      const m = e.message || '';
-      _errs.push('OpenAI: ' + (
-        m.includes('429') || m.toLowerCase().includes('quota')
-          ? 'Quota überschritten -- Plan prüfen'
-          : m.slice(0, 55)
-      ));
     }
   }
 
@@ -5357,11 +5369,19 @@ async function speakText(text, lang, btnEl) {
   // ── 3. Web Speech API (Browser-intern, kein Key benötigt) ──
   if (typeof speechSynthesis !== 'undefined') {
     try {
+      // Stimmen laden asynchron -- bei leerer Liste kurz auf voiceschanged warten
+      let voices = speechSynthesis.getVoices();
+      if (!voices.length) {
+        voices = await new Promise(res => {
+          const t = setTimeout(() => res(speechSynthesis.getVoices()), 1200);
+          speechSynthesis.addEventListener('voiceschanged',
+            () => { clearTimeout(t); res(speechSynthesis.getVoices()); }, { once: true });
+        });
+      }
       speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text.trim());
       utter.lang = 'de-DE';
-      const voices = speechSynthesis.getVoices();
-      const deVoice = voices.find(v => v.lang === 'de-DE') || voices.find(v => v.lang.startsWith('de'));
+      const deVoice = voices.find(v => v.lang === 'de-DE') || voices.find(v => (v.lang||'').startsWith('de'));
       if (deVoice) utter.voice = deVoice;
       utter.rate = 0.95;
       utter.onend = () => resetBtn();
