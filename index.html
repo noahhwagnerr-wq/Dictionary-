@@ -2417,7 +2417,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-23d</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-05-23e</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3639,6 +3639,8 @@ async function autoTranslate(german) {
 جمله آلمانی را به یک جمله روان، طبیعی و امروزی فارسی ترجمه کن.
 
 قوانین مطلق:
+- ترجمه تحت اللفظی ممنوع: معنا را طوری منتقل کن که یک ایرانی تحصیل‌کرده همان فکر را مستقیم به فارسی بیان می‌کرد
+- ساختار مجهول آلمانی را مکانیکی کپی نکن -- طبیعی‌ترین ساخت فارسی را انتخاب کن
 - فقط و فقط یک ترجمه بنویس -- هیچ گزینه دوم، هیچ ؛، هیچ فهرست
 - هیچ توضیح، هیچ مقدمه، هیچ متن آلمانی، هیچ Markdown
 - خروجی تو باید فقط خود جمله فارسی باشد و هیچ چیز دیگر
@@ -4134,7 +4136,7 @@ function _extractGeminiText(data) {
 
 // Claude (Anthropic) API-Aufruf
 async function callClaude(apiKey, messages, system, maxTokens=700) {
-  const body = { model: 'claude-haiku-4-5-20251001', max_tokens: maxTokens, messages };
+  const body = { model: 'claude-sonnet-5', max_tokens: maxTokens, messages };
   if (system) body.system = system;
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -5956,9 +5958,14 @@ ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Sätze sollen natürlich klingen -- so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
 • Satzlänge: mittlere Länge (ca. 15--25 Wörter) -- nicht zu kurz, nicht übermäßig lang
 
-PERSISCHE ÜBERSETZUNG:
+PERSISCHE ÜBERSETZUNG (Muttersprachler-Qualität, höchste Priorität):
+• Übersetze SINNGEMÄSS, niemals Wort-für-Wort: Die Übersetzung muss klingen, als hätte ein gebildeter iranischer Muttersprachler den Gedanken direkt auf Persisch formuliert
+• Deutsches Passiv NICHT mechanisch nachbauen -- die natürlichste persische Konstruktion wählen (z.B. aktive Umformung oder idiomatische شدن-Konstruktion)
+• Verwende für jedes Verb und jede Wendung das Wort, das ein Perser in diesem Kontext tatsächlich benutzt -- keine künstlichen Ableitungen oder erfundenen Komposita
+• Vollständige Bedeutung übertragen: keine Nuance weglassen, nichts hinzufügen
+• Selbstprüfung: Lies die persische Übersetzung für sich allein -- klingt sie merkwürdig oder gestelzt, formuliere sie neu
 • Ausschließlich persisch-arabische Schrift (U+0600--U+06FF) -- KEIN Latein, KEIN Kyrillisch
-• Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
+• Gehobenes, aber lebendiges Standard-Persisch (فارسی معیار)
 • KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
 ${wr.rule}
@@ -6019,9 +6026,14 @@ ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Sätze sollen natürlich klingen -- so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
 • Satzlänge: ca. 15--25 Wörter
 
-PERSISCHE ÜBERSETZUNG:
+PERSISCHE ÜBERSETZUNG (Muttersprachler-Qualität, höchste Priorität):
+• Übersetze SINNGEMÄSS, niemals Wort-für-Wort: Die Übersetzung muss klingen, als hätte ein gebildeter iranischer Muttersprachler den Gedanken direkt auf Persisch formuliert
+• Deutsches Passiv NICHT mechanisch nachbauen -- die natürlichste persische Konstruktion wählen (z.B. aktive Umformung oder idiomatische شدن-Konstruktion)
+• Verwende für jedes Verb und jede Wendung das Wort, das ein Perser in diesem Kontext tatsächlich benutzt -- keine künstlichen Ableitungen oder erfundenen Komposita
+• Vollständige Bedeutung übertragen: keine Nuance weglassen, nichts hinzufügen
+• Selbstprüfung: Lies die persische Übersetzung für sich allein -- klingt sie merkwürdig oder gestelzt, formuliere sie neu
 • Ausschließlich persisch-arabische Schrift (U+0600--U+06FF) -- KEIN Latein, KEIN Kyrillisch
-• Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
+• Gehobenes, aber lebendiges Standard-Persisch (فارسی معیار)
 • KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
 ${wr.rule}
@@ -6080,9 +6092,14 @@ ANFORDERUNGEN AN DIE DEUTSCHEN SÄTZE (C1--C2):
 • Sätze sollen natürlich klingen -- so wie ein gebildeter Muttersprachler sie im Alltag tatsächlich verwenden würde
 • Satzlänge: ca. 15--25 Wörter
 
-PERSISCHE ÜBERSETZUNG:
+PERSISCHE ÜBERSETZUNG (Muttersprachler-Qualität, höchste Priorität):
+• Übersetze SINNGEMÄSS, niemals Wort-für-Wort: Die Übersetzung muss klingen, als hätte ein gebildeter iranischer Muttersprachler den Gedanken direkt auf Persisch formuliert
+• Deutsches Passiv NICHT mechanisch nachbauen -- die natürlichste persische Konstruktion wählen (z.B. aktive Umformung oder idiomatische شدن-Konstruktion)
+• Verwende für jedes Verb und jede Wendung das Wort, das ein Perser in diesem Kontext tatsächlich benutzt -- keine künstlichen Ableitungen oder erfundenen Komposita
+• Vollständige Bedeutung übertragen: keine Nuance weglassen, nichts hinzufügen
+• Selbstprüfung: Lies die persische Übersetzung für sich allein -- klingt sie merkwürdig oder gestelzt, formuliere sie neu
 • Ausschließlich persisch-arabische Schrift (U+0600--U+06FF) -- KEIN Latein, KEIN Kyrillisch
-• Gehobenes Persisch (فارسی معیار) -- keine umgangssprachlichen Ausdrücke
+• Gehobenes, aber lebendiges Standard-Persisch (فارسی معیار)
 • KEIN ZWNJ (U+200C / نیم فاصله) -- nur einfache Leerzeichen
 
 ${wr.rule}
