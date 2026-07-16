@@ -2417,7 +2417,7 @@ color:var(--accent3);
 
   <div class="hero-logo-box" style="width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,rgba(124,95,230,.32),rgba(79,158,255,.26));border:1px solid rgba(124,95,230,.40);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto 16px;box-shadow:0 12px 40px rgba(124,95,230,.30),0 0 0 8px rgba(124,95,230,.07);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#f4f7ff;margin-bottom:4px" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg><div style="font-size:11px;font-weight:800;letter-spacing:.8px;color:#fff">FAEZ</div></div><div class="hero-title">Wörterbuch</div>
   <div class="hero-sub" id="home-entry-count">در حال بارگذاری...</div>
-  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-07-15a</div>
+  <div style="font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:.5px;margin-top:2px;">v2026-07-15b</div>
 </div>
 <button class="quick-search-btn" onclick="switchTab('search')">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3628,11 +3628,17 @@ function _isFullSentence(s) {
   return /[.!?…]$/.test(t) || t.split(/\s+/).length > 3;
 }
 
-async function autoTranslate(german) {
+async function autoTranslate(german, ctx) {
   const keys = getApiKeys();
   if (!keys.claude && !keys.openai && !keys.groq && !keys.gemini) return null;
 
   const isSentence = _isFullSentence(german);
+
+  // Kontext: gehört das Wort zu einem Stichwort-Eintrag, hilft das der KI
+  // enorm (z.B. "der Purzeltag" unter "purzeln" = Geburtstag, kein Wetter-Tag)
+  const ctxBlock = (ctx && ctx.headword && ctx.headword !== german)
+    ? `\n\nکانتکست: این واژه زیرمجموعه مدخل "${ctx.headword}"${ctx.headwordFa ? ' (به معنای: ' + ctx.headwordFa + ')' : ''} در فرهنگ لغت است. معنای واژه را با توجه به این ارتباط تعیین کن.`
+    : '';
 
   const sysPrompt = isSentence
     ? `تو یک مترجم حرفه‌ای آلمانی به فارسی هستی.
@@ -3656,13 +3662,17 @@ async function autoTranslate(german) {
 - برای اصطلاحات: معنا را ترجمه کن، نه کلمه به کلمه
 - فقط معادل‌های فارسی را با ؛ جدا کن -- هیچ توضیح، آلمانی، Markdown یا شماره‌گذاری نداشته باش
 - اگر کلمه معانی متفاوت در حوزه‌های مختلف دارد (حقوقی، پزشکی، روزمره) همه را بیاور
+- هشدار توهم (بسیار مهم): معنای واژه های عامیانه و کم کاربرد را هرگز از روی اجزای کلمه حدس نزن!
+  مثال: Purzeltag = عامیانه برای Geburtstag = تولد، روز تولد (نه «روز برفی»!)
+  اگر واژه ای معنای اصطلاحی ثابت دارد، همان را بده -- ترکیب تحت اللفظی اجزا ممنوع
+- اگر معنای واژه را با اطمینان نمی دانی، محتمل ترین معنای واقعی ثبت شده در فرهنگ ها را بده -- هرگز معنا اختراع نکن
 - نگارش صحیح فارسی: پیشوندهای بی/نا/با/هم/غیر با فاصله نوشته می‌شوند. هرگز از ZWNJ استفاده نکن.`;
 
   const prompt = isSentence
-    ? `جمله آلمانی: "${german}"
+    ? `جمله آلمانی: "${german}"${ctxBlock}
 
 فقط یک ترجمه روان فارسی بنویس. هیچ توضیح، هیچ آلمانی، هیچ گزینه اضافه.`
-    : `کلمه/عبارت آلمانی: "${german}"
+    : `کلمه/عبارت آلمانی: "${german}"${ctxBlock}
 
 تمام معادل‌های فارسی رایج را با ؛ جدا کن.
 با پرکاربردترین معنا شروع کن.
@@ -3716,7 +3726,7 @@ async function autoTranslate(german) {
 }
 
 // ── Auto-Übersetzung für Beispiel-Felder ──
-async function autoTranslateExamples(rows) {
+async function autoTranslateExamples(rows, ctx) {
   const result = [];
   for (const row of rows) {
     const de = String(row.de || '').trim();
@@ -3725,8 +3735,8 @@ async function autoTranslateExamples(rows) {
     if (fa) {
       result.push(row); // Already has translation
     } else {
-      // Try to auto-translate
-      const translated = await autoTranslate(de);
+      // Try to auto-translate (mit Stichwort-Kontext gegen Halluzinationen)
+      const translated = await autoTranslate(de, ctx);
       result.push({de, fa: translated || ''});
     }
   }
@@ -3774,7 +3784,7 @@ async function saveNewWord(){
     fa: row.querySelector('.ex-row-fa').value.trim()
   }));
   // Auto-Übersetzung für Beispiele mit leerem Persisch-Feld
-  const filledRows = await autoTranslateExamples(rows);
+  const filledRows = await autoTranslateExamples(rows, {headword: german, headwordFa: persian});
   const _schTextNew=(document.getElementById('addword-forms').value||'').trim();
   const entry={g:german,p:persian,f:forms,wordType:_addWordType,ex:normalizeExamples(filledRows),...(_schTextNew?{sch:_schTextNew}:{})};
   enrichEntryForSearch(entry);
@@ -4990,7 +5000,7 @@ async function saveEdit(force){
   if(!isValidGermanHeadword(german)){showToast('⚠ Bitte mindestens einen deutschen Buchstaben eingeben');return;}
   if(hasDuplicateHeadword(german,currentEntry.id,_currentWordType)){showToast('⚠ Dieses Wort mit dieser Wortform existiert bereits');return;}
   // Auto-Übersetzung für Beispiele mit leerem Persisch-Feld
-  const filledExamples = await autoTranslateExamples(rawExamples);
+  const filledExamples = await autoTranslateExamples(rawExamples, {headword: german, headwordFa: persian});
   currentEntry.g=german;
   currentEntry.p=persian;
   currentEntry.f=forms;
